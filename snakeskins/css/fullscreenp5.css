@@ -1,0 +1,45 @@
+body, html {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+::-webkit-scrollbar {
+    display: none;
+}
+
+#defaultCanvas0 {
+    position: absolute;
+    top: 5%;
+    left: 7.5%;
+}
+
+#defaultCanvas1 {
+    position: absolute;
+    top: 10%;
+    left: 7.5%;
+}
+
+#defaultCanvas2 {
+    position: absolute;
+    top: 35%;
+    left: 7.5%;
+}
+
+#defaultCanvas3 {
+    position: absolute;
+    top: 40%;
+    left: 7.5%;
+}
+
+#defaultCanvas4 {
+    position: absolute;
+    top: 65%;
+    left: 7.5%;
+}
+
+#defaultCanvas5 {
+    position: absolute;
+    top: 70%;
+    left: 7.5%;
+}
