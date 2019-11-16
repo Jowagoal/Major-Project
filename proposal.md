@@ -34,6 +34,7 @@ The classic game of snake made in a 3D world.  The user is a snake that moves ar
   - Music
   - Sounds
   - Leader board
+  - key mapping
   - Single player mode
   - Two-player mode
   - Online mode
