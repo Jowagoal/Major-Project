@@ -12,6 +12,11 @@ The classic game of snake made in a 3D world.  The user is a snake that moves ar
 - Snake dies when it hits border
 - Snake dies when it hits a body part
 
+- Music
+- Sounds
+- Leader board
+- key mapping
+
 ## Nice to Have List
 - Completed Items
   - Menu screen
@@ -31,10 +36,6 @@ The classic game of snake made in a 3D world.  The user is a snake that moves ar
   
   
 - Extra items
-  - Music
-  - Sounds
-  - Leader board
-  - key mapping
   - Single player mode
   - Two-player mode
   - Online mode
