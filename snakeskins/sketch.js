@@ -12,7 +12,9 @@
 //global variables
 
 //this variable determines the state of the program
-let state = "Menu";
+let state = "Main Menu";
+
+let gameMode;
 
 //these variables are the memory of the program
 let arr = [];
@@ -21,6 +23,12 @@ let secondPosition = [0,0,0];
 let foodPosition = [0,0,0];
 let bodyPosition = [];
 
+let arrP2 = [];
+let positionP2 = [0,950,0];
+let secondPositionP2 = [0,0,0];
+let foodPositionP2 = [0,0,0];
+let bodyPositionP2 = [];
+
 //these variables determine how the snake moves aswell as how long the snake is
 let push0 = 50;
 let push1 = 0;
@@ -28,15 +36,60 @@ let push2 = 0;
 let push3 = 1;
 let snakeLength;
 
+let push0P2 = 50;
+let push1P2 = 0;
+let push2P2 = 0;
+let push3P2 = 1;
+let snakeLengthP2;
+
 //these variables are for text and the difficulty slider in the options menu
 let inconsolata;
-let bare;
-let snakeEyes;
-let lines;
-let iso;
-let instructions = ["Controls:", "A          = left", "D          = right", "W          = forward", "S          = back", "Up Arrow   = up", "Down Arrow = down"];
 let sliderX = 225;
 let difficulty = 10;
+let changingBingingsP1 = false;
+let changingBingingsP2 = false;
+let leftBindP1 = false;
+let rightBindP1 = false;
+let forwardBindP1 = false;
+let backBindP1 = false;
+let upBindP1 = false;
+let downBindP1 = false;
+let leftBindP2 = false;
+let rightBindP2 = false;
+let forwardBindP2 = false;
+let backBindP2 = false;
+let upBindP2 = false;
+let downBindP2 = false;
+let p1Controls = {
+  left: 'a',
+  lKeyCode: 65,
+  right: 'd',
+  rKeyCode: 68,
+  forward: 'w',
+  fKeyCode: 87,
+  back: 's',
+  bKeyCode: 83,
+  up: 'ArrowUp',
+  uKeyCode: 38,
+  down: 'ArrowDown',
+  dKeyCode: 40,
+}
+let p2Controls = {
+  left: 'ArrowLeft',
+  lKeyCode: 37,
+  right: 'ArrowRight',
+  rKeyCode: 39,
+  forward: 'ArrowUp',
+  fKeyCode: 38,
+  back: 'ArrowDown',
+  bKeyCode: 40,
+  up: 'Enter',
+  uKeyCode: 13,
+  down: 'Shift',
+  dKeyCode: 16,
+}
+let instructionsP1 = ["Controls:", p1Controls.left + ' = Left', p1Controls.right + ' = Right', p1Controls.forward + ' = Forward', p1Controls.back + ' = Back', p1Controls.up + ' = Up', p1Controls.down + ' = Down'];
+let instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right + ' = Right', p2Controls.forward + ' = Forward', p2Controls.back + ' = Back', p2Controls.up + ' = Up', p2Controls.down + ' = Down'];
 
 //this variable kees track of if the game has been restarted
 let restarted = false;
@@ -48,41 +101,19 @@ let money = 0;
 let moneyGained = 0;
 //skins array holds all skins
 let skins = [];
-let noSkin = {
-  name: 'No Skin',
-  cost: 'free',
-  bought: 'yes',
-  active: 'yes',
-};
+let noSkin;
+let lineSkin;
+let isotopeSkin;
+let eyesSkin;
 
-let lineSkin = {
-  name: 'Line',
-  cost: 50,
-  bought: 'no',
-  active: 'no',
-};
-
-let isotopeSkin = {
-  name: 'Isotope',
-  cost: 150,
-  bought: 'no',
-  active: 'no',
-};
-
-let eyesSkin = {
-  name: 'Eyes',
-  cost: 250,
-  bought: 'no',
-  active: 'no',
-};
-
-skins.push(noSkin);
-skins.push(lineSkin);
-skins.push(isotopeSkin);
-skins.push(eyesSkin);
 //variables for 2D array
 let cols;
 let rows;
+
+let bare;
+let snakeEyes;
+let lines;
+let iso;
 
 function preload(){
   //preloads text font
@@ -92,10 +123,58 @@ function preload(){
   lines = loadImage('assets/lines.PNG');
   iso = loadImage('assets/iso.PNG');
   snakeEyes = loadImage('assets/snake eyes.PNG');
+  
+  eyesSkin = {
+    name: 'Eyes',
+    cost: 250,
+    bought: 'no',
+    active: 'no',
+    picture: snakeEyes,
+  };
+  
+  isotopeSkin = {
+    name: 'Isotope',
+    cost: 150,
+    bought: 'no',
+    active: 'no',
+    picture: iso,
+  };
+  
+  lineSkin = {
+    name: 'Line',
+    cost: 50,
+    bought: 'no',
+    active: 'no',
+    picture: lines,
+  };
+  
+  noSkin = {
+    name: 'No Skin',
+    cost: 'free',
+    bought: 'yes',
+    active: 'yes',
+    picture: bare,
+  };
+  
+  skins.push(noSkin);
+  skins.push(lineSkin);
+  skins.push(isotopeSkin);
+  skins.push(eyesSkin);
 }
 
 //based on the state of the program, setup will create a new canvas
 function setup() {
+  if(state==="Main Menu"){
+    createCanvas(windowWidth, windowHeight);
+
+    document.getElementById("defaultCanvas0").style.visibility = "hidden";
+    document.getElementById("defaultCanvas1").style.visibility = "hidden";
+    document.getElementById("defaultCanvas2").style.visibility = "hidden";
+    document.getElementById("defaultCanvas3").style.visibility = "hidden";
+    document.getElementById("defaultCanvas4").style.visibility = "hidden";
+    document.getElementById("defaultCanvas5").style.visibility = "hidden";
+  }
+  
   if(state==="Menu"){
     createCanvas(windowWidth, windowHeight);
     
@@ -108,7 +187,7 @@ function setup() {
     document.getElementById("defaultCanvas5").style.visibility = "hidden";
   }else if(state==="Options"){
     createCanvas(windowWidth, windowHeight);
-  }else if(state==="Store"){
+  }else if(state==="Store"&&gameMode!=="Two Player"){
     createCanvas(windowWidth, windowHeight);
   }else if(state==="Play"){
     //creates 3d canvas
@@ -118,9 +197,9 @@ function setup() {
     camera(-300,-400,600,500,700,-500);
     
     //sets initial position of food
-    foodPosition[0]=ceil(random(0,19))*50;
-    foodPosition[1]=ceil(random(0,19))*50;
-    foodPosition[2]=ceil(random(-19,0))*50;
+    foodPosition[0]=ceil(random(-0.9,19))*50;
+    foodPosition[1]=ceil(random(-0.9,19))*50;
+    foodPosition[2]=ceil(random(-19,-0.9))*50;
     
     //shows all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "visible";
@@ -154,6 +233,10 @@ function draw() {
 
 //after state is determined, it will call its corresponding function
 function checkState(){
+  if(state==="Main Menu"){
+    mainMenu();
+    pointerDot();
+  }
   if(state==="Menu"){
     //after user resets, all values that changed need to be reset
     resetAllValues();
@@ -185,6 +268,82 @@ function pointerDot(){
 }
 
 //this function does everything on the start screen
+function mainMenu(){
+  //after the program is restarted, everything on the screen is displaced
+  //this corrects that displacement
+  if(restarted===true){
+    translate(-1/2*width,-1/2*height);
+  }
+
+  background(100);
+  rectMode(CENTER);
+  textAlign(CENTER, CENTER);
+  textFont(inconsolata);
+  
+  //sets stroke, size, and fill for title
+  noStroke();
+  textSize(150);
+  fill(0,255,100);
+  //title
+  text("3D Snake",width/2, height*2/8);
+  
+  //sets stroke and fill for the buttons
+  stroke(0);
+  fill(200);
+  //creates buttons
+  rect(width/2, height/2+height*1/8, width/4, height/8);
+  rect(width/3, height/2+height*3/8, width/4, height/8);
+  rect(width/3*2, height/2+height*3/8, width/4, height/8);
+  
+  //sets stroke, size, and fill for buttons
+  noStroke();
+  textSize(25);
+  fill(0);
+  //start game button
+  text("Single Player",width/2, height/2+height*1/8);
+  
+  //options button
+  text("Two Player",width/3, height/2+height*3/8);
+
+  text("Online",width/3*2, height/2+height*3/8);
+  
+  if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2+height*1/8-height/16&&mouseY<height/2+height*1/8+height/16&&mouseIsPressed){
+    //when mouse clicks options button, sets state to play and calls setup again to start the game
+    gameMode="Single Player";
+    state="Menu";
+    p1Controls.up = 'ArrowUp';
+    p1Controls.uKeyCode = 38;
+    p1Controls.down = 'ArrowDown';
+    p1Controls.dKeyCode = 40;
+    instructionsP1[5]=p1Controls.up + " = Up";
+    instructionsP1[6]=p1Controls.down + " = Down";
+    setup();
+  }else if(mouseX>width/3-width/8&&mouseX<width/3+width/8&&mouseY>height/2+height*1/8-height/16+height/4&&mouseY<height/2+height*1/8+height/16+height/4&&mouseIsPressed){
+    //when mouse clicks options button, sets state to play and calls setup again to open options screen
+    gameMode="Two Player";
+    state="Menu";
+    p1Controls.up = 't';
+    p1Controls.uKeyCode = 84;
+    p1Controls.down = 'g';
+    p1Controls.dKeyCode = 71;
+    instructionsP1[5]=p1Controls.up + " = Up";
+    instructionsP1[6]=p1Controls.down + " = Down";
+    setup();
+  }else if(mouseX>width/3*2-width/8&&mouseX<width/3*2+width/8&&mouseY>height/2+height*1/8-height/16+height/4&&mouseY<height/2+height*1/8+height/16+height/4&&mouseIsPressed){
+    //when mouse clicks options button, sets state to play and calls setup again to open options screen
+    gameMode="Online";
+    state="Menu";
+    p1Controls.up = 'ArrowUp';
+    p1Controls.uKeyCode = 38;
+    p1Controls.down = 'ArrowDown';
+    p1Controls.dKeyCode = 40;
+    instructionsP1[5]=p1Controls.up + " = Up";
+    instructionsP1[6]=p1Controls.down + " = Down";
+    setup();
+  }
+}
+
+//this function does everything on the start screen
 function startScreen(){
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
@@ -201,41 +360,66 @@ function startScreen(){
   noStroke();
   textSize(100);
   fill(0,255,100);
+
   //title
   text("3D Snake",width/2, height/8);
   
   //sets stroke and fill for the buttons
   stroke(0);
   fill(200);
-  //creates buttons
-  rect(width/2, height/2, width/4, height/8);
-  rect(width/3, height/2+height/4, width/4, height/8);
-  rect(width/3*2, height/2+height/4, width/4, height/8);
+
+  if(gameMode!=="Two Player"){
+    //creates buttons
+    rect(width/2, height/2, width/4, height/8);
+    rect(width/3, height/2+height/4, width/4, height/8);
+    rect(width/3*2, height/2+height/4, width/4, height/8);
+  }else{
+    rect(width/2, height/2, width/4, height/8);
+    rect(width/2, height/2+height/4, width/4, height/8);
+  }
   
   //sets stroke, size, and fill for buttons
   noStroke();
   textSize(25);
   fill(0);
-  //start game button
-  text("Start Game",width/2, height/2);
-  
-  //options button
-  text("Options",width/3, height/2+height/4);
 
-  text("Store",width/3*2, height/2+height/4);
-  
-  if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to start the game
-    state="Play";
-    setup();
-  }else if(mouseX>width/3-width/8&&mouseX<width/3+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to open options screen
-    state="Options";
-    setup();
-  }else if(mouseX>width/3*2-width/8&&mouseX<width/3*2+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to open options screen
-    state="Store";
-    setup();
+  if(gameMode!=="Two Player"){
+    //start game button
+    text("Start Game",width/2, height/2);
+    //options button
+    text("Options",width/3, height/2+height/4);
+    //store button
+    text("Store",width/3*2, height/2+height/4);
+  }else{
+//start game button
+  text("Start Game",width/2, height/2);
+  //options button
+  text("Options",width/2, height/2+height/4);
+  }
+  if(gameMode!=="Two Player"){
+    if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
+      //when mouse clicks options button, sets state to play and calls setup again to start the game
+      state="Play";
+      setup();
+    }else if(mouseX>width/3-width/8&&mouseX<width/3+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
+      //when mouse clicks options button, sets state to play and calls setup again to open options screen
+      state="Options";
+      setup();
+    }else if(mouseX>width/3*2-width/8&&mouseX<width/3*2+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
+      //when mouse clicks options button, sets state to play and calls setup again to open options screen
+      state="Store";
+      setup();
+    }
+  }else{
+    if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
+      //when mouse clicks options button, sets state to play and calls setup again to start the game
+      state="Play";
+      setup();
+    }else if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
+      //when mouse clicks options button, sets state to play and calls setup again to open options screen
+      state="Options";
+      setup();
+    }
   }
 }
 
@@ -252,6 +436,18 @@ function resetAllValues(){
   push2 = 0;
   push3 = 1;
   snakeLength = 3;
+
+  arrP2 = [0,950,0,0];
+  positionP2 = [0,950,0];
+  secondPositionP2 = [0,0,0];
+  foodPositionP2 = [0,0,0];
+  bodyPositionP2 = [];
+  
+  push0P2 = 50;
+  push1P2 = 0;
+  push2P2 = 0;
+  push3P2 = 1;
+  snakeLengthP2 = 3;
 }
 
 //this function does everything on the options screen
@@ -270,24 +466,20 @@ function optionMenu(){
   textFont(inconsolata);
   noStroke();
   textSize(25);
-  //for loop allows for easy changes to the instructions
-  for(var i=0; i<instructions.length; i++){
-    text(instructions[i], 100, 100);
-    translate(0, 25);
-  }
-
-  //difficulty slider bar
+  controls();
+  
   stroke(0);
   fill(255);
+  //difficulty slider bar
   rect(225, 300, 250, 20);
-
+  
   //notches on slider bar
   noStroke();
   fill(220);
   for(var j=0; j<9; j++){
     rect(125+25*j, 300, 5, 20);
   }
-
+  
   //text for difficulty
   fill(0);
   textAlign(CENTER, CENTER);
@@ -349,10 +541,415 @@ function optionMenu(){
   rect(width*0.9,-125, 30, 20);
   if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
     state="Menu";
+    changingBingingsP1=false;
+    changingBingingsP2=false;
     setup();
   }
+
   //translates the origin back to the top left of the screen
-  translate(0,-25*instructions.length);
+  translate(0,-25*instructionsP1.length);
+}
+
+function controls(){
+  if(gameMode!=="Two Player"){
+    changePlayer1Bindings();
+  }else{
+    changePlayer1Bindings();
+    changePlayer2Bindings();
+    translate(-250,0);
+  }
+}
+
+function changePlayer1Bindings(){
+  if(mouseX>100&&mouseX<300&&mouseY>135+175&&mouseY<165+175&&mouseIsPressed){
+    changingBingingsP1=true;
+  }
+
+  //for loop allows for easy changes to the instructions
+  for(var i=0; i<instructionsP1.length; i++){
+    text(instructionsP1[i], 100, 100);
+    translate(0, 25);
+  }
+  
+  if(changingBingingsP1===false){
+    //button for key bindings
+    stroke(100);
+    fill(255);
+    rect(200, 150, 200, 30);
+    fill(0);
+    stroke(255);
+    text("Change Bindings", 105, 135);
+  }else{
+    text("Click box to", 105, 135);
+    text("set new binding.", 105, 165);
+  
+    //left binding
+    if(mouseX>75-7&&mouseX<75+7&&mouseY>150-19&&mouseY<150-5&&mouseIsPressed){
+      leftBindP1=true;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(leftBindP1===true){
+      fill(255,255,0);
+      rect(75, -25-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p1Controls.lKeyCode = k;
+          p1Controls.left = key;
+          leftBindP1=false;
+          instructionsP1 = ["Controls:", p1Controls.left + ' = Left', p1Controls.right + ' = Right', p1Controls.forward + ' = Forward', p1Controls.back + ' = Back', p1Controls.up + ' = Up', p1Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, -25-12, 14, 14);
+    }
+  
+    //right binding
+    if(mouseX>75-7&&mouseX<75+7&&mouseY>175-19&&mouseY<175-5&&mouseIsPressed){
+      leftBindP1=false;
+      rightBindP1=true;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(rightBindP1===true){
+      fill(255,255,0);
+      rect(75, 0-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p1Controls.rKeyCode = k;
+          p1Controls.right = key;
+          rightBindP1=false;
+          instructionsP1 = ["Controls:", p1Controls.left + ' = Left', p1Controls.right + ' = Right', p1Controls.forward + ' = Forward', p1Controls.back + ' = Back', p1Controls.up + ' = Up', p1Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 0-12, 14, 14);
+    }
+  
+    //forward binding
+    if(mouseX>75-7&&mouseX<75+7&&mouseY>200-19&&mouseY<200-5&&mouseIsPressed){
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=true;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(forwardBindP1===true){
+      fill(255,255,0);
+      rect(75, 25-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p1Controls.fKeyCode = k;
+          p1Controls.forward = key;
+          forwardBindP1=false;
+          instructionsP1 = ["Controls:", p1Controls.left + ' = Left', p1Controls.right + ' = Right', p1Controls.forward + ' = Forward', p1Controls.back + ' = Back', p1Controls.up + ' = Up', p1Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 25-12, 14, 14);
+    }
+  
+    //back binding
+    if(mouseX>75-7&&mouseX<75+7&&mouseY>225-19&&mouseY<225-5&&mouseIsPressed){
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=true;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(backBindP1===true){
+      fill(255,255,0);
+      rect(75, 50-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p1Controls.bKeyCode = k;
+          p1Controls.back = key;
+          backBindP1=false;
+          instructionsP1 = ["Controls:", p1Controls.left + ' = Left', p1Controls.right + ' = Right', p1Controls.forward + ' = Forward', p1Controls.back + ' = Back', p1Controls.up + ' = Up', p1Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 50-12, 14, 14);
+    }
+  
+    //up binding
+    if(mouseX>75-7&&mouseX<75+7&&mouseY>250-19&&mouseY<250-5&&mouseIsPressed){
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=true;
+      downBindP1=false;
+    }
+    if(upBindP1===true){
+      fill(255,255,0);
+      rect(75, 75-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p1Controls.uKeyCode = k;
+          p1Controls.up = key;
+          upBindP1=false;
+          instructionsP1 = ["Controls:", p1Controls.left + ' = Left', p1Controls.right + ' = Right', p1Controls.forward + ' = Forward', p1Controls.back + ' = Back', p1Controls.up + ' = Up', p1Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 75-12, 14, 14);
+    }
+  
+    //down binding
+    if(mouseX>75-7&&mouseX<75+7&&mouseY>275-19&&mouseY<275-5&&mouseIsPressed){
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=true;
+    }
+    if(downBindP1===true){
+      fill(255,255,0);
+      rect(75, 100-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p1Controls.dKeyCode = k;
+          p1Controls.down = key;
+          downBindP1=false;
+          instructionsP1 = ["Controls:", p1Controls.left + ' = Left', p1Controls.right + ' = Right', p1Controls.forward + ' = Forward', p1Controls.back + ' = Back', p1Controls.up + ' = Up', p1Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 100-12, 14, 14);
+    }
+  }
+}
+
+function changePlayer2Bindings(){
+  if(mouseX>100+250&&mouseX<300+250&&mouseY>135+175&&mouseY<165+175&&mouseIsPressed){
+    changingBingingsP2=true;
+  }
+
+  translate(250, -25*instructionsP1.length);
+  textAlign(LEFT, TOP);
+  textFont(inconsolata);
+  noStroke();
+  textSize(25);
+  fill(0);
+
+  for(var i=0; i<instructionsP2.length; i++){
+    text(instructionsP2[i], 100, 100);
+    translate(0, 25);
+  }
+  
+  if(changingBingingsP2===false){
+    //button for key bindings
+    stroke(100);
+    fill(255);
+    rect(200, 150, 200, 30);
+    fill(0);
+    stroke(255);
+    text("Change Bindings", 105, 135);
+  }else{
+    text("Click box to", 105, 135);
+    text("set new binding.", 105, 165);
+  
+    //left binding
+    if(mouseX>75-7+250&&mouseX<75+7+250&&mouseY>150-19&&mouseY<150-5&&mouseIsPressed){
+      leftBindP2=true;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(leftBindP2===true){
+      fill(255,255,0);
+      rect(75, -25-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p2Controls.lKeyCode = k;
+          p2Controls.left = key;
+          leftBindP2=false;
+          instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right + ' = Right', p2Controls.forward + ' = Forward', p2Controls.back + ' = Back', p2Controls.up + ' = Up', p2Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, -25-12, 14, 14);
+    }
+  
+    //right binding
+    if(mouseX>75-7+250&&mouseX<75+7+250&&mouseY>175-19&&mouseY<175-5&&mouseIsPressed){
+      leftBindP2=false;
+      rightBindP2=true;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(rightBindP2===true){
+      fill(255,255,0);
+      rect(75, 0-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p2Controls.rKeyCode = k;
+          p2Controls.right = key;
+          rightBindP2=false;
+          instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right + ' = Right', p2Controls.forward + ' = Forward', p2Controls.back + ' = Back', p2Controls.up + ' = Up', p2Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 0-12, 14, 14);
+    }
+  
+    //forward binding
+    if(mouseX>75-7+250&&mouseX<75+7+250&&mouseY>200-19&&mouseY<200-5&&mouseIsPressed){
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=true;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(forwardBindP2===true){
+      fill(255,255,0);
+      rect(75, 25-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p2Controls.fKeyCode = k;
+          p2Controls.forward = key;
+          forwardBindP2=false;
+          instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right + ' = Right', p2Controls.forward + ' = Forward', p2Controls.back + ' = Back', p2Controls.up + ' = Up', p2Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 25-12, 14, 14);
+    }
+  
+    //back binding
+    if(mouseX>75-7+250&&mouseX<75+7+250&&mouseY>225-19&&mouseY<225-5&&mouseIsPressed){
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=true;
+      upBindP2=false;
+      downBindP2=false;
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(backBindP2===true){
+      fill(255,255,0);
+      rect(75, 50-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p2Controls.bKeyCode = k;
+          p2Controls.back = key;
+          backBindP2=false;
+          instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right + ' = Right', p2Controls.forward + ' = Forward', p2Controls.back + ' = Back', p2Controls.up + ' = Up', p2Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 50-12, 14, 14);
+    }
+  
+    //up binding
+    if(mouseX>75-7+250&&mouseX<75+7+250&&mouseY>250-19&&mouseY<250-5&&mouseIsPressed){
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=true;
+      downBindP2=false;
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(upBindP2===true){
+      fill(255,255,0);
+      rect(75, 75-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p2Controls.uKeyCode = k;
+          p2Controls.up = key;
+          upBindP2=false;
+          instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right + ' = Right', p2Controls.forward + ' = Forward', p2Controls.back + ' = Back', p2Controls.up + ' = Up', p2Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 75-12, 14, 14);
+    }
+  
+    //down binding
+    if(mouseX>75-7+250&&mouseX<75+7+250&&mouseY>275-19&&mouseY<275-5&&mouseIsPressed){
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=true;
+      leftBindP1=false;
+      rightBindP1=false;
+      forwardBindP1=false;
+      backBindP1=false;
+      upBindP1=false;
+      downBindP1=false;
+    }
+    if(downBindP2===true){
+      fill(255,255,0);
+      rect(75, 100-12, 14, 14);
+      for(var k=0; k<=222; k++){
+        if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          p2Controls.dKeyCode = k;
+          p2Controls.down = key;
+          downBindP2=false;
+          instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right + ' = Right', p2Controls.forward + ' = Forward', p2Controls.back + ' = Back', p2Controls.up + ' = Up', p2Controls.down + ' = Down'];
+        }
+      }
+    }else{
+      fill(255,0,0);
+      rect(75, 100-12, 14, 14);
+    }
+  }
 }
 
 function storeMenu(){
@@ -491,18 +1088,7 @@ function enterItem(col, row, centerX, centerY, wh){
 
   //displays picture of the skin
   if(store[row][col]!==undefined){
-    if(store[row][col].name === 'Eyes'){
-      image(snakeEyes, centerX-wh*1/2+1, centerY+wh*-1/2, wh-2, wh*5/8);
-    }
-    if(store[row][col].name === 'Line'){
-      image(lines, centerX-wh*1/2+1, centerY+wh*-1/2, wh-2, wh*5/8);
-    }
-    if(store[row][col].name === 'Isotope'){
-      image(iso, centerX-wh*1/2+1, centerY+wh*-1/2, wh-2, wh*5/8);
-    }
-    if(store[row][col].name === 'No Skin'){
-      image(bare, centerX-wh*1/2+1, centerY+wh*-1/2, wh-2, wh*5/8);
-    }
+    image(store[row][col].picture, centerX-wh*1/2+1, centerY+wh*-1/2, wh-2, wh*5/8);
   }
 
   //if a part of the array is not filled, places a sqaure same color as background over top
@@ -555,22 +1141,36 @@ function gameStart(){
   strokeWeight(2);
   stroke(0);
   
+  
   //food function makes the food
   food();
-
-  //arr is the memory of the moves
-  //push0 through push3 tells the array which of 6 directions to move
-  arr.push(push0);
-  arr.push(push1);
-  arr.push(push2);
-  arr.push(push3);
-  
-  //moves the snake
-  moveSnake();
+  if(gameMode!=="Two Player"){
+    //arr is the memory of the moves
+    //push0 through push3 tells the array which of 6 directions to move
+    arr.push(push0);
+    arr.push(push1);
+    arr.push(push2);
+    arr.push(push3);
+    //moves the snake
+    moveSnake();
+  }else{
+    push();
+    arr.push(push0);
+    arr.push(push1);
+    arr.push(push2);
+    arr.push(push3);
+    moveSnake();
+    pop();
+    arrP2.push(push0P2);
+    arrP2.push(push1P2);
+    arrP2.push(push2P2);
+    arrP2.push(push3P2);
+    moveSnakeP2();
+  }
 }
-
+    
 function moveSnake(){
-  //resets the current position to 0
+   //resets the current position to 0
   position[0]=0;
   position[1]=0;
   position[2]=0;
@@ -594,6 +1194,7 @@ function moveSnake(){
     //if the position is outside the border, state changes to game over and calls setup
     if(position[0]<0||position[0]>950||position[1]<0||position[1]>950||position[2]>0||position[2]<-950){
       state = "Game Over";
+      pop();
       setup();
     }
     //if the fourth element of a bit is equal to 1, calls the placeBox function
@@ -604,15 +1205,6 @@ function moveSnake(){
         placeBox(true);
       }
     }
-    /*
-    else if(arr[i+3]===0&&i!==0){
-      arr[i-4]+=arr[i];
-      arr[i-3]+=arr[i+1];
-      arr[i-2]+=arr[i+2];
-      arr[i-1]+=arr[i+3];
-      arr.splice(i,4);
-    }
-    */
     //checks a snakeLength bit back if the third element is equal to 1
     //if so, changes it to 0
     //this keeps the length of the snake equal to snakelength
@@ -637,6 +1229,7 @@ function moveSnake(){
   for(var j=0; j<=bodyPosition.length; j+=3){
     if(position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2]){
       state = "Game Over";
+      pop();
       setup();
     }
   }
@@ -660,6 +1253,94 @@ function placeBox(head){
     //otherwise, place a box with the color green
     fill(0,255,0,50);
     applySkin(head);
+  }
+  //the color scheme is a warning system for the user, tells them how close they are to the border
+}
+
+function moveSnakeP2(){
+  //resets the current position to 0
+  positionP2[0]=0;
+  positionP2[1]=950;
+  positionP2[2]=0;
+  //resets second position to 0
+  secondPositionP2[0]=0;
+  secondPositionP2[1]=0;
+  secondPositionP2[2]=0;
+  //for loop reads every 4 elements (bit) of the array
+  for(var i=0; i<=arrP2.length; i+=4){
+    //translates by the first 3 elements of a bit (x,y,z) 
+    translate(arrP2[i],arrP2[i+1],arrP2[i+2]);
+    //updates position and secondPosition
+    if(arrP2[i+0]===50||arrP2[i+0]===-50||arrP2[i+1]===50||arrP2[i+1]===-50||arrP2[i+2]===50||arrP2[i+2]===-50){
+      positionP2[0]=positionP2[0]+arrP2[i+0];
+      positionP2[1]=positionP2[1]+arrP2[i+1];
+      positionP2[2]=positionP2[2]+arrP2[i+2];
+      secondPositionP2[0]=secondPositionP2[0]+arrP2[i-4];
+      secondPositionP2[1]=secondPositionP2[1]+arrP2[i-3];
+      secondPositionP2[2]=secondPositionP2[2]+arrP2[i-2];
+    }
+    //if the position is outside the border, state changes to game over and calls setup
+    if(positionP2[0]<0||positionP2[0]>950||positionP2[1]<0||positionP2[1]>950||positionP2[2]>0||positionP2[2]<-950){
+      state = "Game Over";
+      pop();
+      setup();
+    }
+    //if the fourth element of a bit is equal to 1, calls the placeBox function
+    if(arrP2[i+3]===1){
+      if(i+3!==arrP2.length-1){
+        placeBoxP2();
+      }else{
+        placeBoxP2(true);
+      }
+    }
+    //checks a snakeLength bit back if the third element is equal to 1
+    //if so, changes it to 0
+    //this keeps the length of the snake equal to snakelength
+    if(arrP2[i-4*snakeLengthP2+3]===1){
+      arrP2[i-4*snakeLengthP2+3]=0;
+    }
+  }
+  
+  //pushes the secondPosition into the bodyPosition
+  bodyPositionP2.push(secondPositionP2[0]);
+  bodyPositionP2.push(secondPositionP2[1]);
+  bodyPositionP2.push(secondPositionP2[2]);
+
+  //if bodyPosition is greater than the snake length
+  //the first three elements are deleted since they are no longer a part of the body
+  if(bodyPositionP2.length>snakeLengthP2*3){
+    bodyPositionP2.splice(0,3);
+  }
+
+  //checks if the position is equal to any of the body positions
+  //if so, state changes to game over and calls setup
+  for(var j=0; j<=bodyPositionP2.length; j+=3){
+    if(positionP2[0]===bodyPositionP2[j]&&positionP2[1]===bodyPositionP2[j+1]&&positionP2[2]===bodyPositionP2[j+2]){
+      state = "Game Over";
+      pop();
+      setup();
+    }
+  }
+}
+
+//function shows the snake on screen
+function placeBoxP2(head){
+  let x = positionP2[0];
+  let y = positionP2[1];
+  let z = positionP2[2];
+  //if the position is 1 box away from the border, place a box with the color red
+  if(x<=0||x>=950||y<=0||y>=950||z<=-950||z>=0){
+    fill(255,0,0,50);
+    box(50);
+  }else 
+  //if the position is 2-3 boxs away from the border, place a box with the color blue
+  if(x<=100||x>=850||y<=100||y>=850||z<=-850||z>=-100){
+    fill(0,0,255,50);
+    box(50);
+  }else{
+    //otherwise, place a box with the color green
+    fill(0,255,0,50);
+    box(50);
   }
   //the color scheme is a warning system for the user, tells them how close they are to the border
 }
@@ -754,41 +1435,57 @@ function food(){
     foodPosition[1]=ceil(random(0,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLength++;
-    for(var i=0; i<=bodyPosition.length-3; i+=3){
-      //incase this scenario misses the food on the position, checks if the food is in the body
-      if(foodPosition[0]===bodyPosition[i]&&foodPosition[1]===bodyPosition[i+1]&&foodPosition[2]===bodyPosition[i+2]){
-        foodPosition[0]=ceil(random(0,19))*50;
-        foodPosition[1]=ceil(random(0,19))*50;
-        foodPosition[2]=ceil(random(-19,0))*50;
-      }
-    }
-  }else if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
+  }
+  if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(0,19))*50;
     foodPosition[1]=ceil(random(0,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLength++;
-    for(var j=0; j<=bodyPosition.length-3; j+=3){
-      if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
-        //incase this scenario misses the food on the position, checks if the food is in the body
-        foodPosition[0]=ceil(random(0,19))*50;
-        foodPosition[1]=ceil(random(0,19))*50;
-        foodPosition[2]=ceil(random(-19,0))*50;
-      }
-    }
-  }else{
-    //places the food on screen
-    let x = foodPosition[0];
-    let y = foodPosition[1];
-    let z = foodPosition[2];
-    fill(255,0,0);
-    noStroke();
-    //moves origin to food position
-    translate(x, y, z);
-    box(50);
-    //returns origin to 0,0,0
-    translate(-1*x, -1*y, -1*z);
-    stroke(2);
   }
+  for(var j=0; j<=bodyPosition.length-3; j+=3){
+    if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
+      //incase this scenario misses the food on the position, checks if the food is in the body
+      foodPosition[0]=ceil(random(0,19))*50;
+      foodPosition[1]=ceil(random(0,19))*50;
+      foodPosition[2]=ceil(random(-19,0))*50;
+      snakeLength++;
+    }
+  }
+
+  if(positionP2[0]+push0P2===foodPosition[0]&&positionP2[1]+push1P2===foodPosition[1]&&positionP2[2]+push2P2===foodPosition[2]){
+    foodPosition[0]=ceil(random(0,19))*50;
+    foodPosition[1]=ceil(random(0,19))*50;
+    foodPosition[2]=ceil(random(-19,0))*50;
+    snakeLengthP2++;
+  }
+  if(positionP2[0]===foodPosition[0]&&positionP2[1]===foodPosition[1]&&positionP2[2]===foodPosition[2]){
+    foodPosition[0]=ceil(random(0,19))*50;
+    foodPosition[1]=ceil(random(0,19))*50;
+    foodPosition[2]=ceil(random(-19,0))*50;
+    snakeLengthP2++;
+  }
+  for(var j=0; j<=bodyPositionP2.length-3; j+=3){
+    if(foodPosition[0]===bodyPositionP2[j]&&foodPosition[1]===bodyPositionP2[j+1]&&foodPosition[2]===bodyPositionP2[j+2]){
+      //incase this scenario misses the food on the position, checks if the food is in the body
+      foodPosition[0]=ceil(random(0,19))*50;
+      foodPosition[1]=ceil(random(0,19))*50;
+      foodPosition[2]=ceil(random(-19,0))*50;
+      snakeLengthP2++;
+    }
+  }
+
+  //places the food on screen
+  let x = foodPosition[0];
+  let y = foodPosition[1];
+  let z = foodPosition[2];
+  fill(255,0,0);
+  noStroke();
+  //moves origin to food position
+  translate(x, y, z);
+  box(50);
+  //returns origin to 0,0,0
+  translate(-1*x, -1*y, -1*z);
+  stroke(2);
 }
 
 //when the user dies the death screen is shown
@@ -829,68 +1526,113 @@ function deathScreen(){
 }
 
 function keyPressed(){
-  //'d', changes direction to right unless snake is going left
-  if(keyIsDown(68)){
-    if(secondPosition[0]!==position[0]+50){
-      push0=50;
-      push1=0;
-      push2=0;
-      //updates current position
-      position[0]=position[0]+50;
+  for(var i=0; i<=222; i++){
+    if(keyIsDown(i)&&i===p1Controls.rKeyCode){
+      if(secondPosition[0]!==position[0]+50){
+        push0=50;
+        push1=0;
+        push2=0;
+        //updates current position
+        position[0]=position[0]+50;
+      }
+    }else if(keyIsDown(i)&&i===p1Controls.lKeyCode){
+      if(secondPosition[0]!==position[0]-50){
+        push0=-50;
+        push1=0;
+        push2=0;
+        //updates current position
+        position[0]=position[0]-50;
+      }
+    }else if(keyIsDown(i)&&i===p1Controls.fKeyCode){
+      if(secondPosition[2]!==position[2]-50){
+        push0=0;
+        push1=0;
+        push2=-50;
+        //updates current position
+        position[2]=position[2]-50;
+      }
+    }else if(keyIsDown(i)&&i===p1Controls.bKeyCode){
+      if(secondPosition[2]!==position[2]+50){
+        push0=0;
+        push1=0;
+        push2=50;
+        //updates current position
+        position[2]=position[2]+50;
+      }
+    }else if(keyIsDown(i)&&i===p1Controls.uKeyCode){
+      if(secondPosition[1]!==position[1]-50){
+        push0=0;
+        push1=-50;
+        push2=0;
+        //updates current position
+        position[1]=position[1]-50;
+      }
+    }else if(keyIsDown(i)&&i===p1Controls.dKeyCode){
+      if(secondPosition[1]!==position[1]+50){
+        push0=0;
+        push1=50;
+        push2=0;
+        //updates current position
+        position[1]=position[1]+50;
+      }
     }
-  }else 
-  //'a', changes direction to left unless snake is going right
-  if(keyIsDown(65)){
-    if(secondPosition[0]!==position[0]-50){
-      push0=-50;
-      push1=0;
-      push2=0;
-      //updates current position
-      position[0]=position[0]-50;
-    }
-  }else 
-  //'w', changes direction to forward unless snake is going back
-  if(keyIsDown(87)){
-    if(secondPosition[2]!==position[2]-50){
-      push0=0;
-      push1=0;
-      push2=-50;
-      //updates current position
-      position[2]=position[2]-50;
-    }
-  }else 
-  //'s', changes direction to back unless snake is going forward
-  if(keyIsDown(83)){
-    if(secondPosition[2]!==position[2]+50){
-      push0=0;
-      push1=0;
-      push2=50;
-      //updates current position
-      position[2]=position[2]+50;
-    }
-  }else 
-  //'UP_ARROW', changes direction to up unless snake is going down
-  if(keyIsDown(38)){
-    if(secondPosition[1]!==position[1]-50){
-      push0=0;
-      push1=-50;
-      push2=0;
-      //updates current position
-      position[1]=position[1]-50;
-    }
-  }else 
-  //'DOWN_ARROW', changes direction to down unless snake is going up
-  if(keyIsDown(40)){
-    if(secondPosition[1]!==position[1]+50){
-      push0=0;
-      push1=50;
-      push2=0;
-      //updates current position
-      position[1]=position[1]+50;
+    if(gameMode==="Two Player"){
+      if(keyIsDown(i)&&i===p2Controls.rKeyCode){
+        if(secondPositionP2[0]!==positionP2[0]+50){
+          push0P2=50;
+          push1P2=0;
+          push2P2=0;
+          //updates current position
+          positionP2[0]=positionP2[0]+50;
+        }
+      }else if(keyIsDown(i)&&i===p2Controls.lKeyCode){
+        if(secondPositionP2[0]!==positionP2[0]-50){
+          push0P2=-50;
+          push1P2=0;
+          push2P2=0;
+          //updates current position
+          positionP2[0]=positionP2[0]-50;
+        }
+      }else if(keyIsDown(i)&&i===p2Controls.fKeyCode){
+        if(secondPositionP2[2]!==positionP2[2]-50){
+          push0P2=0;
+          push1P2=0;
+          push2P2=-50;
+          //updates current position
+          positionP2[2]=positionP2[2]-50;
+        }
+      }else if(keyIsDown(i)&&i===p2Controls.bKeyCode){
+        if(secondPositionP2[2]!==positionP2[2]+50){
+          push0P2=0;
+          push1P2=0;
+          push2P2=50;
+          //updates current position
+          positionP2[2]=positionP2[2]+50;
+        }
+      }else if(keyIsDown(i)&&i===p2Controls.uKeyCode){
+        if(secondPositionP2[1]!==positionP2[1]-50){
+          push0P2=0;
+          push1P2=-50;
+          push2P2=0;
+          //updates current position
+          positionP2[1]=positionP2[1]-50;
+        }
+      }else if(keyIsDown(i)&&i===p2Controls.dKeyCode){
+        if(secondPositionP2[1]!==positionP2[1]+50){
+          push0P2=0;
+          push1P2=50;
+          push2P2=0;
+          //updates current position
+          positionP2[1]=positionP2[1]+50;
+        }
+      }
     }
   }
-  if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
-    money+=1000;
+  
+  if(gameMode==="Single Player"){
+    if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
+      money+=1000;
+    }
   }
 }
 
@@ -936,7 +1678,14 @@ let topView = new p5(( sketch ) => {
     
     sketch.food();
     
-    sketch.moveSnake();
+    if(gameMode!=="Two Player"){
+      sketch.moveSnake();
+    }else{
+      sketch.push();
+      sketch.moveSnake();
+      sketch.pop();
+      sketch.moveSnakeP2();
+    }
   };
   
   sketch.moveSnake = () => {
@@ -977,6 +1726,56 @@ let topView = new p5(( sketch ) => {
     let x1 = position[0];
     let y1 = position[1];
     let z1 = position[2];
+    if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
+      sketch.fill(255,0,0,50);
+      sketch.rect(0,0,x/20,y/20);
+    }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
+      sketch.fill(0,0,255,50);
+      sketch.rect(0,0,x/20,y/20);
+    }else{
+      sketch.fill(0,255,0,50);
+      sketch.rect(0,0,x/20,y/20);
+    }
+  };
+
+  sketch.moveSnakeP2 = () => {
+    //by the time the program gets to this point, it has deleted a block of the end of the snake
+    //if I were to do nothing, the side views length would be one less then the 3d snake
+    if(arrP2[arrP2.length-(4*snakeLengthP2-3)]===0){
+      arrP2[arrP2.length-(4*snakeLengthP2-3)]=1;
+    }
+    //since the z coordinate is negative and the side views are positive
+    //this translation aligns the snake with the canvas
+    sketch.translate(0,y-y/20);
+    //resets position values
+    positionP2[0]=0;
+    positionP2[1]=0;
+    positionP2[2]=0;
+    //reads the array and translates by x and z of the arr, 
+    //in the top view x is the same as 3d x, but y is the 3d z
+    for(var i=0; i<=arrP2.length; i+=4){
+      sketch.translate(arrP2[i]/50*x/20,arrP2[i+2]/50*y/20);
+      if(arrP2[i+0]===50||arrP2[i+0]===-50||arrP2[i+1]===50||arrP2[i+1]===-50||arrP2[i+2]===50||arrP2[i+2]===-50){
+        positionP2[0]=positionP2[0]+arrP2[i+0];
+        positionP2[1]=positionP2[1]+arrP2[i+1];
+        positionP2[2]=positionP2[2]+arrP2[i+2];
+      }
+      //places a box
+      if(arrP2[i+3]===1){
+        sketch.placeBoxP2();
+      }
+    }
+    //returns the arr back to what it was
+    if(arrP2[arrP2.length-(4*snakeLengthP2-3)]===1){
+      arrP2[arrP2.length-(4*snakeLengthP2-3)]=0;
+    }
+  };
+  
+  //function is the same as 3d function
+  sketch.placeBoxP2 = () => {
+    let x1 = positionP2[0];
+    let y1 = positionP2[1];
+    let z1 = positionP2[2];
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
       sketch.fill(255,0,0,50);
       sketch.rect(0,0,x/20,y/20);
@@ -1036,7 +1835,14 @@ let sideView = new p5(( sketch ) => {
     
     sketch.food();
     
-    sketch.moveSnake();
+    if(gameMode!=="Two Player"){
+      sketch.moveSnake();
+    }else{
+      sketch.push();
+      sketch.moveSnake();
+      sketch.pop();
+      sketch.moveSnakeP2();
+    }
   };
   
   sketch.moveSnake = () => {
@@ -1069,6 +1875,48 @@ let sideView = new p5(( sketch ) => {
     let x1 = position[0];
     let y1 = position[1];
     let z1 = position[2];
+    if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
+      sketch.fill(255,0,0,50);
+      sketch.rect(0,0,x/20,y/20);
+    }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
+      sketch.fill(0,0,255,50);
+      sketch.rect(0,0,x/20,y/20);
+    }else{
+      sketch.fill(0,255,0,50);
+      sketch.rect(0,0,x/20,y/20);
+    }
+  };
+
+  sketch.moveSnakeP2 = () => {
+    if(arrP2[arrP2.length-(4*snakeLengthP2-3)]===0){
+      arrP2[arrP2.length-(4*snakeLengthP2-3)]=1;
+    }
+    //corrects x(z) axis
+    sketch.translate(y-y/20,0);
+    positionP2[0]=0;
+    positionP2[1]=0;
+    positionP2[2]=0;
+    for(var i=0; i<=arrP2.length; i+=4){
+      //in side view, x is 3d z and y is the same as 3d y
+      sketch.translate(arrP2[i+2]/50*x/20,arrP2[i+1]/50*y/20);
+      if(arrP2[i+0]===50||arrP2[i+0]===-50||arrP2[i+1]===50||arrP2[i+1]===-50||arrP2[i+2]===50||arrP2[i+2]===-50){
+        positionP2[0]=positionP2[0]+arrP2[i+0];
+        positionP2[1]=positionP2[1]+arrP2[i+1];
+        positionP2[2]=positionP2[2]+arrP2[i+2];
+      }
+      if(arrP2[i+3]===1){
+        sketch.placeBoxP2();
+      }
+    }
+    if(arrP2[arrP2.length-(4*snakeLengthP2-3)]===1){
+      arrP2[arrP2.length-(4*snakeLengthP2-3)]=0;
+    }
+  };
+  
+  sketch.placeBoxP2 = () => {
+    let x1 = positionP2[0];
+    let y1 = positionP2[1];
+    let z1 = positionP2[2];
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
       sketch.fill(255,0,0,50);
       sketch.rect(0,0,x/20,y/20);
@@ -1126,7 +1974,14 @@ let frontView = new p5(( sketch ) => {
     
     sketch.food();
     
-    sketch.moveSnake();
+    if(gameMode!=="Two Player"){
+      sketch.moveSnake();
+    }else{
+      sketch.push();
+      sketch.moveSnake();
+      sketch.pop();
+      sketch.moveSnakeP2();
+    }
   };
   
   sketch.moveSnake = () => {
@@ -1158,6 +2013,47 @@ let frontView = new p5(( sketch ) => {
     let x1 = position[0];
     let y1 = position[1];
     let z1 = position[2];
+    if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
+      sketch.fill(255,0,0,50);
+      sketch.rect(0,0,x/20,y/20);
+    }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
+      sketch.fill(0,0,255,50);
+      sketch.rect(0,0,x/20,y/20);
+    }else{
+      sketch.fill(0,255,0,50);
+      sketch.rect(0,0,x/20,y/20);
+    }
+  };
+
+  sketch.moveSnakeP2 = () => {
+    if(arrP2[arrP2.length-(4*snakeLengthP2-3)]===0){
+      arrP2[arrP2.length-(4*snakeLengthP2-3)]=1;
+    }
+    //front view does not need to be translated since x and y are the same as 3d x and y
+    positionP2[0]=0;
+    positionP2[1]=0;
+    positionP2[2]=0;
+    for(var i=0; i<=arrP2.length; i+=4){
+      //in front view, x and y are the same as 3d x and y
+      sketch.translate(arrP2[i]/50*x/20,arrP2[i+1]/50*y/20);
+      if(arrP2[i+0]===50||arrP2[i+0]===-50||arrP2[i+1]===50||arrP2[i+1]===-50||arrP2[i+2]===50||arrP2[i+2]===-50){
+        positionP2[0]=positionP2[0]+arrP2[i+0];
+        positionP2[1]=positionP2[1]+arrP2[i+1];
+        positionP2[2]=positionP2[2]+arrP2[i+2];
+      }
+      if(arrP2[i+3]===1){
+        sketch.placeBoxP2();
+      }
+    }
+    if(arrP2[arrP2.length-(4*snakeLengthP2-3)]===1){
+      arrP2[arrP2.length-(4*snakeLengthP2-3)]=0;
+    }
+  };
+  
+  sketch.placeBoxP2 = () => {
+    let x1 = positionP2[0];
+    let y1 = positionP2[1];
+    let z1 = positionP2[2];
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
       sketch.fill(255,0,0,50);
       sketch.rect(0,0,x/20,y/20);
