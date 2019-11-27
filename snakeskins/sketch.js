@@ -45,7 +45,7 @@ let snakeLengthP2;
 //these variables are for text and the difficulty slider in the options menu
 let inconsolata;
 let sliderX = 225;
-let difficulty = 1;
+let difficulty = 10;
 let changingBingingsP1 = false;
 let changingBingingsP2 = false;
 let leftBindP1 = false;
