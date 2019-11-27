@@ -45,7 +45,7 @@ let snakeLengthP2;
 //these variables are for text and the difficulty slider in the options menu
 let inconsolata;
 let sliderX = 225;
-let difficulty = 10;
+let difficulty = 1;
 let changingBingingsP1 = false;
 let changingBingingsP2 = false;
 let leftBindP1 = false;
@@ -1227,7 +1227,7 @@ function moveSnake(){
   //checks if the position is equal to any of the body positions
   //if so, state changes to game over and calls setup
   for(var j=0; j<=bodyPosition.length; j+=3){
-    if(position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2]){
+    if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]===bodyPositionP2[j]&&position[1]===bodyPositionP2[j+1]&&position[2]===bodyPositionP2[j+2])||(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2])){
       state = "Game Over";
       pop();
       setup();
@@ -1315,7 +1315,7 @@ function moveSnakeP2(){
   //checks if the position is equal to any of the body positions
   //if so, state changes to game over and calls setup
   for(var j=0; j<=bodyPositionP2.length; j+=3){
-    if(positionP2[0]===bodyPositionP2[j]&&positionP2[1]===bodyPositionP2[j+1]&&positionP2[2]===bodyPositionP2[j+2]){
+    if((positionP2[0]===bodyPositionP2[j]&&positionP2[1]===bodyPositionP2[j+1]&&positionP2[2]===bodyPositionP2[j+2])||(positionP2[0]===bodyPosition[j]&&positionP2[1]===bodyPosition[j+1]&&positionP2[2]===bodyPosition[j+2])){
       state = "Game Over";
       pop();
       setup();
