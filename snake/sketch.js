@@ -364,63 +364,91 @@ function startScreen(){
   //title
   text("3D Snake",width/2, height/8);
   
-  //sets stroke and fill for the buttons
+  //buttons
   stroke(0);
   fill(200);
+  rect(width/2, height/2, width/4, height/8);
+  rect(width/2, height/2+height*1/4, width/4, height/8);
 
-  if(gameMode!=="Two Player"){
-    //creates buttons
-    rect(width/2, height/2, width/4, height/8);
-    rect(width/3, height/2+height/4, width/4, height/8);
-    rect(width/3*2, height/2+height/4, width/4, height/8);
-  }else{
-    rect(width/2, height/2, width/4, height/8);
-    rect(width/2, height/2+height/4, width/4, height/8);
-  }
-  
-  //sets stroke, size, and fill for buttons
+  //displays words
   noStroke();
   textSize(25);
   fill(0);
-
-  if(gameMode!=="Two Player"){
-    //start game button
-    text("Start Game",width/2, height/2);
-    //options button
-    text("Options",width/3, height/2+height/4);
-    //store button
-    text("Store",width/3*2, height/2+height/4);
-  }else{
-//start game button
   text("Start Game",width/2, height/2);
-  //options button
-  text("Options",width/2, height/2+height/4);
+  text("Main Menu",width/2, height/2+height*1/4);
+
+  if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
+    //when mouse clicks options button, sets state to play and calls setup again to start the game
+    state="Play";
+    setup();
+  }else if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2+height*1/4-height/16&&mouseY<height/2+height*1/4+height/16&&mouseIsPressed){
+    //when mouse clicks options button, sets state to play and calls setup again to start the game
+    state="Main Menu";
+    setup();
   }
-  if(gameMode!=="Two Player"){
-    if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
-      //when mouse clicks options button, sets state to play and calls setup again to start the game
-      state="Play";
-      setup();
-    }else if(mouseX>width/3-width/8&&mouseX<width/3+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
+
+  //settings
+  if(mouseX>width*1/16-25&&mouseX<width*1/16+25&&mouseY>height*1/8-25&&mouseY<height*1/8+25){
+    settingIcon(true);
+    if(mouseIsPressed){
       //when mouse clicks options button, sets state to play and calls setup again to open options screen
       state="Options";
-      setup();
-    }else if(mouseX>width/3*2-width/8&&mouseX<width/3*2+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
-      //when mouse clicks options button, sets state to play and calls setup again to open options screen
-      state="Store";
       setup();
     }
   }else{
-    if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
-      //when mouse clicks options button, sets state to play and calls setup again to start the game
-      state="Play";
-      setup();
-    }else if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16+height/4&&mouseY<height/2+height/16+height/4&&mouseIsPressed){
-      //when mouse clicks options button, sets state to play and calls setup again to open options screen
-      state="Options";
-      setup();
+    settingIcon(false);
+  }
+
+  //store
+  if(gameMode!=="Two Player"){
+    if(mouseX>width*15/16-25&&mouseX<width*15/16+25&&mouseY>height*1/8-25&&mouseY<height*1/8+25){
+      StoreIcon(true);
+      if(mouseIsPressed){
+        //when mouse clicks options button, sets state to play and calls setup again to open options screen
+        state="Store";
+        setup();
+      }
+    }else{
+      StoreIcon(false);
     }
   }
+}
+
+function settingIcon(on){
+  push();
+  translate(width*1/16, height*1/8);
+  noStroke();
+  if(!on){
+    fill(50);
+  }else{
+    fill(0,0,150);
+  }
+  for(var i=0; i<12; i++){
+    ellipse(0, 0, 50, 10);
+    rotate(10);
+  }
+  fill(100);
+  circle(0, 0, 34);
+  pop();
+}
+
+function StoreIcon(on){
+  push();
+  translate(width*15/16, height*1/8);
+  if(!on){
+    fill(50);
+    stroke(50);
+  }else{
+    fill(0,0,150);
+    stroke(0,0,150);
+  }
+  quad(-15,-15,25,-10,20,15,-10,15);
+  strokeWeight(3);
+  line(-15,-15,-18,-22);
+  line(-18,-22,-25,-25);
+  circle(-2,20,8,8);
+  circle(12,20,8,8);
+  pop();
 }
 
 //after user resets, all values that changed need to be reset
