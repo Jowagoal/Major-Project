@@ -29,6 +29,8 @@ let secondPositionP2 = [0,0,0];
 let foodPositionP2 = [0,0,0];
 let bodyPositionP2 = [];
 
+let playerDeath;
+
 //these variables determine how the snake moves aswell as how long the snake is
 let push0 = 50;
 let push1 = 0;
@@ -366,6 +368,7 @@ function startScreen(){
   
   //buttons
   stroke(0);
+  strokeWeight(1);
   fill(200);
   rect(width/2, height/2, width/4, height/8);
   rect(width/2, height/2+height*1/4, width/4, height/8);
@@ -391,7 +394,7 @@ function startScreen(){
   if(mouseX>width*1/16-25&&mouseX<width*1/16+25&&mouseY>height*1/8-25&&mouseY<height*1/8+25){
     settingIcon(true);
     if(mouseIsPressed){
-      //when mouse clicks options button, sets state to play and calls setup again to open options screen
+      //when mouse clicks options icon, sets state to options and calls setup again to open options screen
       state="Options";
       setup();
     }
@@ -404,7 +407,7 @@ function startScreen(){
     if(mouseX>width*15/16-25&&mouseX<width*15/16+25&&mouseY>height*1/8-25&&mouseY<height*1/8+25){
       StoreIcon(true);
       if(mouseIsPressed){
-        //when mouse clicks options button, sets state to play and calls setup again to open options screen
+        //when mouse clicks store icon, sets state to store and calls setup again to open store screen
         state="Store";
         setup();
       }
@@ -414,6 +417,7 @@ function startScreen(){
   }
 }
 
+//draws the setting icon
 function settingIcon(on){
   push();
   translate(width*1/16, height*1/8);
@@ -432,6 +436,7 @@ function settingIcon(on){
   pop();
 }
 
+//draws the store icon
 function StoreIcon(on){
   push();
   translate(width*15/16, height*1/8);
@@ -1222,6 +1227,7 @@ function moveSnake(){
     //if the position is outside the border, state changes to game over and calls setup
     if(position[0]<0||position[0]>950||position[1]<0||position[1]>950||position[2]>0||position[2]<-950){
       state = "Game Over";
+      playerDeath = 1;
       pop();
       setup();
     }
@@ -1257,6 +1263,7 @@ function moveSnake(){
   for(var j=0; j<=bodyPosition.length; j+=3){
     if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]===bodyPositionP2[j]&&position[1]===bodyPositionP2[j+1]&&position[2]===bodyPositionP2[j+2])||(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2])){
       state = "Game Over";
+      playerDeath = 1;
       pop();
       setup();
     }
@@ -1310,6 +1317,7 @@ function moveSnakeP2(){
     //if the position is outside the border, state changes to game over and calls setup
     if(positionP2[0]<0||positionP2[0]>950||positionP2[1]<0||positionP2[1]>950||positionP2[2]>0||positionP2[2]<-950){
       state = "Game Over";
+      playerDeath = 2;
       pop();
       setup();
     }
@@ -1345,6 +1353,7 @@ function moveSnakeP2(){
   for(var j=0; j<=bodyPositionP2.length; j+=3){
     if((positionP2[0]===bodyPositionP2[j]&&positionP2[1]===bodyPositionP2[j+1]&&positionP2[2]===bodyPositionP2[j+2])||(positionP2[0]===bodyPosition[j]&&positionP2[1]===bodyPosition[j+1]&&positionP2[2]===bodyPosition[j+2])){
       state = "Game Over";
+      playerDeath = 2;
       pop();
       setup();
     }
@@ -1528,19 +1537,24 @@ function deathScreen(){
   //says 'You Died!' at top of screen
   fill(255,0,0);
   textSize(50);
-  text("You Died!", width/2, height/8);
+  if(gameMode!=="Two Player"){
+    text("You Died!", width/2, height/8);
+    
+    //displays the users score
+    fill(0);
+    textSize(25);
+    text("Score: " + snakeLength, width/2, height/4);
   
-  //displays the users score
-  fill(0);
-  textSize(25);
-  text("Score: " + snakeLength, width/2, height/4);
-
-  //displays money gained for the round
-  text("Money Gained: " + moneyGained, width/2, height*5/16);
+    //displays money gained for the round
+    text("Money Gained: " + moneyGained, width/2, height*5/16);
+  }else{
+    text("Player " + playerDeath + " Died!", width/2, height/8);
+  }
 
   //makes Back to Menu button
   stroke(0);
   fill(255);
+  textSize(25);
   rectMode(CENTER);
   rect(width/2,height/2+height/8, width/4, height/8);
   fill(0);

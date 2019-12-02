@@ -12,6 +12,7 @@ The classic game of snake made in a 3D world.  The user is a snake that moves ar
 - Snake dies when it hits border
 - Snake dies when it hits a body part
 
+## Things I Should be able to Complete
 - Music
 - Sounds
 - Leader board
