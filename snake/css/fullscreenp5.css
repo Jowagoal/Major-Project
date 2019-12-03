@@ -43,3 +43,9 @@ body, html {
     top: 70%;
     left: 7.5%;
 }
+
+#defaultCanvas6 {
+    position: absolute;
+    top: 5%;
+    left: 90%;
+}

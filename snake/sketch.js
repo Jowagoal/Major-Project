@@ -15,6 +15,7 @@
 let state = "Main Menu";
 
 let gameMode;
+let gameType;
 
 //these variables are the memory of the program
 let arr = [];
@@ -30,6 +31,10 @@ let foodPositionP2 = [0,0,0];
 let bodyPositionP2 = [];
 
 let playerDeath;
+
+let firstIteration = true;
+let gameTimeStarted;
+let time;
 
 //these variables determine how the snake moves aswell as how long the snake is
 let push0 = 50;
@@ -175,18 +180,13 @@ function setup() {
     document.getElementById("defaultCanvas3").style.visibility = "hidden";
     document.getElementById("defaultCanvas4").style.visibility = "hidden";
     document.getElementById("defaultCanvas5").style.visibility = "hidden";
+    document.getElementById("defaultCanvas6").style.visibility = "hidden";
   }
   
   if(state==="Menu"){
     createCanvas(windowWidth, windowHeight);
-    
-    //hides all additional canvases
-    document.getElementById("defaultCanvas0").style.visibility = "hidden";
-    document.getElementById("defaultCanvas1").style.visibility = "hidden";
-    document.getElementById("defaultCanvas2").style.visibility = "hidden";
-    document.getElementById("defaultCanvas3").style.visibility = "hidden";
-    document.getElementById("defaultCanvas4").style.visibility = "hidden";
-    document.getElementById("defaultCanvas5").style.visibility = "hidden";
+  }else if(state==="Select Game Type"){
+    createCanvas(windowWidth, windowHeight);
   }else if(state==="Options"){
     createCanvas(windowWidth, windowHeight);
   }else if(state==="Store"&&gameMode!=="Two Player"){
@@ -210,6 +210,7 @@ function setup() {
     document.getElementById("defaultCanvas3").style.visibility = "visible";
     document.getElementById("defaultCanvas4").style.visibility = "visible";
     document.getElementById("defaultCanvas5").style.visibility = "visible";
+    document.getElementById("defaultCanvas6").style.visibility = "visible";
   }else if(state==="Game Over"){
     createCanvas(windowWidth, windowHeight);
 
@@ -225,6 +226,7 @@ function setup() {
     document.getElementById("defaultCanvas3").style.visibility = "hidden";
     document.getElementById("defaultCanvas4").style.visibility = "hidden";
     document.getElementById("defaultCanvas5").style.visibility = "hidden";
+    document.getElementById("defaultCanvas6").style.visibility = "hidden";
   }
 }
 
@@ -243,6 +245,10 @@ function checkState(){
     //after user resets, all values that changed need to be reset
     resetAllValues();
     startScreen();
+    pointerDot();
+  }
+  if(state==="Select Game Type"){
+    selectGameType();
     pointerDot();
   }
   if(state==="Options"){
@@ -382,8 +388,13 @@ function startScreen(){
 
   if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
     //when mouse clicks options button, sets state to play and calls setup again to start the game
-    state="Play";
-    setup();
+    if(gameMode==="Two Player"){
+      state="Select Game Type"
+      setup();
+    }else{
+      state="Play";
+      setup();
+    }
   }else if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2+height*1/4-height/16&&mouseY<height/2+height*1/4+height/16&&mouseIsPressed){
     //when mouse clicks options button, sets state to play and calls setup again to start the game
     state="Main Menu";
@@ -481,6 +492,25 @@ function resetAllValues(){
   push2P2 = 0;
   push3P2 = 1;
   snakeLengthP2 = 3;
+
+  firstIteration = true;
+}
+
+function selectGameType(){
+  background(200);
+  fill(0);
+  textSize(30);
+  text("Select Game Mode", width/2, height/10);
+
+  noStroke();
+  fill(150);
+  rect(width/2-width/4, height/2-height/4, width/4, height/8);
+  rect(width/2+width/4, height/2-height/4, width/4, height/8);
+  textSize(25);
+  fill(0);
+  text("Survival", width/2-width/4, height/2-height/4);
+  text("Points", width/2+width/4, height/2-height/4);
+
 }
 
 //this function does everything on the options screen
@@ -1169,6 +1199,12 @@ function createBoard(){
 function gameStart(){
   //the difficulty changes the framerate
   frameRate(difficulty);
+
+  if(firstIteration){
+    gameTimeStarted = frameCount;
+    time = 101;
+  }
+
   
   orbitControl();
   strokeWeight(2);
@@ -1199,6 +1235,14 @@ function gameStart(){
     arrP2.push(push2P2);
     arrP2.push(push3P2);
     moveSnakeP2();
+    timer();
+    firstIteration=false;
+  }
+}
+
+function timer(){
+  if((frameCount-gameTimeStarted)%difficulty===0){
+    time--;
   }
 }
     
@@ -2111,6 +2155,28 @@ let frontView = new p5(( sketch ) => {
   sketch.food = () => {
     sketch.fill(255,0,0);
     sketch.rect(foodPosition[0]/50*x/20,foodPosition[1]/50*y/20,x/20,y/20);
+  };
+});
+
+let timerDisplay = new p5(( sketch ) => {
+
+  let x = 150;
+  let y = 50;
+
+  //creates canvas
+  sketch.setup = () => {
+    sketch.createCanvas(x, y);
+  };
+
+  //writes word
+  sketch.draw = () => {
+    sketch.background(220);
+    sketch.translate(30,15);
+    sketch.textAlign(BOTTOM, CENTER);
+    sketch.textSize(50);
+    if(gameMode==="Two Player"){
+      sketch.text(time,0,10);
+    }
   };
 });
 
