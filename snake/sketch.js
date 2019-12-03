@@ -23,12 +23,14 @@ let position = [0,0,0];
 let secondPosition = [0,0,0];
 let foodPosition = [0,0,0];
 let bodyPosition = [];
+let points;
 
 let arrP2 = [];
 let positionP2 = [0,950,0];
 let secondPositionP2 = [0,0,0];
 let foodPositionP2 = [0,0,0];
 let bodyPositionP2 = [];
+let poinsP2;
 
 let playerDeath;
 
@@ -474,12 +476,14 @@ function resetAllValues(){
   secondPosition = [0,0,0];
   foodPosition = [0,0,0];
   bodyPosition = [];
+  points = 3;
   
   push0 = 50;
   push1 = 0;
   push2 = 0;
   push3 = 1;
   snakeLength = 3;
+  points = 3;
 
   arrP2 = [0,950,0,0];
   positionP2 = [0,950,0];
@@ -494,23 +498,61 @@ function resetAllValues(){
   snakeLengthP2 = 3;
 
   firstIteration = true;
+  gameType;
 }
 
 function selectGameType(){
+
+  if(restarted===true){
+    translate(-1/2*width,-1/2*height);
+  }
+
   background(200);
-  fill(0);
-  textSize(30);
+  fill(50,255,50);
+  textSize(75);
   text("Select Game Mode", width/2, height/10);
 
   noStroke();
-  fill(150);
-  rect(width/2-width/4, height/2-height/4, width/4, height/8);
-  rect(width/2+width/4, height/2-height/4, width/4, height/8);
-  textSize(25);
-  fill(0);
-  text("Survival", width/2-width/4, height/2-height/4);
-  text("Points", width/2+width/4, height/2-height/4);
+  if(mouseX>width/2-width/4-width/8&&mouseX<width/2-width/4+width/8&&mouseY>height/2-height/8-height/16&&mouseY<height/2-height/8+height/16){
+    fill(255,255,0);
+    rect(width/2-width/4, height/2-height/8, width/4, height/8);
+    fill(200,0,200);
+    rect(width/2+width/4, height/2-height/8, width/4, height/8);
+    if(mouseIsPressed){
+      gameType = "Survival";
+      state = "Play";
+      setup();
+    }
+  }else if(mouseX>width/2+width/4-width/8&&mouseX<width/2+width/4+width/8&&mouseY>height/2-height/8-height/16&&mouseY<height/2-height/8+height/16){
+    fill(255,255,0);
+    rect(width/2+width/4, height/2-height/8, width/4, height/8);
+    fill(200,0,200);
+    rect(width/2-width/4, height/2-height/8, width/4, height/8);
+    if(mouseIsPressed){
+      gameType = "Points"
+      state = "Play";
+      setup();
+    }
+  }else{
+    fill(200,0,200);
+    rect(width/2-width/4, height/2-height/8, width/4, height/8);
+    rect(width/2+width/4, height/2-height/8, width/4, height/8);
+  }
+  
+  textSize(40);
+  fill(25);
+  text("Survival", width/2-width/4, height/2-height/8);
+  text("Points", width/2+width/4, height/2-height/8);
 
+  textSize(30);
+  text("Play aginst your", width/2-width/4, height*16/32);
+  text("opponent until", width/2-width/4, height*18/32);
+  text("one of you perishes", width/2-width/4, height*20/32);
+
+  textSize(30);
+  text("Play aginst your", width/2+width/4, height*16/32);
+  text("opponent to see who", width/2+width/4, height*18/32);
+  text("can eat the most food", width/2+width/4, height*20/32);
 }
 
 //this function does everything on the options screen
@@ -1200,7 +1242,7 @@ function gameStart(){
   //the difficulty changes the framerate
   frameRate(difficulty);
 
-  if(firstIteration){
+  if(firstIteration&&gameType==="Points"){
     gameTimeStarted = frameCount;
     time = 101;
   }
@@ -1235,14 +1277,20 @@ function gameStart(){
     arrP2.push(push2P2);
     arrP2.push(push3P2);
     moveSnakeP2();
-    timer();
-    firstIteration=false;
+    if(gameType==="Points"){
+      timer();
+      firstIteration=false;
+    }
   }
 }
 
 function timer(){
   if((frameCount-gameTimeStarted)%difficulty===0){
     time--;
+  }
+  if(time<=0){
+    state = "Game Over";
+    pop();
   }
 }
     
@@ -1270,10 +1318,28 @@ function moveSnake(){
     }
     //if the position is outside the border, state changes to game over and calls setup
     if(position[0]<0||position[0]>950||position[1]<0||position[1]>950||position[2]>0||position[2]<-950){
-      state = "Game Over";
-      playerDeath = 1;
-      pop();
-      setup();
+      if(gameType==="Survival"){
+        state = "Game Over";
+        playerDeath = 1;
+        pop();
+        setup();
+      }else if(gameType==="Points"){
+        arr = [0,0,0,0];
+        position = [0,0,0];
+        secondPosition = [0,0,0];
+        bodyPosition = [];
+
+        push0 = 50;
+        push1 = 0;
+        push2 = 0;
+        push3 = 1;
+        snakeLength = 3;
+      }else{
+        state = "Game Over";
+        playerDeath = 1;
+        pop();
+        setup();
+      }
     }
     //if the fourth element of a bit is equal to 1, calls the placeBox function
     if(arr[i+3]===1){
@@ -1306,10 +1372,28 @@ function moveSnake(){
   //if so, state changes to game over and calls setup
   for(var j=0; j<=bodyPosition.length; j+=3){
     if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]===bodyPositionP2[j]&&position[1]===bodyPositionP2[j+1]&&position[2]===bodyPositionP2[j+2])||(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2])){
-      state = "Game Over";
-      playerDeath = 1;
-      pop();
-      setup();
+      if(gameType==="Survival"){
+        state = "Game Over";
+        playerDeath = 1;
+        pop();
+        setup();
+      }else if(gameType==="Points"){
+        arr = [0,0,0,0];
+        position = [0,0,0];
+        secondPosition = [0,0,0];
+        bodyPosition = [];
+
+        push0 = 50;
+        push1 = 0;
+        push2 = 0;
+        push3 = 1;
+        snakeLength = 3;
+      }else{
+        state = "Game Over";
+        playerDeath = 1;
+        pop();
+        setup();
+      }
     }
   }
 }
@@ -1360,10 +1444,28 @@ function moveSnakeP2(){
     }
     //if the position is outside the border, state changes to game over and calls setup
     if(positionP2[0]<0||positionP2[0]>950||positionP2[1]<0||positionP2[1]>950||positionP2[2]>0||positionP2[2]<-950){
-      state = "Game Over";
-      playerDeath = 2;
-      pop();
-      setup();
+      if(gameType==="Survival"){
+        state = "Game Over";
+        playerDeath = 2;
+        pop();
+        setup();
+      }else if(gameType==="Points"){
+        arrP2 = [0,950,0,0];
+        positionP2 = [0,950,0];
+        secondPositionP2 = [0,0,0];
+        bodyPositionP2 = [];
+
+        push0P2 = 50;
+        push1P2 = 0;
+        push2P2 = 0;
+        push3P2 = 1;
+        snakeLengthP2 = 3;
+      }else{
+        state = "Game Over";
+        playerDeath = 2;
+        pop();
+        setup();
+      }
     }
     //if the fourth element of a bit is equal to 1, calls the placeBox function
     if(arrP2[i+3]===1){
@@ -1396,10 +1498,28 @@ function moveSnakeP2(){
   //if so, state changes to game over and calls setup
   for(var j=0; j<=bodyPositionP2.length; j+=3){
     if((positionP2[0]===bodyPositionP2[j]&&positionP2[1]===bodyPositionP2[j+1]&&positionP2[2]===bodyPositionP2[j+2])||(positionP2[0]===bodyPosition[j]&&positionP2[1]===bodyPosition[j+1]&&positionP2[2]===bodyPosition[j+2])){
-      state = "Game Over";
-      playerDeath = 2;
-      pop();
-      setup();
+      if(gameType==="Survival"){
+        state = "Game Over";
+        playerDeath = 2;
+        pop();
+        setup();
+      }else if(gameType==="Points"){
+        arrP2 = [0,950,0,0];
+        positionP2 = [0,950,0];
+        secondPositionP2 = [0,0,0];
+        bodyPositionP2 = [];
+
+        push0P2 = 50;
+        push1P2 = 0;
+        push2P2 = 0;
+        push3P2 = 1;
+        snakeLengthP2 = 3;
+      }else{
+        state = "Game Over";
+        playerDeath = 2;
+        pop();
+        setup();
+      }
     }
   }
 }
@@ -1516,12 +1636,14 @@ function food(){
     foodPosition[1]=ceil(random(0,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLength++;
+    points++;
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(0,19))*50;
     foodPosition[1]=ceil(random(0,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLength++;
+    points++;
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
@@ -1530,6 +1652,7 @@ function food(){
       foodPosition[1]=ceil(random(0,19))*50;
       foodPosition[2]=ceil(random(-19,0))*50;
       snakeLength++;
+      points++;
     }
   }
 
@@ -1538,12 +1661,14 @@ function food(){
     foodPosition[1]=ceil(random(0,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLengthP2++;
+    pointsP2++;
   }
   if(positionP2[0]===foodPosition[0]&&positionP2[1]===foodPosition[1]&&positionP2[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(0,19))*50;
     foodPosition[1]=ceil(random(0,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLengthP2++;
+    pointsP2++;
   }
   for(var j=0; j<=bodyPositionP2.length-3; j+=3){
     if(foodPosition[0]===bodyPositionP2[j]&&foodPosition[1]===bodyPositionP2[j+1]&&foodPosition[2]===bodyPositionP2[j+2]){
@@ -1552,6 +1677,7 @@ function food(){
       foodPosition[1]=ceil(random(0,19))*50;
       foodPosition[2]=ceil(random(-19,0))*50;
       snakeLengthP2++;
+      pointsP2++;
     }
   }
 
