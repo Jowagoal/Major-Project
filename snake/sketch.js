@@ -30,7 +30,7 @@ let positionP2 = [0,950,0];
 let secondPositionP2 = [0,0,0];
 let foodPositionP2 = [0,0,0];
 let bodyPositionP2 = [];
-let poinsP2;
+let pointsP2;
 
 let playerDeath;
 
@@ -183,6 +183,8 @@ function setup() {
     document.getElementById("defaultCanvas4").style.visibility = "hidden";
     document.getElementById("defaultCanvas5").style.visibility = "hidden";
     document.getElementById("defaultCanvas6").style.visibility = "hidden";
+    document.getElementById("defaultCanvas7").style.visibility = "hidden";
+    document.getElementById("defaultCanvas8").style.visibility = "hidden";
   }
   
   if(state==="Menu"){
@@ -213,6 +215,10 @@ function setup() {
     document.getElementById("defaultCanvas4").style.visibility = "visible";
     document.getElementById("defaultCanvas5").style.visibility = "visible";
     document.getElementById("defaultCanvas6").style.visibility = "visible";
+    if(gameType==="Points"){
+      document.getElementById("defaultCanvas7").style.visibility = "visible";
+      document.getElementById("defaultCanvas8").style.visibility = "visible";
+    }
   }else if(state==="Game Over"){
     createCanvas(windowWidth, windowHeight);
 
@@ -229,6 +235,8 @@ function setup() {
     document.getElementById("defaultCanvas4").style.visibility = "hidden";
     document.getElementById("defaultCanvas5").style.visibility = "hidden";
     document.getElementById("defaultCanvas6").style.visibility = "hidden";
+    document.getElementById("defaultCanvas7").style.visibility = "hidden";
+    document.getElementById("defaultCanvas8").style.visibility = "hidden";
   }
 }
 
@@ -476,20 +484,20 @@ function resetAllValues(){
   secondPosition = [0,0,0];
   foodPosition = [0,0,0];
   bodyPosition = [];
-  points = 3;
+  points = 0;
   
   push0 = 50;
   push1 = 0;
   push2 = 0;
   push3 = 1;
   snakeLength = 3;
-  points = 3;
-
+  
   arrP2 = [0,950,0,0];
   positionP2 = [0,950,0];
   secondPositionP2 = [0,0,0];
   foodPositionP2 = [0,0,0];
   bodyPositionP2 = [];
+  pointsP2 = 0;
   
   push0P2 = 50;
   push1P2 = 0;
@@ -547,12 +555,16 @@ function selectGameType(){
   textSize(30);
   text("Play aginst your", width/2-width/4, height*16/32);
   text("opponent until", width/2-width/4, height*18/32);
-  text("one of you perishes", width/2-width/4, height*20/32);
+  text("one of you perishes.", width/2-width/4, height*20/32);
 
   textSize(30);
-  text("Play aginst your", width/2+width/4, height*16/32);
-  text("opponent to see who", width/2+width/4, height*18/32);
-  text("can eat the most food", width/2+width/4, height*20/32);
+  text("Play aginst your opponent", width/2+width/4, height*16/32);
+  text("to see who can eat the", width/2+width/4, height*18/32);
+  text("most food in a limited", width/2+width/4, height*20/32);
+  text("amount of time.", width/2+width/4, height*22/32);
+
+  text("Players lose 3 points if", width/2+width/4, height*26/32);
+  text("they die, then respawn.", width/2+width/4, height*28/32);
 }
 
 //this function does everything on the options screen
@@ -1291,6 +1303,7 @@ function timer(){
   if(time<=0){
     state = "Game Over";
     pop();
+    setup();
   }
 }
     
@@ -1334,6 +1347,11 @@ function moveSnake(){
         push2 = 0;
         push3 = 1;
         snakeLength = 3;
+
+        points-=1.5;
+        if(points<0){
+          points=0;
+        }
       }else{
         state = "Game Over";
         playerDeath = 1;
@@ -1388,6 +1406,11 @@ function moveSnake(){
         push2 = 0;
         push3 = 1;
         snakeLength = 3;
+
+        points-=3;
+        if(points<0){
+          points=0;
+        }
       }else{
         state = "Game Over";
         playerDeath = 1;
@@ -1460,6 +1483,11 @@ function moveSnakeP2(){
         push2P2 = 0;
         push3P2 = 1;
         snakeLengthP2 = 3;
+
+        pointsP2-=3;
+        if(pointsP2<0){
+          pointsP2=0;
+        }
       }else{
         state = "Game Over";
         playerDeath = 2;
@@ -1514,6 +1542,11 @@ function moveSnakeP2(){
         push2P2 = 0;
         push3P2 = 1;
         snakeLengthP2 = 3;
+        
+        pointsP2-=1.5;
+        if(pointsP2<0){
+          pointsP2=0;
+        }
       }else{
         state = "Game Over";
         playerDeath = 2;
@@ -1718,7 +1751,20 @@ function deathScreen(){
     //displays money gained for the round
     text("Money Gained: " + moneyGained, width/2, height*5/16);
   }else{
-    text("Player " + playerDeath + " Died!", width/2, height/8);
+    if(gameType==="Survival"){
+      text("Player " + playerDeath + " Died!", width/2, height/8);
+    }else{
+      textSize(75);
+      fill(220,0,220);
+      text("Time's Up!", width/2, height/8);
+      textSize(50);
+      fill(255,40,0);
+      text("Player 1 Score:", width/4, height*5/16);
+      text(points, width/4, height*7/16);
+      fill(0,0,200);
+      text("Player 2 Score:", width*3/4, height*5/16);
+      text(pointsP2, width*3/4, height*7/16);
+    }
   }
 
   //makes Back to Menu button
@@ -2302,6 +2348,52 @@ let timerDisplay = new p5(( sketch ) => {
     sketch.textSize(50);
     if(gameMode==="Two Player"){
       sketch.text(time,0,10);
+    }
+  };
+});
+
+let p1Points = new p5(( sketch ) => {
+
+  let x = 100;
+  let y = 50;
+
+  //creates canvas
+  sketch.setup = () => {
+    sketch.createCanvas(x, y);
+  };
+
+  //writes word
+  sketch.draw = () => {
+    sketch.background(220);
+    sketch.translate(30,15);
+    sketch.textAlign(BOTTOM, CENTER);
+    sketch.textSize(50);
+    sketch.fill(255,40,0);
+    if(gameMode==="Two Player"){
+      sketch.text(points,0,10);
+    }
+  };
+});
+
+let p2Points = new p5(( sketch ) => {
+
+  let x = 100;
+  let y = 50;
+
+  //creates canvas
+  sketch.setup = () => {
+    sketch.createCanvas(x, y);
+  };
+
+  //writes word
+  sketch.draw = () => {
+    sketch.background(220);
+    sketch.translate(30,15);
+    sketch.textAlign(BOTTOM, CENTER);
+    sketch.textSize(50);
+    sketch.fill(0,0,200);
+    if(gameMode==="Two Player"){
+      sketch.text(pointsP2,0,10);
     }
   };
 });
