@@ -203,10 +203,16 @@ function setup() {
     camera(-300,-400,600,500,700,-500);
     
     //sets initial position of food
+    /*
     foodPosition[0]=ceil(random(-0.9,19))*50;
     foodPosition[1]=ceil(random(-0.9,19))*50;
     foodPosition[2]=ceil(random(-19,-0.9))*50;
-    
+    */
+
+   foodPosition[0]=5*50;
+   foodPosition[1]=0*50;
+   foodPosition[2]=0*50;
+
     //shows all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "visible";
     document.getElementById("defaultCanvas1").style.visibility = "visible";
@@ -1336,7 +1342,8 @@ function moveSnake(){
         playerDeath = 1;
         pop();
         setup();
-      }else if(gameType==="Points"){
+      }
+      else if(gameType==="Points"){
         arr = [0,0,0,0];
         position = [0,0,0];
         secondPosition = [0,0,0];
@@ -1347,14 +1354,8 @@ function moveSnake(){
         push2 = 0;
         push3 = 1;
         snakeLength = 3;
-
-        points-=1.5;
-        if(points<0){
-          points=0;
-        }
       }else{
         state = "Game Over";
-        playerDeath = 1;
         pop();
         setup();
       }
@@ -1389,7 +1390,7 @@ function moveSnake(){
   //checks if the position is equal to any of the body positions
   //if so, state changes to game over and calls setup
   for(var j=0; j<=bodyPosition.length; j+=3){
-    if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]===bodyPositionP2[j]&&position[1]===bodyPositionP2[j+1]&&position[2]===bodyPositionP2[j+2])||(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2])){
+    if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]+push[0]===bodyPositionP2[j]&&position[1]+push[1]===bodyPositionP2[j+1]&&position[2]+push[2]===bodyPositionP2[j+2])||(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2])){
       if(gameType==="Survival"){
         state = "Game Over";
         playerDeath = 1;
@@ -1413,7 +1414,6 @@ function moveSnake(){
         }
       }else{
         state = "Game Over";
-        playerDeath = 1;
         pop();
         setup();
       }
@@ -1490,7 +1490,6 @@ function moveSnakeP2(){
         }
       }else{
         state = "Game Over";
-        playerDeath = 2;
         pop();
         setup();
       }
@@ -1543,13 +1542,12 @@ function moveSnakeP2(){
         push3P2 = 1;
         snakeLengthP2 = 3;
         
-        pointsP2-=1.5;
+        pointsP2-=3;
         if(pointsP2<0){
           pointsP2=0;
         }
       }else{
         state = "Game Over";
-        playerDeath = 2;
         pop();
         setup();
       }
@@ -1680,7 +1678,6 @@ function food(){
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
-      //incase this scenario misses the food on the position, checks if the food is in the body
       foodPosition[0]=ceil(random(0,19))*50;
       foodPosition[1]=ceil(random(0,19))*50;
       foodPosition[2]=ceil(random(-19,0))*50;
@@ -1705,7 +1702,6 @@ function food(){
   }
   for(var j=0; j<=bodyPositionP2.length-3; j+=3){
     if(foodPosition[0]===bodyPositionP2[j]&&foodPosition[1]===bodyPositionP2[j+1]&&foodPosition[2]===bodyPositionP2[j+2]){
-      //incase this scenario misses the food on the position, checks if the food is in the body
       foodPosition[0]=ceil(random(0,19))*50;
       foodPosition[1]=ceil(random(0,19))*50;
       foodPosition[2]=ceil(random(-19,0))*50;
@@ -2007,7 +2003,7 @@ let topView = new p5(( sketch ) => {
     sketch.translate(0,y-y/20);
     //resets position values
     positionP2[0]=0;
-    positionP2[1]=0;
+    positionP2[1]=950;
     positionP2[2]=0;
     //reads the array and translates by x and z of the arr, 
     //in the top view x is the same as 3d x, but y is the 3d z
@@ -2152,7 +2148,7 @@ let sideView = new p5(( sketch ) => {
     //corrects x(z) axis
     sketch.translate(y-y/20,0);
     positionP2[0]=0;
-    positionP2[1]=0;
+    positionP2[1]=950;
     positionP2[2]=0;
     for(var i=0; i<=arrP2.length; i+=4){
       //in side view, x is 3d z and y is the same as 3d y
@@ -2289,7 +2285,7 @@ let frontView = new p5(( sketch ) => {
     }
     //front view does not need to be translated since x and y are the same as 3d x and y
     positionP2[0]=0;
-    positionP2[1]=0;
+    positionP2[1]=950;
     positionP2[2]=0;
     for(var i=0; i<=arrP2.length; i+=4){
       //in front view, x and y are the same as 3d x and y
