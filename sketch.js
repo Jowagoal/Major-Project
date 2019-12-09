@@ -132,7 +132,7 @@ function preload(){
   lines = loadImage('assets/lines.PNG');
   iso = loadImage('assets/iso.PNG');
   snakeEyes = loadImage('assets/snake eyes.PNG');
-  
+
   eyesSkin = {
     name: 'Eyes',
     cost: 250,
@@ -203,15 +203,16 @@ function setup() {
     camera(-300,-400,600,500,700,-500);
     
     //sets initial position of food
-    /*
+    
     foodPosition[0]=ceil(random(-0.9,19))*50;
     foodPosition[1]=ceil(random(-0.9,19))*50;
     foodPosition[2]=ceil(random(-19,-0.9))*50;
+    
+    /*
+    foodPosition[0]=5*50;
+    foodPosition[1]=0*50;
+    foodPosition[2]=0*50;
     */
-
-   foodPosition[0]=5*50;
-   foodPosition[1]=0*50;
-   foodPosition[2]=0*50;
 
     //shows all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "visible";
@@ -243,6 +244,8 @@ function setup() {
     document.getElementById("defaultCanvas6").style.visibility = "hidden";
     document.getElementById("defaultCanvas7").style.visibility = "hidden";
     document.getElementById("defaultCanvas8").style.visibility = "hidden";
+  }else if(state==="LeaderBoard"){
+    createCanvas(windowWidth, windowHeight);
   }
 }
 
@@ -280,6 +283,10 @@ function checkState(){
   if(state==="Game Over"){
     restarted=true;
     deathScreen();
+    pointerDot();
+  }
+  if(state==="LeaderBoard"){
+    leaderBoard();
     pointerDot();
   }
 }
@@ -1713,9 +1720,32 @@ function deathScreen(){
     fill(0);
     textSize(25);
     text("Score: " + snakeLength, width/2, height/4);
-  
+    
+
+    //leaderboard
+    if(gameMode!=="Two Player"){
+      if(mouseX>width*15/16-25&&mouseX<width*15/16+25&&mouseY>height*1/8-25/2&&mouseY<height*1/8+25/2){
+        leaderBoardIcon(true);
+        if(mouseIsPressed){
+          //when mouse clicks store icon, sets state to store and calls setup again to open store screen
+          state="LeaderBoard";
+          setup();
+        }
+      }else{
+        leaderBoardIcon(false);
+      }
+    }
+    //displays high score
+    if(getItem('High Score')===null){
+      storeItem('High Score', snakeLength);
+    }else if(snakeLength>getItem('High Score')){
+      storeItem('High Score', snakeLength);
+    }
+    text("High Score: " + getItem('High Score'), width/2, height*5/16);
+    
+
     //displays money gained for the round
-    text("Money Gained: " + moneyGained, width/2, height*5/16);
+    text("Money Gained: " + moneyGained, width/2, height*6/16);
   }else{
     if(gameType==="Survival"){
       text("Player " + playerDeath + " Died!", width/2, height/8);
@@ -1747,6 +1777,28 @@ function deathScreen(){
     state="Menu";
     setup();
   }
+}
+
+//draws the leader board icon
+function leaderBoardIcon(on){
+  push();
+  translate(width*15/16, height*1/8);
+  noStroke();
+  if(!on){
+    fill(100);
+  }else{
+    fill(0,0,150);
+  }
+  rectMode(CENTER);
+  rect(0,0,17,50/2);
+  rect(-17,4,17,34/2);
+  rect(17,6,17,12);
+  pop();
+}
+
+function leaderBoard(){
+  background(200);
+  
 }
 
 function keyPressed(){
