@@ -33,8 +33,10 @@ let bodyPositionP2 = [];
 let pointsP2;
 
 let playerDeath;
+let highScores;
 
 let firstIteration = true;
+let firstIterationDeath = true;
 let gameTimeStarted;
 let time;
 
@@ -169,6 +171,12 @@ function preload(){
   skins.push(lineSkin);
   skins.push(isotopeSkin);
   skins.push(eyesSkin);
+
+  if(getItem("High Scores")===undefined){
+    highScores = [];
+  }else{
+    highScores = getItem("High Scores")
+  }
 }
 
 //based on the state of the program, setup will create a new canvas
@@ -519,6 +527,7 @@ function resetAllValues(){
   snakeLengthP2 = 3;
 
   firstIteration = true;
+  firstIterationDeath = true;
   gameType;
 }
 
@@ -1735,13 +1744,70 @@ function deathScreen(){
         leaderBoardIcon(false);
       }
     }
-    //displays high score
-    if(getItem('High Score')===null){
-      storeItem('High Score', snakeLength);
-    }else if(snakeLength>getItem('High Score')){
-      storeItem('High Score', snakeLength);
+
+    if(firstIterationDeath){
+      let thisScore = {
+        score: snakeLength,
+        day: 0,
+        month: 0,
+        year: 0,
+      };
+      thisScore.day = day();
+      thisScore.month = month();
+      thisScore.year = year();
+      if(thisScore.month===1){
+        thisScore.month = "January"
+      }else if(thisScore.month===2){
+        thisScore.month = "February"
+      }else if(thisScore.month===3){
+        thisScore.month = "March"
+      }else if(thisScore.month===4){
+        thisScore.month = "April"
+      }else if(thisScore.month===5){
+        thisScore.month = "May"
+      }else if(thisScore.month===6){
+        thisScore.month = "June"
+      }else if(thisScore.month===7){
+        thisScore.month = "July"
+      }else if(thisScore.month===8){
+        thisScore.month = "August"
+      }else if(thisScore.month===9){
+        thisScore.month = "September"
+      }else if(thisScore.month===10){
+        thisScore.month = "October"
+      }else if(thisScore.month===11){
+        thisScore.month = "November"
+      }else if(thisScore.month===12){
+        thisScore.month = "December"
+      }
+
+      for(var i=0; i<10; i++){
+        if(highScores[i]!==undefined){
+          if(thisScore.score>highScores[i].score){
+            highScores.splice(i, 0, thisScore);
+            if(highScores.length>10){
+              highScores.pop();
+            }
+            break;
+          }
+          if(thisScore.score===highScores[i].score){
+            highScores.splice(i+1, 0, thisScore);
+            if(highScores.length>10){
+              highScores.pop();
+            }
+            break;
+          }
+        }else{
+          highScores.splice(i, 0, thisScore);
+          break;
+        }
+      }
+      storeItem("High Scores", highScores)
+      console.log(getItem("High Scores"));
+      firstIterationDeath=false;
     }
-    text("High Score: " + getItem('High Score'), width/2, height*5/16);
+    
+    text("High Score: " + getItem('High Scores')[0].score, width/2, height*5/16);
     
 
     //displays money gained for the round
@@ -1798,7 +1864,12 @@ function leaderBoardIcon(on){
 
 function leaderBoard(){
   background(200);
-  
+
+  translate(-1*width/2, -1*height/2);
+
+  textSize(50);
+  fill(255,0,255);
+  text("High Scores", width/2, height*1/8);
 }
 
 function keyPressed(){
