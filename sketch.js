@@ -34,6 +34,17 @@ let pointsP2;
 
 let playerDeath;
 let highScores;
+let highScores5;
+let highScores6;
+let highScores7;
+let highScores8;
+let highScores9;
+let highScores10;
+let highScores11;
+let highScores12;
+let highScores13;
+let highScores14;
+let highScores15;
 
 let firstIteration = true;
 let firstIterationDeath = true;
@@ -172,10 +183,60 @@ function preload(){
   skins.push(isotopeSkin);
   skins.push(eyesSkin);
 
-  if(getItem("High Scores")===undefined){
-    highScores = [];
+  if(getItem("High Scores 5")===null){
+    highScores5 = [];
   }else{
-    highScores = getItem("High Scores")
+    highScores5 = getItem("High Scores 5")
+  }
+  if(getItem("High Scores 6")===null){
+    highScores6 = [];
+  }else{
+    highScores6 = getItem("High Scores 6")
+  }
+  if(getItem("High Scores 7")===null){
+    highScores7 = [];
+  }else{
+    highScores7 = getItem("High Scores 7")
+  }
+  if(getItem("High Scores 8")===null){
+    highScores8 = [];
+  }else{
+    highScores8 = getItem("High Scores 8")
+  }
+  if(getItem("High Scores 9")===null){
+    highScores9 = [];
+  }else{
+    highScores9 = getItem("High Scores 9")
+  }
+  if(getItem("High Scores 10")===null){
+    highScores10 = [];
+  }else{
+    highScores10 = getItem("High Scores 10")
+  }
+  if(getItem("High Scores 11")===null){
+    highScores11 = [];
+  }else{
+    highScores11 = getItem("High Scores 11")
+  }
+  if(getItem("High Scores 12")===null){
+    highScores12 = [];
+  }else{
+    highScores12 = getItem("High Scores 12")
+  }
+  if(getItem("High Scores 13")===null){
+    highScores13 = [];
+  }else{
+    highScores13 = getItem("High Scores 13")
+  }
+  if(getItem("High Scores 14")===null){
+    highScores14 = [];
+  }else{
+    highScores14 = getItem("High Scores 14")
+  }
+  if(getItem("High Scores 15")===null){
+    highScores15 = [];
+  }else{
+    highScores15 = getItem("High Scores 15")
   }
 }
 
@@ -1728,7 +1789,7 @@ function deathScreen(){
     //displays the users score
     fill(0);
     textSize(25);
-    text("Score: " + snakeLength, width/2, height/4);
+    text("Score: " + snakeLength, width/2, height*5/16);
     
 
     //leaderboard
@@ -1751,6 +1812,7 @@ function deathScreen(){
         day: 0,
         month: 0,
         year: 0,
+        thisDifficulty: difficulty,
       };
       thisScore.day = day();
       thisScore.month = month();
@@ -1781,37 +1843,343 @@ function deathScreen(){
         thisScore.month = "December"
       }
 
-      for(var i=0; i<10; i++){
-        if(highScores[i]!==undefined){
-          if(thisScore.score>highScores[i].score){
-            highScores.splice(i, 0, thisScore);
-            if(highScores.length>10){
-              highScores.pop();
+      if(thisScore.thisDifficulty===5){
+        for(var i=0; i<10; i++){
+          if(highScores5[i]!==undefined){
+            if(thisScore.score>highScores5[i].score){
+              highScores5.splice(i, 0, thisScore);
+              if(highScores5.length>10){
+                highScores5.pop();
+              }
+              break;
             }
+            if(thisScore.score===highScores5[i].score){
+              highScores5.splice(i+1, 0, thisScore);
+              if(highScores5.length>10){
+                highScores5.pop();
+              }
+              break;
+            }
+          }else{
+            highScores5.splice(i, 0, thisScore);
             break;
           }
-          if(thisScore.score===highScores[i].score){
-            highScores.splice(i+1, 0, thisScore);
-            if(highScores.length>10){
-              highScores.pop();
-            }
-            break;
-          }
-        }else{
-          highScores.splice(i, 0, thisScore);
-          break;
         }
+        storeItem("High Scores 5", highScores5);
+        console.log(getItem("High Scores 5"));
+        firstIterationDeath=false;
       }
-      storeItem("High Scores", highScores)
-      console.log(getItem("High Scores"));
-      firstIterationDeath=false;
+      if(thisScore.thisDifficulty===6){
+        for(var i=0; i<10; i++){
+          if(highScores6[i]!==undefined){
+            if(thisScore.score>highScores6[i].score){
+              highScores6.splice(i, 0, thisScore);
+              if(highScores6.length>10){
+                highScores6.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores6[i].score){
+              highScores6.splice(i+1, 0, thisScore);
+              if(highScores6.length>10){
+                highScores6.pop();
+              }
+              break;
+            }
+          }else{
+            highScores6.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 6", highScores6);
+        console.log(getItem("High Scores 6"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===7){
+        for(var i=0; i<10; i++){
+          if(highScores7[i]!==undefined){
+            if(thisScore.score>highScores7[i].score){
+              highScores7.splice(i, 0, thisScore);
+              if(highScores7.length>10){
+                highScores7.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores7[i].score){
+              highScores7.splice(i+1, 0, thisScore);
+              if(highScores7.length>10){
+                highScores7.pop();
+              }
+              break;
+            }
+          }else{
+            highScores7.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 7", highScores7);
+        console.log(getItem("High Scores 7"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===8){
+        for(var i=0; i<10; i++){
+          if(highScores8[i]!==undefined){
+            if(thisScore.score>highScores8[i].score){
+              highScores8.splice(i, 0, thisScore);
+              if(highScores8.length>10){
+                highScores8.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores8[i].score){
+              highScores8.splice(i+1, 0, thisScore);
+              if(highScores8.length>10){
+                highScores8.pop();
+              }
+              break;
+            }
+          }else{
+            highScores8.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 8", highScores8);
+        console.log(getItem("High Scores 8"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===9){
+        for(var i=0; i<10; i++){
+          if(highScores9[i]!==undefined){
+            if(thisScore.score>highScores9[i].score){
+              highScores9.splice(i, 0, thisScore);
+              if(highScores9.length>10){
+                highScores9.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores9[i].score){
+              highScores9.splice(i+1, 0, thisScore);
+              if(highScores9.length>10){
+                highScores9.pop();
+              }
+              break;
+            }
+          }else{
+            highScores9.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 9", highScores9);
+        console.log(getItem("High Scores 9"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===10){
+        for(var i=0; i<10; i++){
+          if(highScores10[i]!==undefined){
+            if(thisScore.score>highScores10[i].score){
+              highScores10.splice(i, 0, thisScore);
+              if(highScores10.length>10){
+                highScores10.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores10[i].score){
+              highScores10.splice(i+1, 0, thisScore);
+              if(highScores10.length>10){
+                highScores10.pop();
+              }
+              break;
+            }
+          }else{
+            highScores10.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 10", highScores10);
+        console.log(getItem("High Scores 10"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===11){
+        for(var i=0; i<10; i++){
+          if(highScores11[i]!==undefined){
+            if(thisScore.score>highScores11[i].score){
+              highScores11.splice(i, 0, thisScore);
+              if(highScores11.length>10){
+                highScores11.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores11[i].score){
+              highScores11.splice(i+1, 0, thisScore);
+              if(highScores11.length>10){
+                highScores11.pop();
+              }
+              break;
+            }
+          }else{
+            highScores11.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 11", highScores11);
+        console.log(getItem("High Scores 11"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===12){
+        for(var i=0; i<10; i++){
+          if(highScores12[i]!==undefined){
+            if(thisScore.score>highScores12[i].score){
+              highScores12.splice(i, 0, thisScore);
+              if(highScores12.length>10){
+                highScores12.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores12[i].score){
+              highScores12.splice(i+1, 0, thisScore);
+              if(highScores12.length>10){
+                highScores12.pop();
+              }
+              break;
+            }
+          }else{
+            highScores12.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 12", highScores12);
+        console.log(getItem("High Scores 12"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===13){
+        for(var i=0; i<10; i++){
+          if(highScores13[i]!==undefined){
+            if(thisScore.score>highScores13[i].score){
+              highScores13.splice(i, 0, thisScore);
+              if(highScores13.length>10){
+                highScores13.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores13[i].score){
+              highScores13.splice(i+1, 0, thisScore);
+              if(highScores13.length>10){
+                highScores13.pop();
+              }
+              break;
+            }
+          }else{
+            highScores13.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 13", highScores13);
+        console.log(getItem("High Scores 13"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===14){
+        for(var i=0; i<10; i++){
+          if(highScores14[i]!==undefined){
+            if(thisScore.score>highScores14[i].score){
+              highScores14.splice(i, 0, thisScore);
+              if(highScores14.length>10){
+                highScores14.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores14[i].score){
+              highScores14.splice(i+1, 0, thisScore);
+              if(highScores14.length>10){
+                highScores14.pop();
+              }
+              break;
+            }
+          }else{
+            highScores14.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 14", highScores14);
+        console.log(getItem("High Scores 14"));
+        firstIterationDeath=false;
+      }
+      if(thisScore.thisDifficulty===15){
+        for(var i=0; i<10; i++){
+          if(highScores15[i]!==undefined){
+            if(thisScore.score>highScores15[i].score){
+              highScores15.splice(i, 0, thisScore);
+              if(highScores15.length>10){
+                highScores15.pop();
+              }
+              break;
+            }
+            if(thisScore.score===highScores15[i].score){
+              highScores15.splice(i+1, 0, thisScore);
+              if(highScores15.length>10){
+                highScores15.pop();
+              }
+              break;
+            }
+          }else{
+            highScores15.splice(i, 0, thisScore);
+            break;
+          }
+        }
+        storeItem("High Scores 15", highScores15);
+        console.log(getItem("High Scores 15"));
+        firstIterationDeath=false;
+      }
+    }
+
+    if(difficulty===5){
+      text("Difficulty 5", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 5")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===6){
+      text("Difficulty 6", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 6")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===7){
+      text("Difficulty 7", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 7")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===8){
+      text("Difficulty 8", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 8")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===9){
+      text("Difficulty 9", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 9")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===10){
+      text("Difficulty 10", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 10")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===11){
+      text("Difficulty 11", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 11")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===12){
+      text("Difficulty 12", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 12")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===13){
+      text("Difficulty 13", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 13")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===14){
+      text("Difficulty 14", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 14")[0].score, width/2, height*6/16);
+    }
+    if(difficulty===15){
+      text("Difficulty 15", width/2, height*4/16);
+      text("High Score : " + getItem("High Scores 15")[0].score, width/2, height*6/16);
     }
     
-    text("High Score: " + getItem('High Scores')[0].score, width/2, height*5/16);
     
 
     //displays money gained for the round
-    text("Money Gained: " + moneyGained, width/2, height*6/16);
+    text("Money Gained: " + moneyGained, width/2, height*7/16);
   }else{
     if(gameType==="Survival"){
       text("Player " + playerDeath + " Died!", width/2, height/8);
@@ -1858,7 +2226,7 @@ function leaderBoardIcon(on){
   rectMode(CENTER);
   rect(0,0,17,50/2);
   rect(-17,4,17,34/2);
-  rect(17,6,17,12);
+  rect(17,7,17,12);
   pop();
 }
 
@@ -1867,9 +2235,259 @@ function leaderBoard(){
 
   translate(-1*width/2, -1*height/2);
 
-  textSize(50);
+  textSize(75);
   fill(255,0,255);
   text("High Scores", width/2, height*1/8);
+
+  textSize(25);
+  fill(200,0,200);
+  text("For difficulty " + difficulty, width/2, height*7/32);
+
+  //writes top scores
+  textSize(50);
+  fill(0);
+  push();
+
+  if(difficulty===5){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 5").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 5")[i].score, 0, 0);
+    }
+    pop();
+  
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 5").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 5")[i].month + " " +  getItem("High Scores 5")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===6){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 6").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 6")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 6").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 6")[i].month + " " +  getItem("High Scores 6")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===7){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 7").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 7")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 7").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 7")[i].month + " " +  getItem("High Scores 7")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===8){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 8").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 8")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 8").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 8")[i].month + " " +  getItem("High Scores 8")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===9){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 9").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 9")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 9").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 9")[i].month + " " +  getItem("High Scores 9")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===10){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 10").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 10")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 10").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 10")[i].month + " " +  getItem("High Scores 10")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===11){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 11").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 11")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 11").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 11")[i].month + " " +  getItem("High Scores 11")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===12){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 12").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 12")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 12").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 12")[i].month + " " +  getItem("High Scores 12")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===13){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 13").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 13")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 13").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 13")[i].month + " " +  getItem("High Scores 13")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===14){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 14").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 14")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 14").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 14")[i].month + " " +  getItem("High Scores 14")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+  if(difficulty===15){
+    translate(width*11/32, height*2/8);
+    for(var i=0; i<getItem("High Scores 15").length; i++){
+      translate(0, height*1/16);
+      if(i===9){
+        translate(-12,0);
+      }
+      text((i+1) + ". " + getItem("High Scores 15")[i].score, 0, 0);
+    }
+    pop();
+
+    //writes date top scores were made
+    push();
+    translate(width*19/32, height*2/8);
+    textSize(30);
+    for(var i=0; i<getItem("High Scores 15").length; i++){
+      translate(0, height*1/16);
+      text(getItem("High Scores 15")[i].month + " " +  getItem("High Scores 15")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+    }
+    pop();
+  }
+
+  fill(255,0,0);
+  rectMode(CENTER);
+  stroke(0);
+  rect(width*0.9, 50, 30, 20);
+  if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
+    state="Game Over";
+    setup();
+  }
 }
 
 function keyPressed(){
