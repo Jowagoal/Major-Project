@@ -2370,7 +2370,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 10").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 10")[i].month + " " +  getItem("High Scores 10")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 10")[i].month + " " +  getItem("High Scores 10")[i].day + ", " +  getItem("High Scores 10")[i].year, 0, 0);
     }
     pop();
   }
