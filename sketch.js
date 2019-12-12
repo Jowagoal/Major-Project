@@ -2132,48 +2132,48 @@ function deathScreen(){
     }
 
     if(difficulty===5){
-      text("Difficulty 5", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 5")[0].score, width/2, height*6/16);
+      text("Difficulty: 5", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 5")[0].score, width/2, height*6/16);
     }
     if(difficulty===6){
-      text("Difficulty 6", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 6")[0].score, width/2, height*6/16);
+      text("Difficulty: 6", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 6")[0].score, width/2, height*6/16);
     }
     if(difficulty===7){
-      text("Difficulty 7", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 7")[0].score, width/2, height*6/16);
+      text("Difficulty: 7", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 7")[0].score, width/2, height*6/16);
     }
     if(difficulty===8){
-      text("Difficulty 8", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 8")[0].score, width/2, height*6/16);
+      text("Difficulty: 8", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 8")[0].score, width/2, height*6/16);
     }
     if(difficulty===9){
-      text("Difficulty 9", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 9")[0].score, width/2, height*6/16);
+      text("Difficulty: 9", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 9")[0].score, width/2, height*6/16);
     }
     if(difficulty===10){
-      text("Difficulty 10", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 10")[0].score, width/2, height*6/16);
+      text("Difficulty: 10", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 10")[0].score, width/2, height*6/16);
     }
     if(difficulty===11){
-      text("Difficulty 11", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 11")[0].score, width/2, height*6/16);
+      text("Difficulty: 11", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 11")[0].score, width/2, height*6/16);
     }
     if(difficulty===12){
-      text("Difficulty 12", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 12")[0].score, width/2, height*6/16);
+      text("Difficulty: 12", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 12")[0].score, width/2, height*6/16);
     }
     if(difficulty===13){
-      text("Difficulty 13", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 13")[0].score, width/2, height*6/16);
+      text("Difficulty: 13", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 13")[0].score, width/2, height*6/16);
     }
     if(difficulty===14){
-      text("Difficulty 14", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 14")[0].score, width/2, height*6/16);
+      text("Difficulty: 14", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 14")[0].score, width/2, height*6/16);
     }
     if(difficulty===15){
-      text("Difficulty 15", width/2, height*4/16);
-      text("High Score : " + getItem("High Scores 15")[0].score, width/2, height*6/16);
+      text("Difficulty: 15", width/2, height*4/16);
+      text("High Score: " + getItem("High Scores 15")[0].score, width/2, height*6/16);
     }
     
     
@@ -2226,7 +2226,7 @@ function leaderBoardIcon(on){
   rectMode(CENTER);
   rect(0,0,17,50/2);
   rect(-17,4,17,34/2);
-  rect(17,7,17,12);
+  rect(17,6,17,13);
   pop();
 }
 
