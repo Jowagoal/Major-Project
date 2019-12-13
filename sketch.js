@@ -24,6 +24,7 @@ let secondPosition = [0,0,0];
 let foodPosition = [0,0,0];
 let bodyPosition = [];
 let points;
+let p1Died;
 
 let arrP2 = [];
 let positionP2 = [0,950,0];
@@ -31,6 +32,7 @@ let secondPositionP2 = [0,0,0];
 let foodPositionP2 = [0,0,0];
 let bodyPositionP2 = [];
 let pointsP2;
+let p2Died;
 
 let playerDeath;
 let highScores;
@@ -127,6 +129,7 @@ let noSkin;
 let lineSkin;
 let isotopeSkin;
 let eyesSkin;
+let topHatSkin;
 
 //variables for 2D array
 let cols;
@@ -136,6 +139,7 @@ let bare;
 let snakeEyes;
 let lines;
 let iso;
+let topHat
 
 function preload(){
   //preloads text font
@@ -145,6 +149,7 @@ function preload(){
   lines = loadImage('assets/lines.PNG');
   iso = loadImage('assets/iso.PNG');
   snakeEyes = loadImage('assets/snake eyes.PNG');
+  topHat = loadImage('assets/top hat.PNG');
 
   eyesSkin = {
     name: 'Eyes',
@@ -177,11 +182,20 @@ function preload(){
     active: 'yes',
     picture: bare,
   };
+
+  topHatSkin = {
+    name: 'Top Hat',
+    cost: 500,
+    bought: 'no',
+    active: 'no',
+    picture: topHat,
+  };
   
   skins.push(noSkin);
   skins.push(lineSkin);
   skins.push(isotopeSkin);
   skins.push(eyesSkin);
+  skins.push(topHatSkin);
 
   if(getItem("High Scores 5")===null){
     highScores5 = [];
@@ -1200,8 +1214,11 @@ function storeMenu(){
       if(y%2===0&&x%2===0){
         stroke(0);
         fill(220);
-        rect(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5, cellSize*1.5);
-        enterItem(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
+        //if a part of the array is not filled, places a sqaure same color as background over top
+        if(store[y/2][x/2]!==undefined){
+          rect(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5, cellSize*1.5);
+          enterItem(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
+        }
       }
     }
   }
@@ -1290,13 +1307,6 @@ function enterItem(col, row, centerX, centerY, wh){
   if(store[row][col]!==undefined){
     image(store[row][col].picture, centerX-wh*1/2+1, centerY+wh*-1/2, wh-2, wh*5/8);
   }
-
-  //if a part of the array is not filled, places a sqaure same color as background over top
-  if(store[row][col]===undefined){
-    noStroke();
-    fill(200);
-    rect(centerX, centerY, wh+2, wh+2);
-  }
 }
 
 //gameplay is split into two parts, board creation and the part that the user plays
@@ -1336,7 +1346,10 @@ function createBoard(){
 function gameStart(){
   //the difficulty changes the framerate
   frameRate(difficulty);
-
+  
+  p1Died=false;
+  p2Died=false;
+  
   if(firstIteration&&gameType==="Points"){
     gameTimeStarted = frameCount;
     time = 101;
@@ -1446,7 +1459,7 @@ function moveSnake(){
   //checks if the position is equal to any of the body positions
   //if so, state changes to game over and calls setup
   for(var j=0; j<=bodyPosition.length; j+=3){
-    if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]+push[0]===bodyPositionP2[j]&&position[1]+push[1]===bodyPositionP2[j+1]&&position[2]+push[2]===bodyPositionP2[j+2])){
+    if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]+push[0]===bodyPositionP2[j]&&position[1]+push[1]===bodyPositionP2[j+1]&&position[2]+push[2]===bodyPositionP2[j+2])&&p1Died===false){
       playerHasDied(1);
     }
   }
@@ -1534,7 +1547,7 @@ function moveSnakeP2(){
   //checks if the position is equal to any of the body positions
   //if so, state changes to game over and calls setup
   for(var j=0; j<=bodyPositionP2.length; j+=3){
-    if((positionP2[0]===bodyPositionP2[j]&&positionP2[1]===bodyPositionP2[j+1]&&positionP2[2]===bodyPositionP2[j+2])||(positionP2[0]===bodyPosition[j]&&positionP2[1]===bodyPosition[j+1]&&positionP2[2]===bodyPosition[j+2])){
+    if((positionP2[0]===bodyPositionP2[j]&&positionP2[1]===bodyPositionP2[j+1]&&positionP2[2]===bodyPositionP2[j+2])||(positionP2[0]===bodyPosition[j]&&positionP2[1]===bodyPosition[j+1]&&positionP2[2]===bodyPosition[j+2])&&p2Died===false){
       playerHasDied(2);
     }
   }
@@ -1618,6 +1631,32 @@ function applySkin(head){
       if(secondPosition[1]===position[1]+50){
         drawEye(10, -30, 25, 0, 0);
         drawEye(-10, -30, 25, 0, 0);
+      }
+    }
+  }else if(skin==="Top Hat"){
+    box(50);
+    if(head){
+      fill(0);
+      if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
+        push();
+        translate(0,-25,0);
+        rotateX(1.4);
+        circle(0,0,40,40);
+        pop();
+        push();
+        translate(0,-35,0);
+        cylinder(10,20,30,30);
+        pop();
+      }else{
+        push();
+        translate(0,0,25);
+        circle(0,0,40,40);
+        pop();
+        push();
+        translate(0,0,35);
+        rotateX(1.4);
+        cylinder(10,20,30,30);
+        pop();
       }
     }
   }else{
@@ -1723,7 +1762,7 @@ function playerHasDied(p){
     }else if(gameType==="Points"){
       arr = [0,0,0,0];
       position = [0,0,0];
-      secondPosition = [0,0,0];
+      secondPosition = [];
       bodyPosition = [];
 
       push0 = 50;
@@ -1736,6 +1775,7 @@ function playerHasDied(p){
       if(points<0){
         points=0;
       }
+      p1Died=true;
     }else{
       state = "Game Over";
       pop();
@@ -1750,7 +1790,7 @@ function playerHasDied(p){
     }else if(gameType==="Points"){
       arrP2 = [0,950,0,0];
       positionP2 = [0,950,0];
-      secondPositionP2 = [0,0,0];
+      secondPositionP2 = [];
       bodyPositionP2 = [];
 
       push0P2 = 50;
@@ -1763,6 +1803,7 @@ function playerHasDied(p){
       if(pointsP2<0){
         pointsP2=0;
       }
+      p2Died=true;
     }else{
       state = "Game Over";
       pop();
