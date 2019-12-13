@@ -1853,20 +1853,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores5[i].score){
-              highScores5.splice(i+1, 0, thisScore);
-              if(highScores5.length>10){
-                highScores5.pop();
-              }
-              break;
-            }
           }else{
             highScores5.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 5", highScores5);
-        console.log(getItem("High Scores 5"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===6){
@@ -1879,20 +1871,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores6[i].score){
-              highScores6.splice(i+1, 0, thisScore);
-              if(highScores6.length>10){
-                highScores6.pop();
-              }
-              break;
-            }
           }else{
             highScores6.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 6", highScores6);
-        console.log(getItem("High Scores 6"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===7){
@@ -1905,20 +1889,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores7[i].score){
-              highScores7.splice(i+1, 0, thisScore);
-              if(highScores7.length>10){
-                highScores7.pop();
-              }
-              break;
-            }
           }else{
             highScores7.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 7", highScores7);
-        console.log(getItem("High Scores 7"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===8){
@@ -1931,20 +1907,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores8[i].score){
-              highScores8.splice(i+1, 0, thisScore);
-              if(highScores8.length>10){
-                highScores8.pop();
-              }
-              break;
-            }
           }else{
             highScores8.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 8", highScores8);
-        console.log(getItem("High Scores 8"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===9){
@@ -1957,20 +1925,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores9[i].score){
-              highScores9.splice(i+1, 0, thisScore);
-              if(highScores9.length>10){
-                highScores9.pop();
-              }
-              break;
-            }
           }else{
             highScores9.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 9", highScores9);
-        console.log(getItem("High Scores 9"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===10){
@@ -1983,20 +1943,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores10[i].score){
-              highScores10.splice(i+1, 0, thisScore);
-              if(highScores10.length>10){
-                highScores10.pop();
-              }
-              break;
-            }
           }else{
             highScores10.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 10", highScores10);
-        console.log(getItem("High Scores 10"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===11){
@@ -2009,20 +1961,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores11[i].score){
-              highScores11.splice(i+1, 0, thisScore);
-              if(highScores11.length>10){
-                highScores11.pop();
-              }
-              break;
-            }
           }else{
             highScores11.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 11", highScores11);
-        console.log(getItem("High Scores 11"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===12){
@@ -2035,20 +1979,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores12[i].score){
-              highScores12.splice(i+1, 0, thisScore);
-              if(highScores12.length>10){
-                highScores12.pop();
-              }
-              break;
-            }
           }else{
             highScores12.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 12", highScores12);
-        console.log(getItem("High Scores 12"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===13){
@@ -2061,20 +1997,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores13[i].score){
-              highScores13.splice(i+1, 0, thisScore);
-              if(highScores13.length>10){
-                highScores13.pop();
-              }
-              break;
-            }
           }else{
             highScores13.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 13", highScores13);
-        console.log(getItem("High Scores 13"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===14){
@@ -2087,20 +2015,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores14[i].score){
-              highScores14.splice(i+1, 0, thisScore);
-              if(highScores14.length>10){
-                highScores14.pop();
-              }
-              break;
-            }
           }else{
             highScores14.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 14", highScores14);
-        console.log(getItem("High Scores 14"));
         firstIterationDeath=false;
       }
       if(thisScore.thisDifficulty===15){
@@ -2113,20 +2033,12 @@ function deathScreen(){
               }
               break;
             }
-            if(thisScore.score===highScores15[i].score){
-              highScores15.splice(i+1, 0, thisScore);
-              if(highScores15.length>10){
-                highScores15.pop();
-              }
-              break;
-            }
           }else{
             highScores15.splice(i, 0, thisScore);
             break;
           }
         }
         storeItem("High Scores 15", highScores15);
-        console.log(getItem("High Scores 15"));
         firstIterationDeath=false;
       }
     }
