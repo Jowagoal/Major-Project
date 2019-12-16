@@ -59,3 +59,6 @@ body, html {
     top: 5%;
     left: 70%;
 }
+#defaultCanvas9 {
+    visibility: "hidden";
+}

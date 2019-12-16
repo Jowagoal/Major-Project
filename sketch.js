@@ -130,6 +130,8 @@ let lineSkin;
 let isotopeSkin;
 let eyesSkin;
 let topHatSkin;
+let trainSkin;
+let theSmoke = [];
 
 //variables for 2D array
 let cols;
@@ -139,7 +141,8 @@ let bare;
 let snakeEyes;
 let lines;
 let iso;
-let topHat
+let topHat;
+let train;
 
 function preload(){
   //preloads text font
@@ -150,6 +153,7 @@ function preload(){
   iso = loadImage('assets/iso.PNG');
   snakeEyes = loadImage('assets/snake eyes.PNG');
   topHat = loadImage('assets/top hat.PNG');
+  train = loadImage('assets/top hat.PNG');
 
   eyesSkin = {
     name: 'Eyes',
@@ -190,12 +194,21 @@ function preload(){
     active: 'no',
     picture: topHat,
   };
+
+  trainSkin = {
+    name: 'Train',
+    cost: 1000,
+    bought: 'no',
+    active: 'no',
+    picture: train,
+  };
   
   skins.push(noSkin);
   skins.push(lineSkin);
   skins.push(isotopeSkin);
   skins.push(eyesSkin);
   skins.push(topHatSkin);
+  skins.push(trainSkin);
 
   if(getItem("High Scores 5")===null){
     highScores5 = [];
@@ -1647,6 +1660,11 @@ function applySkin(head){
         translate(0,-35,0);
         cylinder(10,20,30,30);
         pop();
+        push();
+        translate(0,-27.5,0);
+        fill(255,0,0);
+        cylinder(12,5,30,30,false,false);
+        pop();
       }else{
         push();
         translate(0,0,25);
@@ -1657,11 +1675,86 @@ function applySkin(head){
         rotateX(1.4);
         cylinder(10,20,30,30);
         pop();
+        push();
+        translate(0,0,27.5);
+        rotateX(1.4);
+        fill(255,0,0);
+        cylinder(12,5,30,30,false,false);
+        pop();
+      }
+    }
+  }else if(skin==="Train"){
+    box(50);
+    if(head){
+      if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
+        push();
+        fill(200);
+        translate(0,-30,0);
+        cylinder(10,10,30,30);
+        pop();
+        push();
+        fill(0);
+        translate(0,-37.5,0);
+        cylinder(12,5,30,30);
+        translate(0,-7.5,0);
+        let mySmoke = new Smoke();
+        theSmoke.push(mySmoke);
+        pop();
+      }else{
+        push();
+        fill(200);
+        translate(0,0,30);
+        rotateX(1.4);
+        cylinder(10,10,30,30);
+        pop();
+        push();
+        fill(0);
+        translate(0,0,37.5);
+        rotateX(1.4);
+        cylinder(12,5,30,30);
+        rotateX(-1.4);
+        translate(0,0,7.5)
+        let mySmoke = new Smoke();
+        theSmoke.push(mySmoke);
+        pop();
       }
     }
   }else{
     //no skin
     box(50);
+  }
+}
+
+class Smoke {
+  constructor() {
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+    this.radius = 5;
+    this.alpha = 255;
+  }
+
+  display() {
+    fill(50,this.alpha);
+    translate(0,this.y,0);
+    push();
+    for(var i=0; i<5; i++){
+      rotate(PI/i);
+      tranlate(2.5);
+      sphere(this.radius);
+      tranlate(-2.5);
+    }
+    pop();
+  }
+
+  update() {
+    this.y+=0.1;
+    this.radius-=0.1;
+    this.alpha-=1;
+  }
+
+  isDone() {
+    return this.alpha <= 0;
   }
 }
 
@@ -3054,6 +3147,26 @@ let p2Points = new p5(( sketch ) => {
     sketch.fill(0,0,200);
     if(gameMode==="Two Player"){
       sketch.text(pointsP2,0,10);
+    }
+  };
+});
+
+let smokeUpdater = new p5(( sketch ) => {
+  //creates canvas
+  sketch.setup = () => {
+    sketch.createCanvas(0,0);
+  };
+
+  //writes word
+  sketch.draw = () => {
+    for (let i = theSmoke.length-1; i>=0; i--) {
+      theSmoke[i].update();
+      if (theSmoke[i].isDone()) {
+        theSmoke.splice(i, 1);
+      }
+      else {
+        theSmoke[i].display();
+      }
     }
   };
 });
