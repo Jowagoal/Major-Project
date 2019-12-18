@@ -153,7 +153,7 @@ function preload(){
   iso = loadImage('assets/iso.PNG');
   snakeEyes = loadImage('assets/snake eyes.PNG');
   topHat = loadImage('assets/top hat.PNG');
-  train = loadImage('assets/top hat.PNG');
+  train = loadImage('assets/train.PNG');
 
   eyesSkin = {
     name: 'Eyes',
@@ -617,6 +617,8 @@ function resetAllValues(){
   firstIteration = true;
   firstIterationDeath = true;
   gameType;
+
+  theSmoke = [];
 }
 
 function selectGameType(){
@@ -1367,12 +1369,21 @@ function gameStart(){
     gameTimeStarted = frameCount;
     time = 101;
   }
-
+  
   
   orbitControl();
   strokeWeight(2);
   stroke(0);
   
+  for (let i = theSmoke.length-1; i>=0; i--) {
+    theSmoke[i].update();
+    if (theSmoke[i].isDone()) {
+      theSmoke.splice(i, 1);
+    }
+    else {
+      theSmoke[i].display();
+    }
+  }
   
   //food function makes the food
   food();
@@ -1403,6 +1414,7 @@ function gameStart(){
       firstIteration=false;
     }
   }
+
 }
 
 function timer(){
@@ -1697,7 +1709,7 @@ function applySkin(head){
         translate(0,-37.5,0);
         cylinder(12,5,30,30);
         translate(0,-7.5,0);
-        let mySmoke = new Smoke();
+        let mySmoke = new Smoke(position[0],position[1],position[2],false);
         theSmoke.push(mySmoke);
         pop();
       }else{
@@ -1714,7 +1726,7 @@ function applySkin(head){
         cylinder(12,5,30,30);
         rotateX(-1.4);
         translate(0,0,7.5)
-        let mySmoke = new Smoke();
+        let mySmoke = new Smoke(position[0],position[1],position[2],true);
         theSmoke.push(mySmoke);
         pop();
       }
@@ -1726,31 +1738,38 @@ function applySkin(head){
 }
 
 class Smoke {
-  constructor() {
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    this.radius = 5;
+  constructor(x,y,z,upDown) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.radius = 25;
     this.alpha = 255;
+    this.upDown = upDown;
   }
 
   display() {
-    fill(50,this.alpha);
-    translate(0,this.y,0);
+    noStroke();
+    fill(100,this.alpha);
     push();
-    for(var i=0; i<5; i++){
-      rotate(PI/i);
-      tranlate(2.5);
-      sphere(this.radius);
-      tranlate(-2.5);
+    if(this.upDown){
+      translate(this.x,this.y,this.z+50);
+    }else{
+      translate(this.x,this.y-50,this.z);
     }
+    sphere(this.radius);
+    translate(25,-12.5,0);
+    sphere(this.radius);
+    translate(0,25,-12.5);
+    sphere(this.radius);
+    translate(-12.5,0,25);
+    sphere(this.radius);
     pop();
   }
 
   update() {
-    this.y+=0.1;
-    this.radius-=0.1;
-    this.alpha-=1;
+    this.y-=5;
+    this.radius-=1;
+    this.alpha-=10;
   }
 
   isDone() {
@@ -3159,15 +3178,7 @@ let smokeUpdater = new p5(( sketch ) => {
 
   //writes word
   sketch.draw = () => {
-    for (let i = theSmoke.length-1; i>=0; i--) {
-      theSmoke[i].update();
-      if (theSmoke[i].isDone()) {
-        theSmoke.splice(i, 1);
-      }
-      else {
-        theSmoke[i].display();
-      }
-    }
+    
   };
 });
 
