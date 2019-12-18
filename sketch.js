@@ -1320,7 +1320,7 @@ function enterItem(col, row, centerX, centerY, wh){
 
   //displays picture of the skin
   if(store[row][col]!==undefined){
-    image(store[row][col].picture, centerX-wh*1/2+1, centerY+wh*-1/2, wh-2, wh*5/8);
+    image(store[row][col].picture, centerX-wh*1/3+1, centerY+wh*-1/2+1, wh*6/8, wh*5/8-4);
   }
 }
 
@@ -1745,6 +1745,9 @@ class Smoke {
     this.radius = 25;
     this.alpha = 255;
     this.upDown = upDown;
+    this.waverX = random(-10,10);
+    this.waverY = random(-10,10);
+    this.waverZ = random(-10,10);
   }
 
   display() {
@@ -1757,11 +1760,11 @@ class Smoke {
       translate(this.x,this.y-50,this.z);
     }
     sphere(this.radius);
-    translate(25,-12.5,0);
+    translate(25+this.waverX,-12.5+this.waverY,0+this.waverZ);
     sphere(this.radius);
-    translate(0,25,-12.5);
+    translate(0+this.waverX,25+this.waverY,-12.5+this.waverZ);
     sphere(this.radius);
-    translate(-12.5,0,25);
+    translate(-12.5+this.waverX,0+this.waverY,25+this.waverZ);
     sphere(this.radius);
     pop();
   }
@@ -1770,6 +1773,10 @@ class Smoke {
     this.y-=5;
     this.radius-=1;
     this.alpha-=10;
+    this.x+=random(1,-1);
+    this.waverX += random(-1,1);
+    this.waverY += random(-1,1);
+    this.waverZ += random(-1,1);
   }
 
   isDone() {
@@ -3167,18 +3174,6 @@ let p2Points = new p5(( sketch ) => {
     if(gameMode==="Two Player"){
       sketch.text(pointsP2,0,10);
     }
-  };
-});
-
-let smokeUpdater = new p5(( sketch ) => {
-  //creates canvas
-  sketch.setup = () => {
-    sketch.createCanvas(0,0);
-  };
-
-  //writes word
-  sketch.draw = () => {
-    
   };
 });
 
