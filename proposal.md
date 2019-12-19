@@ -40,3 +40,4 @@ The classic game of snake made in a 3D world.  The user is a snake that moves ar
   - Single player mode
   - Two-player mode
   - Online mode
+  - AI

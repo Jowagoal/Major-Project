@@ -144,6 +144,8 @@ let iso;
 let topHat;
 let train;
 
+let orderOfPositions = [];
+
 function preload(){
   //preloads text font
   inconsolata = loadFont('assets/Inconsolata.otf');
@@ -154,21 +156,13 @@ function preload(){
   snakeEyes = loadImage('assets/snake eyes.PNG');
   topHat = loadImage('assets/top hat.PNG');
   train = loadImage('assets/train.PNG');
-
-  eyesSkin = {
-    name: 'Eyes',
-    cost: 250,
-    bought: 'no',
-    active: 'no',
-    picture: snakeEyes,
-  };
   
-  isotopeSkin = {
-    name: 'Isotope',
-    cost: 150,
-    bought: 'no',
-    active: 'no',
-    picture: iso,
+  noSkin = {
+    name: 'No Skin',
+    cost: 'free',
+    bought: 'yes',
+    active: 'yes',
+    picture: bare,
   };
   
   lineSkin = {
@@ -178,15 +172,23 @@ function preload(){
     active: 'no',
     picture: lines,
   };
-  
-  noSkin = {
-    name: 'No Skin',
-    cost: 'free',
-    bought: 'yes',
-    active: 'yes',
-    picture: bare,
+
+  isotopeSkin = {
+    name: 'Isotope',
+    cost: 150,
+    bought: 'no',
+    active: 'no',
+    picture: iso,
   };
 
+  eyesSkin = {
+    name: 'Eyes',
+    cost: 250,
+    bought: 'no',
+    active: 'no',
+    picture: snakeEyes,
+  };
+  
   topHatSkin = {
     name: 'Top Hat',
     cost: 500,
@@ -203,11 +205,20 @@ function preload(){
     picture: train,
   };
   
+  /*
+    1  2  5  10 17 26
+    3  4  6  11 18 27
+    7  8  9  12 19 28
+    13 14 15 16 20 29
+    21 22 23 24 25 30
+    31 32 33 34 35 36
+  */
+
   skins.push(noSkin);
   skins.push(lineSkin);
-  skins.push(isotopeSkin);
   skins.push(eyesSkin);
   skins.push(topHatSkin);
+  skins.push(isotopeSkin);
   skins.push(trainSkin);
 
   if(getItem("High Scores 5")===null){
@@ -322,6 +333,9 @@ function setup() {
       document.getElementById("defaultCanvas7").style.visibility = "visible";
       document.getElementById("defaultCanvas8").style.visibility = "visible";
     }
+    if(gameMode==="AI"){
+      labelPositions();
+    }
   }else if(state==="Game Over"){
     createCanvas(windowWidth, windowHeight);
 
@@ -432,7 +446,7 @@ function mainMenu(){
   //options button
   text("Two Player",width/3, height/2+height*3/8);
 
-  text("Online",width/3*2, height/2+height*3/8);
+  text("AI",width/3*2, height/2+height*3/8);
   
   if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2+height*1/8-height/16&&mouseY<height/2+height*1/8+height/16&&mouseIsPressed){
     //when mouse clicks options button, sets state to play and calls setup again to start the game
@@ -458,14 +472,8 @@ function mainMenu(){
     setup();
   }else if(mouseX>width/3*2-width/8&&mouseX<width/3*2+width/8&&mouseY>height/2+height*1/8-height/16+height/4&&mouseY<height/2+height*1/8+height/16+height/4&&mouseIsPressed){
     //when mouse clicks options button, sets state to play and calls setup again to open options screen
-    gameMode="Online";
-    state="Menu";
-    p1Controls.up = 'ArrowUp';
-    p1Controls.uKeyCode = 38;
-    p1Controls.down = 'ArrowDown';
-    p1Controls.dKeyCode = 40;
-    instructionsP1[5]=p1Controls.up + " = Up";
-    instructionsP1[6]=p1Controls.down + " = Down";
+    gameMode="AI";
+    state="Play";
     setup();
   }
 }
@@ -1387,34 +1395,38 @@ function gameStart(){
   
   //food function makes the food
   food();
-  if(gameMode!=="Two Player"){
-    //arr is the memory of the moves
-    //push0 through push3 tells the array which of 6 directions to move
-    arr.push(push0);
-    arr.push(push1);
-    arr.push(push2);
-    arr.push(push3);
-    //moves the snake
+  if(gameMode==="AI"){
+    calculateMove();
     moveSnake();
   }else{
-    push();
-    arr.push(push0);
-    arr.push(push1);
-    arr.push(push2);
-    arr.push(push3);
-    moveSnake();
-    pop();
-    arrP2.push(push0P2);
-    arrP2.push(push1P2);
-    arrP2.push(push2P2);
-    arrP2.push(push3P2);
-    moveSnakeP2();
-    if(gameType==="Points"){
-      timer();
-      firstIteration=false;
+    if(gameMode!=="Two Player"){
+      //arr is the memory of the moves
+      //push0 through push3 tells the array which of 6 directions to move
+      arr.push(push0);
+      arr.push(push1);
+      arr.push(push2);
+      arr.push(push3);
+      //moves the snake
+      moveSnake();
+    }else{
+      push();
+      arr.push(push0);
+      arr.push(push1);
+      arr.push(push2);
+      arr.push(push3);
+      moveSnake();
+      pop();
+      arrP2.push(push0P2);
+      arrP2.push(push1P2);
+      arrP2.push(push2P2);
+      arrP2.push(push3P2);
+      moveSnakeP2();
+      if(gameType==="Points"){
+        timer();
+        firstIteration=false;
+      }
     }
   }
-
 }
 
 function timer(){
@@ -1607,132 +1619,136 @@ function placeBoxP2(head){
 //applys the skin with the input of which box is the head
 function applySkin(head){
   //creates line skin on box
-  if(skin==="Line"){
-    box(50);
-    strokeWeight(2);
-    stroke(0);
-    //determines direction of snake and places three lines
-    for(var i=-15; i<=15; i+=10){
-      if(secondPosition[2]===position[2]+50||secondPosition[2]===position[2]-50){
-        line(i,-25,-25,i,-25,25);
-        line(i,25,-25,i,25,25);
+  if(gameMode!=="Two Player"){
+    if(skin==="Line"){
+      box(50);
+      strokeWeight(2);
+      stroke(0);
+      //determines direction of snake and places three lines
+      for(var i=-15; i<=15; i+=10){
+        if(secondPosition[2]===position[2]+50||secondPosition[2]===position[2]-50){
+          line(i,-25,-25,i,-25,25);
+          line(i,25,-25,i,25,25);
+        }
+        if(secondPosition[0]===position[0]+50||secondPosition[0]===position[0]-50){
+          line(-25,-25,i,25,-25,i);
+          line(-25,25,i,25,25,i);
+        }
+        if(secondPosition[1]===position[1]+50||secondPosition[1]===position[1]-50){
+          line(i,-25,25,i,25,25);
+          line(i,-25,-25,i,25,-25);
+        }
       }
-      if(secondPosition[0]===position[0]+50||secondPosition[0]===position[0]-50){
-        line(-25,-25,i,25,-25,i);
-        line(-25,25,i,25,25,i);
+    }else if(skin==="Isotope"){
+      //each bady part is a sphere
+      sphere(30,5,5);
+    }else if(skin==="Eyes"){
+      box(50);
+      //places eyes on the head of the snake based on the direction it's going
+      if(head){
+        if(secondPosition[0]===position[0]-50){
+          drawEye(25,-30,10,0,90);
+          drawEye(25,-30,-10,0,90);
+        }
+        if(secondPosition[0]===position[0]+50){
+          drawEye(-25, -30, 10, 0, 90);
+          drawEye(-25, -30, -10, 0, 90);
+        }
+        if(secondPosition[2]===position[2]-50){
+          drawEye(10, -30, 25, 0, 0);
+          drawEye(-10, -30, 25, 0, 0);
+        }
+        if(secondPosition[2]===position[2]+50){
+          drawEye(10, -30, -25, 0, 0);
+          drawEye(-10, -30, -25, 0, 0);
+        }
+        if(secondPosition[1]===position[1]-50){
+          drawEye(10, 30, 25, 0, 0);
+          drawEye(-10, 30, 25, 0, 0);
+        }
+        if(secondPosition[1]===position[1]+50){
+          drawEye(10, -30, 25, 0, 0);
+          drawEye(-10, -30, 25, 0, 0);
+        }
       }
-      if(secondPosition[1]===position[1]+50||secondPosition[1]===position[1]-50){
-        line(i,-25,25,i,25,25);
-        line(i,-25,-25,i,25,-25);
-      }
-    }
-  }else if(skin==="Isotope"){
-    //each bady part is a sphere
-    sphere(30,5,5);
-  }else if(skin==="Eyes"){
-    box(50);
-    //places eyes on the head of the snake based on the direction it's going
-    if(head){
-      if(secondPosition[0]===position[0]-50){
-        drawEye(25,-30,10,0,90);
-        drawEye(25,-30,-10,0,90);
-      }
-      if(secondPosition[0]===position[0]+50){
-        drawEye(-25, -30, 10, 0, 90);
-        drawEye(-25, -30, -10, 0, 90);
-      }
-      if(secondPosition[2]===position[2]-50){
-        drawEye(10, -30, 25, 0, 0);
-        drawEye(-10, -30, 25, 0, 0);
-      }
-      if(secondPosition[2]===position[2]+50){
-        drawEye(10, -30, -25, 0, 0);
-        drawEye(-10, -30, -25, 0, 0);
-      }
-      if(secondPosition[1]===position[1]-50){
-        drawEye(10, 30, 25, 0, 0);
-        drawEye(-10, 30, 25, 0, 0);
-      }
-      if(secondPosition[1]===position[1]+50){
-        drawEye(10, -30, 25, 0, 0);
-        drawEye(-10, -30, 25, 0, 0);
-      }
-    }
-  }else if(skin==="Top Hat"){
-    box(50);
-    if(head){
-      fill(0);
-      if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
-        push();
-        translate(0,-25,0);
-        rotateX(1.4);
-        circle(0,0,40,40);
-        pop();
-        push();
-        translate(0,-35,0);
-        cylinder(10,20,30,30);
-        pop();
-        push();
-        translate(0,-27.5,0);
-        fill(255,0,0);
-        cylinder(12,5,30,30,false,false);
-        pop();
-      }else{
-        push();
-        translate(0,0,25);
-        circle(0,0,40,40);
-        pop();
-        push();
-        translate(0,0,35);
-        rotateX(1.4);
-        cylinder(10,20,30,30);
-        pop();
-        push();
-        translate(0,0,27.5);
-        rotateX(1.4);
-        fill(255,0,0);
-        cylinder(12,5,30,30,false,false);
-        pop();
-      }
-    }
-  }else if(skin==="Train"){
-    box(50);
-    if(head){
-      if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
-        push();
-        fill(200);
-        translate(0,-30,0);
-        cylinder(10,10,30,30);
-        pop();
-        push();
+    }else if(skin==="Top Hat"){
+      box(50);
+      if(head){
         fill(0);
-        translate(0,-37.5,0);
-        cylinder(12,5,30,30);
-        translate(0,-7.5,0);
-        let mySmoke = new Smoke(position[0],position[1],position[2],false);
-        theSmoke.push(mySmoke);
-        pop();
-      }else{
-        push();
-        fill(200);
-        translate(0,0,30);
-        rotateX(1.4);
-        cylinder(10,10,30,30);
-        pop();
-        push();
-        fill(0);
-        translate(0,0,37.5);
-        rotateX(1.4);
-        cylinder(12,5,30,30);
-        rotateX(-1.4);
-        translate(0,0,7.5)
-        let mySmoke = new Smoke(position[0],position[1],position[2],true);
-        theSmoke.push(mySmoke);
-        pop();
+        if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
+          push();
+          translate(0,-25,0);
+          rotateX(1.4);
+          circle(0,0,40,40);
+          pop();
+          push();
+          translate(0,-35,0);
+          cylinder(10,20,30,30);
+          pop();
+          push();
+          translate(0,-27.5,0);
+          fill(255,0,0);
+          cylinder(12,5,30,30,false,false);
+          pop();
+        }else{
+          push();
+          translate(0,0,25);
+          circle(0,0,40,40);
+          pop();
+          push();
+          translate(0,0,35);
+          rotateX(1.4);
+          cylinder(10,20,30,30);
+          pop();
+          push();
+          translate(0,0,27.5);
+          rotateX(1.4);
+          fill(255,0,0);
+          cylinder(12,5,30,30,false,false);
+          pop();
+        }
       }
+    }else if(skin==="Train"){
+      box(50);
+      if(head){
+        if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
+          push();
+          fill(200);
+          translate(0,-30,0);
+          cylinder(10,10,30,30);
+          pop();
+          push();
+          fill(0);
+          translate(0,-37.5,0);
+          cylinder(12,5,30,30);
+          translate(0,-7.5,0);
+          let mySmoke = new Smoke(position[0],position[1],position[2],false);
+          theSmoke.push(mySmoke);
+          pop();
+        }else{
+          push();
+          fill(200);
+          translate(0,0,30);
+          rotateX(1.4);
+          cylinder(10,10,30,30);
+          pop();
+          push();
+          fill(0);
+          translate(0,0,37.5);
+          rotateX(1.4);
+          cylinder(12,5,30,30);
+          rotateX(-1.4);
+          translate(0,0,7.5)
+          let mySmoke = new Smoke(position[0],position[1],position[2],true);
+          theSmoke.push(mySmoke);
+          pop();
+        }
+      }
+    }else{
+      //no skin
+      box(50);
     }
   }else{
-    //no skin
     box(50);
   }
 }
@@ -1928,6 +1944,35 @@ function playerHasDied(p){
       pop();
       setup();
     }
+  }
+}
+
+function labelPositions(){
+  orderOfPositions.push([50,0,0]);
+  let currentPosition = [50,0,0];
+  let directionX = 'right';
+  let directionY = 'down';
+  let directionZ = 'forward';
+  for(var y=0; y<20; y++){
+    for(var z=0; z<20; z++){
+      for(var x=1; x<20; x++){
+        currentPosition = [...currentPosition];
+        if(directionX==='right'){
+          currentPosition[0]+=50;
+        }else{
+          currentPosition[0]-=50;
+        }
+        orderOfPositions.push([...currentPosition]);
+      }
+      directionX='left';
+      if(directionZ==='forward'){
+        currentPosition[2]-=50;
+      }else{
+        currentPosition[2]+=50;
+      }
+    }
+    directionZ='back';
+    currentPosition[1]+=50;
   }
 }
 
