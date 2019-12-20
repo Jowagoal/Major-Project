@@ -473,7 +473,7 @@ function mainMenu(){
   }else if(mouseX>width/3*2-width/8&&mouseX<width/3*2+width/8&&mouseY>height/2+height*1/8-height/16+height/4&&mouseY<height/2+height*1/8+height/16+height/4&&mouseIsPressed){
     //when mouse clicks options button, sets state to play and calls setup again to open options screen
     gameMode="AI";
-    state="Play";
+    state="Menu";
     setup();
   }
 }
@@ -1397,6 +1397,11 @@ function gameStart(){
   food();
   if(gameMode==="AI"){
     calculateMove();
+
+    arr.push(push0);
+    arr.push(push1);
+    arr.push(push2);
+    arr.push(push3);
     moveSnake();
   }else{
     if(gameMode!=="Two Player"){
@@ -1948,32 +1953,68 @@ function playerHasDied(p){
 }
 
 function labelPositions(){
-  orderOfPositions.push([50,0,0]);
   let currentPosition = [50,0,0];
   let directionX = 'right';
   let directionY = 'down';
   let directionZ = 'forward';
   for(var y=0; y<20; y++){
     for(var z=0; z<20; z++){
-      for(var x=1; x<20; x++){
+      for(var x=0; x<19; x++){
         currentPosition = [...currentPosition];
-        if(directionX==='right'){
-          currentPosition[0]+=50;
-        }else{
-          currentPosition[0]-=50;
+        if(x!==0){
+          if(directionX==='right'){
+            currentPosition[0]+=50;
+          }else{
+            currentPosition[0]-=50;
+          }
+        }
+        if(currentPosition[2]===-1000){
+          currentPosition[2]=-950;
         }
         orderOfPositions.push([...currentPosition]);
       }
-      directionX='left';
+      if(directionX==='right'){
+        directionX='left';
+      }else{
+        directionX='right';
+      }
       if(directionZ==='forward'){
         currentPosition[2]-=50;
       }else{
         currentPosition[2]+=50;
       }
     }
-    directionZ='back';
+    if(directionZ==='forward'){
+      directionZ='back';
+    }else{
+      directionZ='forward';
+    }
     currentPosition[1]+=50;
   }
+  for(var i=380; i<399; i++){
+    orderOfPositions[i][1] = 50;
+  }
+}
+
+let positionPlaceCounter = 0;
+
+function calculateMove(){
+  if(positionPlaceCounter!==0){
+    if(orderOfPositions[positionPlaceCounter][0]-orderOfPositions[positionPlaceCounter-1][0]!==0){
+      push0 = orderOfPositions[positionPlaceCounter][0]-orderOfPositions[positionPlaceCounter-1][0];
+      push1 = 0;
+      push2 = 0
+    }else if(orderOfPositions[positionPlaceCounter][1]-orderOfPositions[positionPlaceCounter-1][1]!==0){
+      push0 = 0;
+      push1 = orderOfPositions[positionPlaceCounter][1]-orderOfPositions[positionPlaceCounter-1][1];
+      push2 = 0;
+    }else{
+      push0 = 0;
+      push1 = 0;
+      push2 = orderOfPositions[positionPlaceCounter][2]-orderOfPositions[positionPlaceCounter-1][2];
+    }
+  }
+  positionPlaceCounter++;
 }
 
 //when the user dies the death screen is shown
@@ -2608,112 +2649,114 @@ function leaderBoard(){
 }
 
 function keyPressed(){
-  for(var i=0; i<=222; i++){
-    if(keyIsDown(i)&&i===p1Controls.rKeyCode){
-      if(secondPosition[0]!==position[0]+50){
-        push0=50;
-        push1=0;
-        push2=0;
-        //updates current position
-        position[0]=position[0]+50;
+  if(gameMode!=="AI"){
+    for(var i=0; i<=222; i++){
+      if(keyIsDown(i)&&i===p1Controls.rKeyCode){
+        if(secondPosition[0]!==position[0]+50){
+          push0=50;
+          push1=0;
+          push2=0;
+          //updates current position
+          position[0]=position[0]+50;
+        }
+      }else if(keyIsDown(i)&&i===p1Controls.lKeyCode){
+        if(secondPosition[0]!==position[0]-50){
+          push0=-50;
+          push1=0;
+          push2=0;
+          //updates current position
+          position[0]=position[0]-50;
+        }
+      }else if(keyIsDown(i)&&i===p1Controls.fKeyCode){
+        if(secondPosition[2]!==position[2]-50){
+          push0=0;
+          push1=0;
+          push2=-50;
+          //updates current position
+          position[2]=position[2]-50;
+        }
+      }else if(keyIsDown(i)&&i===p1Controls.bKeyCode){
+        if(secondPosition[2]!==position[2]+50){
+          push0=0;
+          push1=0;
+          push2=50;
+          //updates current position
+          position[2]=position[2]+50;
+        }
+      }else if(keyIsDown(i)&&i===p1Controls.uKeyCode){
+        if(secondPosition[1]!==position[1]-50){
+          push0=0;
+          push1=-50;
+          push2=0;
+          //updates current position
+          position[1]=position[1]-50;
+        }
+      }else if(keyIsDown(i)&&i===p1Controls.dKeyCode){
+        if(secondPosition[1]!==position[1]+50){
+          push0=0;
+          push1=50;
+          push2=0;
+          //updates current position
+          position[1]=position[1]+50;
+        }
       }
-    }else if(keyIsDown(i)&&i===p1Controls.lKeyCode){
-      if(secondPosition[0]!==position[0]-50){
-        push0=-50;
-        push1=0;
-        push2=0;
-        //updates current position
-        position[0]=position[0]-50;
-      }
-    }else if(keyIsDown(i)&&i===p1Controls.fKeyCode){
-      if(secondPosition[2]!==position[2]-50){
-        push0=0;
-        push1=0;
-        push2=-50;
-        //updates current position
-        position[2]=position[2]-50;
-      }
-    }else if(keyIsDown(i)&&i===p1Controls.bKeyCode){
-      if(secondPosition[2]!==position[2]+50){
-        push0=0;
-        push1=0;
-        push2=50;
-        //updates current position
-        position[2]=position[2]+50;
-      }
-    }else if(keyIsDown(i)&&i===p1Controls.uKeyCode){
-      if(secondPosition[1]!==position[1]-50){
-        push0=0;
-        push1=-50;
-        push2=0;
-        //updates current position
-        position[1]=position[1]-50;
-      }
-    }else if(keyIsDown(i)&&i===p1Controls.dKeyCode){
-      if(secondPosition[1]!==position[1]+50){
-        push0=0;
-        push1=50;
-        push2=0;
-        //updates current position
-        position[1]=position[1]+50;
+      if(gameMode==="Two Player"){
+        if(keyIsDown(i)&&i===p2Controls.rKeyCode){
+          if(secondPositionP2[0]!==positionP2[0]+50){
+            push0P2=50;
+            push1P2=0;
+            push2P2=0;
+            //updates current position
+            positionP2[0]=positionP2[0]+50;
+          }
+        }else if(keyIsDown(i)&&i===p2Controls.lKeyCode){
+          if(secondPositionP2[0]!==positionP2[0]-50){
+            push0P2=-50;
+            push1P2=0;
+            push2P2=0;
+            //updates current position
+            positionP2[0]=positionP2[0]-50;
+          }
+        }else if(keyIsDown(i)&&i===p2Controls.fKeyCode){
+          if(secondPositionP2[2]!==positionP2[2]-50){
+            push0P2=0;
+            push1P2=0;
+            push2P2=-50;
+            //updates current position
+            positionP2[2]=positionP2[2]-50;
+          }
+        }else if(keyIsDown(i)&&i===p2Controls.bKeyCode){
+          if(secondPositionP2[2]!==positionP2[2]+50){
+            push0P2=0;
+            push1P2=0;
+            push2P2=50;
+            //updates current position
+            positionP2[2]=positionP2[2]+50;
+          }
+        }else if(keyIsDown(i)&&i===p2Controls.uKeyCode){
+          if(secondPositionP2[1]!==positionP2[1]-50){
+            push0P2=0;
+            push1P2=-50;
+            push2P2=0;
+            //updates current position
+            positionP2[1]=positionP2[1]-50;
+          }
+        }else if(keyIsDown(i)&&i===p2Controls.dKeyCode){
+          if(secondPositionP2[1]!==positionP2[1]+50){
+            push0P2=0;
+            push1P2=50;
+            push2P2=0;
+            //updates current position
+            positionP2[1]=positionP2[1]+50;
+          }
+        }
       }
     }
-    if(gameMode==="Two Player"){
-      if(keyIsDown(i)&&i===p2Controls.rKeyCode){
-        if(secondPositionP2[0]!==positionP2[0]+50){
-          push0P2=50;
-          push1P2=0;
-          push2P2=0;
-          //updates current position
-          positionP2[0]=positionP2[0]+50;
-        }
-      }else if(keyIsDown(i)&&i===p2Controls.lKeyCode){
-        if(secondPositionP2[0]!==positionP2[0]-50){
-          push0P2=-50;
-          push1P2=0;
-          push2P2=0;
-          //updates current position
-          positionP2[0]=positionP2[0]-50;
-        }
-      }else if(keyIsDown(i)&&i===p2Controls.fKeyCode){
-        if(secondPositionP2[2]!==positionP2[2]-50){
-          push0P2=0;
-          push1P2=0;
-          push2P2=-50;
-          //updates current position
-          positionP2[2]=positionP2[2]-50;
-        }
-      }else if(keyIsDown(i)&&i===p2Controls.bKeyCode){
-        if(secondPositionP2[2]!==positionP2[2]+50){
-          push0P2=0;
-          push1P2=0;
-          push2P2=50;
-          //updates current position
-          positionP2[2]=positionP2[2]+50;
-        }
-      }else if(keyIsDown(i)&&i===p2Controls.uKeyCode){
-        if(secondPositionP2[1]!==positionP2[1]-50){
-          push0P2=0;
-          push1P2=-50;
-          push2P2=0;
-          //updates current position
-          positionP2[1]=positionP2[1]-50;
-        }
-      }else if(keyIsDown(i)&&i===p2Controls.dKeyCode){
-        if(secondPositionP2[1]!==positionP2[1]+50){
-          push0P2=0;
-          push1P2=50;
-          push2P2=0;
-          //updates current position
-          positionP2[1]=positionP2[1]+50;
-        }
+    
+    if(gameMode==="Single Player"){
+      if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
+        money+=1000;
       }
-    }
-  }
-  
-  if(gameMode==="Single Player"){
-    if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
-      money+=1000;
     }
   }
 }
