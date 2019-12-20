@@ -146,6 +146,7 @@ let train;
 
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
+let framesSinceFood = 0;
 
 function preload(){
   //preloads text font
@@ -1400,13 +1401,15 @@ function gameStart(){
   //food function makes the food
   food();
   if(gameMode==="AI"){
-    calculateMove();
+   arr.push(push0);
+   arr.push(push1);
+   arr.push(push2);
+   arr.push(push3);
+   moveSnake();
 
-    arr.push(push0);
-    arr.push(push1);
-    arr.push(push2);
-    arr.push(push3);
-    moveSnake();
+   let arrayOfNeighborPositions = neighboringPositions();
+   calculateMove(arrayOfNeighborPositions);
+
   }else{
     if(gameMode!=="Two Player"){
       //arr is the memory of the moves
@@ -1432,10 +1435,12 @@ function gameStart(){
       moveSnakeP2();
       if(gameType==="Points"){
         timer();
-        firstIteration=false;
       }
     }
   }
+  firstIteration=false;
+  console.log(framesSinceFood);
+  framesSinceFood++;
 }
 
 function timer(){
@@ -1840,6 +1845,7 @@ function food(){
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLength++;
     points++;
+    framesSinceFood = 0;
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(0,19))*50;
@@ -1847,6 +1853,7 @@ function food(){
     foodPosition[2]=ceil(random(-19,0))*50;
     snakeLength++;
     points++;
+    framesSinceFood = 0;
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
@@ -1855,6 +1862,7 @@ function food(){
       foodPosition[2]=ceil(random(-19,0))*50;
       snakeLength++;
       points++;
+      framesSinceFood = 0;
     }
   }
 
@@ -2027,33 +2035,379 @@ function labelPositions(){
     }
     currentPosition[1]-=50;
   }
+
+  orderOfPositions.splice(760,0,[50,100,0]);
+  if(orderOfPositions.length>8001){
+    orderOfPositions.splice(8002, 8001);
+  }
 }
 
-function calculateMove(){
-  if(positionPlaceCounter===8000){
+function calculateMove(moveArr){
+  let choice;
+  let moveMade = false;
+  if(positionPlaceCounter===8001){
     push0 = 50;
     push1 = 0;
     push2 = 0;
     positionPlaceCounter=0;
   }
-  if(positionPlaceCounter===7599){
-  }
-  if(positionPlaceCounter!==0){
-    if(orderOfPositions[positionPlaceCounter][0]-orderOfPositions[positionPlaceCounter-1][0]!==0){
-      push0 = orderOfPositions[positionPlaceCounter][0]-orderOfPositions[positionPlaceCounter-1][0];
+  if(framesSinceFood>250){
+    if(orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0]!==0){
+      push0 = orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0];
       push1 = 0;
       push2 = 0;
-    }else if(orderOfPositions[positionPlaceCounter][1]-orderOfPositions[positionPlaceCounter-1][1]!==0){
+    }else if(orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1]!==0){
       push0 = 0;
-      push1 = orderOfPositions[positionPlaceCounter][1]-orderOfPositions[positionPlaceCounter-1][1];
+      push1 = orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1];
       push2 = 0;
     }else{
       push0 = 0;
       push1 = 0;
-      push2 = orderOfPositions[positionPlaceCounter][2]-orderOfPositions[positionPlaceCounter-1][2];
+      push2 = orderOfPositions[positionPlaceCounter+1][2]-orderOfPositions[positionPlaceCounter][2];
+    }
+    framesSinceFood = 0;
+    positionPlaceCounter++;
+    moveMade = true;
+  }else{
+    choice = pathOpen(moveArr);
+  }
+  if(orderOfPositions[choice]!==undefined&&orderOfPositions[positionPlaceCounter]!==undefined){
+    if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
+      push0 = orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0];
+      push1 = 0;
+      push2 = 0;
+      positionPlaceCounter = choice;
+      moveMade = true;
+    }else if(orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1]!==0){
+      push0 = 0;
+      push1 = orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1];
+      push2 = 0;
+      positionPlaceCounter = choice;
+      moveMade = true;
+    }else if(orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2]!==0){
+      push0 = 0;
+      push1 = 0;
+      push2 = orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2];
+      positionPlaceCounter = choice;
+      moveMade = true;
     }
   }
-  positionPlaceCounter++;
+  if(moveMade===false){
+    if(orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0]!==0){
+      push0 = orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0];
+      push1 = 0;
+      push2 = 0;
+    }else if(orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1]!==0){
+      push0 = 0;
+      push1 = orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1];
+      push2 = 0;
+    }else{
+      push0 = 0;
+      push1 = 0;
+      push2 = orderOfPositions[positionPlaceCounter+1][2]-orderOfPositions[positionPlaceCounter][2];
+    }
+    positionPlaceCounter++;
+    moveMade = true;
+  }
+}
+
+function pathOpen(array){
+  let pathNotFound = true;
+  let pathTest = array.length-1;
+  let pathIsBad = false;
+  while(pathNotFound){
+    if(pathTest===0){
+      return array[0];
+    }
+    pathIsBad = false;
+    if(array[pathTest]<positionPlaceCounter){
+      for(var i=0; i<=bodyPosition.length; i+=3){
+        for(var j=positionPlaceCounter+1; j<8000; j++){
+          if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
+            pathIsBad = true;
+          }
+        }
+      }
+      if(!pathIsBad){
+        for(var i=0; i<=bodyPosition.length; i+=3){
+          for(var j=0; j<array[pathTest]; j++){
+            if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
+              pathIsBad = true;
+            }
+          }
+        }
+      }
+      if(!pathIsBad){
+        let missFood = willIMissFood("Double", array, pathTest);
+        if(!missFood){
+          return array[pathTest];
+        }else{
+          pathTest--
+        }
+      }else{
+        pathTest--;
+      }
+    }else{
+      for(var i=0; i<=bodyPosition.length; i+=3){
+        for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
+          if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
+            pathIsBad = true;
+          }
+        }
+      }
+      if(!pathIsBad){
+        let missFood = willIMissFood("Single", array, pathTest);
+        if(!missFood){
+          return array[pathTest];
+        }else{
+          pathTest--
+        }
+      }else{
+        pathTest--;
+      }
+    }
+  }
+}
+
+function willIMissFood(x, array, pathTest){
+  if(x==="Double"){
+    for(var j=positionPlaceCounter+1; j<8000; j++){
+      if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+        return true;
+      }
+    }
+    for(var j=0; j<array[pathTest]; j++){
+      if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+        return true;
+      }
+    }
+    return false;
+  }else{
+    for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
+      if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+function neighboringPositions(){
+  let openR = right();
+  let openL = left();
+  let openF = forward();
+  let openB = back();
+  let openU = up();
+  let openD = down();
+
+  let positionR = rightPosition(openR);
+  let positionL = leftPosition(openL); 
+  let positionF = forwardPosition(openF); 
+  let positionB = backPosition(openB); 
+  let positionU = upPosition(openU); 
+  let positionD = downPosition(openD); 
+
+  let neighborPositionsGreaterThan = [];
+  let neighborPositionsLessThan = [];
+
+  if(openR){
+    if(positionR<positionPlaceCounter){
+      neighborPositionsLessThan.push(positionR);
+    }else{
+      neighborPositionsGreaterThan.push(positionR);
+    }
+  }
+
+  if(openL){
+    if(positionL<positionPlaceCounter){
+      neighborPositionsLessThan.push(positionL);
+    }else{
+      neighborPositionsGreaterThan.push(positionL);
+    }
+  }
+
+  if(openF){
+    if(positionF<positionPlaceCounter){
+      neighborPositionsLessThan.push(positionF);
+    }else{
+      neighborPositionsGreaterThan.push(positionF);
+    }
+  }
+
+  if(openB){
+    if(positionB<positionPlaceCounter){
+      neighborPositionsLessThan.push(positionB);
+    }else{
+      neighborPositionsGreaterThan.push(positionB);
+    }
+  }
+
+  if(openU){
+    if(positionU<positionPlaceCounter){
+      neighborPositionsLessThan.push(positionU);
+    }else{
+      neighborPositionsGreaterThan.push(positionU);
+    }
+  }
+
+  if(openD){
+    if(positionD<positionPlaceCounter){
+      neighborPositionsLessThan.push(positionD);
+    }else{
+      neighborPositionsGreaterThan.push(positionD);
+    }
+  }
+
+  let greaterArr = bubbleSort(neighborPositionsGreaterThan);
+  let lessArr = bubbleSort(neighborPositionsLessThan);
+
+  for(var i=0; i<lessArr.length; i++){
+    greaterArr.push(lessArr[i]);
+  }
+
+  return greaterArr;
+}
+
+function right(){
+  for(var i=0; i<=bodyPosition.length; i+=3){
+    if(position[0]+50===1000||(position[0]+50===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+      return false;
+    }
+  }
+  return true;
+}
+
+function left(){
+  for(var i=0; i<=bodyPosition.length; i+=3){
+    if(position[0]-50===-50||(position[0]-50===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+      return false;
+    }
+  }
+  return true;
+}
+
+function forward(){
+  for(var i=0; i<=bodyPosition.length; i+=3){
+    if(position[2]-50===-1000||(position[0]===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]-50===bodyPosition[i+2])){
+      return false;
+    }
+  }
+  return true;
+}
+
+function back(){
+  for(var i=0; i<=bodyPosition.length; i+=3){
+    if(position[2]+50===50||(position[0]===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]+50===bodyPosition[i+2])){
+      return false;
+    }
+  }
+  return true;
+}
+
+function up(){
+  for(var i=0; i<=bodyPosition.length; i+=3){
+    if(position[1]-50===-50||(position[0]===bodyPosition[i+0]&&position[1]-50===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+      return false;
+    }
+  }
+  return true;
+}
+
+function down(){
+  for(var i=0; i<=bodyPosition.length; i+=3){
+    if(position[1]+50===1000||(position[0]===bodyPosition[i+0]&&position[1]+50===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+      return false;
+    }
+  }
+  return true;
+}
+
+function rightPosition(x){
+  if(x){
+    for(var i=0; i<orderOfPositions.length; i++){
+      if(position[0]+50===orderOfPositions[i][0]&&position[1]===orderOfPositions[i][1]&&position[2]===orderOfPositions[i][2]){
+        return i;
+      }
+    }
+  }else{
+    return false;
+  }
+}
+
+function leftPosition(x){
+  if(x){
+    for(var i=0; i<orderOfPositions.length; i++){
+      if(position[0]-50===orderOfPositions[i][0]&&position[1]===orderOfPositions[i][1]&&position[2]===orderOfPositions[i][2]){
+        return i;
+      }
+    }
+  }else{
+    return false;
+  }
+}
+
+function forwardPosition(x){
+  if(x){
+    for(var i=0; i<orderOfPositions.length; i++){
+      if(position[0]===orderOfPositions[i][0]&&position[1]===orderOfPositions[i][1]&&position[2]-50===orderOfPositions[i][2]){
+        return i;
+      }
+    }
+  }else{
+    return false;
+  }
+}
+
+function backPosition(x){
+  if(x){
+    for(var i=0; i<orderOfPositions.length; i++){
+      if(position[0]===orderOfPositions[i][0]&&position[1]===orderOfPositions[i][1]&&position[2]+50===orderOfPositions[i][2]){
+        return i;
+      }
+    }
+  }else{
+    return false;
+  }
+}
+
+function upPosition(x){
+  if(x){
+    for(var i=0; i<orderOfPositions.length; i++){
+      if(position[0]===orderOfPositions[i][0]&&position[1]-50===orderOfPositions[i][1]&&position[2]===orderOfPositions[i][2]){
+        return i;
+      }
+    }
+  }else{
+    return false;
+  }
+}
+
+function downPosition(x){
+  if(x){
+    for(var i=0; i<orderOfPositions.length; i++){
+      if(position[0]===orderOfPositions[i][0]&&position[1]+50===orderOfPositions[i][1]&&position[2]===orderOfPositions[i][2]){
+        return i;
+      }
+    }
+  }else{
+    return false;
+  }
+}
+
+function bubbleSort(thisArray){
+  let again = true;
+  while(again){
+    again = false;
+    for(var i=0; i<thisArray.length-1; i++){
+      if(thisArray[i]>thisArray[i+1]){
+        let hold = thisArray [i];
+        thisArray[i]=thisArray[i+1];
+        thisArray[i+1]=hold;
+        again = true;
+      }
+    }
+  }
+  return thisArray;
 }
 
 //when the user dies the death screen is shown
@@ -2065,30 +2419,33 @@ function deathScreen(){
   //screen is displaced, translation fixes it
   translate(-1/2*width,-1/2*height);
   
-  //says 'You Died!' at top of screen
-  fill(255,0,0);
-  textSize(50);
   if(gameMode!=="Two Player"){
-    text("You Died!", width/2, height/8);
-    
+    //says 'You Died!' at top of screen
+    fill(255,0,0);
+    textSize(50);
+    if(gameMode==="Single Player"){
+      text("You Died!", width/2, height/8);
+    }else{
+      text("AI Died!", width/2, height/8);
+    }
+
     //displays the users score
     fill(0);
     textSize(25);
     text("Score: " + snakeLength, width/2, height*5/16);
-    
-
+  }
+  
+  if(gameMode==="Single Player"){
     //leaderboard
-    if(gameMode!=="Two Player"){
-      if(mouseX>width*15/16-25&&mouseX<width*15/16+25&&mouseY>height*1/8-25/2&&mouseY<height*1/8+25/2){
-        leaderBoardIcon(true);
-        if(mouseIsPressed){
-          //when mouse clicks store icon, sets state to store and calls setup again to open store screen
-          state="LeaderBoard";
-          setup();
-        }
-      }else{
-        leaderBoardIcon(false);
+    if(mouseX>width*15/16-25&&mouseX<width*15/16+25&&mouseY>height*1/8-25/2&&mouseY<height*1/8+25/2){
+      leaderBoardIcon(true);
+      if(mouseIsPressed){
+        //when mouse clicks store icon, sets state to store and calls setup again to open store screen
+        state="LeaderBoard";
+        setup();
       }
+    }else{
+      leaderBoardIcon(false);
     }
 
     if(firstIterationDeath){
@@ -2377,7 +2734,7 @@ function deathScreen(){
 
     //displays money gained for the round
     text("Money Gained: " + moneyGained, width/2, height*7/16);
-  }else{
+  }else if(gameMode==="Two Player"){
     if(gameType==="Survival"){
       text("Player " + playerDeath + " Died!", width/2, height/8);
     }else{
