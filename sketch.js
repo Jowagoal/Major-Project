@@ -145,6 +145,7 @@ let topHat;
 let train;
 
 let orderOfPositions = [];
+let positionPlaceCounter = 0;
 
 function preload(){
   //preloads text font
@@ -627,6 +628,9 @@ function resetAllValues(){
   gameType;
 
   theSmoke = [];
+
+  orderOfPositions = [];
+  positionPlaceCounter = 0;
 }
 
 function selectGameType(){
@@ -1505,7 +1509,7 @@ function moveSnake(){
       playerHasDied(1);
     }
   }
-  if(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2]){
+  if(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2]&&gameMode==="Two Player"){
     playerHasDied(1);
     playerHasDied(2); 
   }
@@ -1991,19 +1995,54 @@ function labelPositions(){
     }
     currentPosition[1]+=50;
   }
+
   for(var i=380; i<399; i++){
     orderOfPositions[i][1] = 50;
   }
+
+  
+  currentPosition = [...currentPosition];
+  currentPosition[0]-=50;
+  currentPosition[1]-=50;
+  orderOfPositions.push([...currentPosition]);
+  orderOfPositions.pop();
+  currentPosition[2]-=50;
+
+  for(var j=0; j<20; j++){
+    for(var k=0; k<20; k++){
+      currentPosition = [...currentPosition];
+      if(k!==0){
+        if(directionZ==="forward"){
+          currentPosition[2]-=50;
+        }else{
+          currentPosition[2]+=50;
+        }
+      }
+      orderOfPositions.push([...currentPosition]);
+    }
+    if(directionZ==='forward'){
+      directionZ='back';
+    }else{
+      directionZ='forward';
+    }
+    currentPosition[1]-=50;
+  }
 }
 
-let positionPlaceCounter = 0;
-
 function calculateMove(){
+  if(positionPlaceCounter===8000){
+    push0 = 50;
+    push1 = 0;
+    push2 = 0;
+    positionPlaceCounter=0;
+  }
+  if(positionPlaceCounter===7599){
+  }
   if(positionPlaceCounter!==0){
     if(orderOfPositions[positionPlaceCounter][0]-orderOfPositions[positionPlaceCounter-1][0]!==0){
       push0 = orderOfPositions[positionPlaceCounter][0]-orderOfPositions[positionPlaceCounter-1][0];
       push1 = 0;
-      push2 = 0
+      push2 = 0;
     }else if(orderOfPositions[positionPlaceCounter][1]-orderOfPositions[positionPlaceCounter-1][1]!==0){
       push0 = 0;
       push1 = orderOfPositions[positionPlaceCounter][1]-orderOfPositions[positionPlaceCounter-1][1];
