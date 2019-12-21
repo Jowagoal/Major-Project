@@ -2052,24 +2052,12 @@ function calculateMove(moveArr){
     positionPlaceCounter=0;
   }
   if(framesSinceFood>250){
-    if(orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0]!==0){
-      push0 = orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0];
-      push1 = 0;
-      push2 = 0;
-    }else if(orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1]!==0){
-      push0 = 0;
-      push1 = orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1];
-      push2 = 0;
-    }else{
-      push0 = 0;
-      push1 = 0;
-      push2 = orderOfPositions[positionPlaceCounter+1][2]-orderOfPositions[positionPlaceCounter][2];
-    }
+    choice = pathOpen(moveArr, "Next Best");
     framesSinceFood = 0;
     positionPlaceCounter++;
     moveMade = true;
   }else{
-    choice = pathOpen(moveArr);
+    choice = pathOpen(moveArr, "Best");
   }
   if(orderOfPositions[choice]!==undefined&&orderOfPositions[positionPlaceCounter]!==undefined){
     if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
@@ -2111,7 +2099,11 @@ function calculateMove(moveArr){
   }
 }
 
-function pathOpen(array){
+function pathOpen(array, option){
+  let counter;
+  if(option==="Next Best"){
+    counter = 0;
+  }
   let pathNotFound = true;
   let pathTest = array.length-1;
   let pathIsBad = false;
@@ -2139,10 +2131,19 @@ function pathOpen(array){
       }
       if(!pathIsBad){
         let missFood = willIMissFood("Double", array, pathTest);
-        if(!missFood){
-          return array[pathTest];
+        if(option==="Next Best"){
+          if(!missFood&&counter<1&&pathTest!==array.length-1){
+            return array[pathTest];
+          }else{
+            pathTest--;
+            counter--;
+          }
         }else{
-          pathTest--
+          if(!missFood){
+            return array[pathTest];
+          }else{
+            pathTest--;
+          }
         }
       }else{
         pathTest--;
@@ -2157,10 +2158,19 @@ function pathOpen(array){
       }
       if(!pathIsBad){
         let missFood = willIMissFood("Single", array, pathTest);
-        if(!missFood){
-          return array[pathTest];
+        if(option==="Next Best"){
+          if(!missFood&&counter<1&&pathTest!==array.length-1){
+            return array[pathTest];
+          }else{
+            pathTest--;
+            counter--;
+          }
         }else{
-          pathTest--
+          if(!missFood){
+            return array[pathTest];
+          }else{
+            pathTest--;
+          }
         }
       }else{
         pathTest--;
