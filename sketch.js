@@ -1439,7 +1439,6 @@ function gameStart(){
     }
   }
   firstIteration=false;
-  console.log(framesSinceFood);
   framesSinceFood++;
 }
 
@@ -2045,19 +2044,49 @@ function labelPositions(){
 function calculateMove(moveArr){
   let choice;
   let moveMade = false;
+  let loopFixAttempt = false;
   if(positionPlaceCounter===8001){
     push0 = 50;
     push1 = 0;
     push2 = 0;
     positionPlaceCounter=0;
   }
-  if(framesSinceFood>250){
-    choice = pathOpen(moveArr, "Next Best");
-    framesSinceFood = 0;
-    positionPlaceCounter++;
-    moveMade = true;
+  if(snakeLength>200){
+    if(framesSinceFood>snakelength*2&&!loopFixAttempt){
+      let openF = forward();
+      let openR = right();
+      if(openF){
+        choice = forwardPosition(openF);
+        loopFixAttempt = true;
+      }else if(openR){
+        choice = rightPosition(openR);
+        loopFixAttempt = true;
+      }
+      framesSinceFood = 0;
+      positionPlaceCounter = choice;
+      moveMade = true;
+    }else{
+      choice = pathOpen(moveArr, "Best");
+      loopFixAttempt = false;
+    }
   }else{
-    choice = pathOpen(moveArr, "Best");
+    if(framesSinceFood>250&&!loopFixAttempt){
+      let openF = forward();
+      let openR = right();
+      if(openF){
+        choice = forwardPosition(openF);
+        loopFixAttempt = true;
+      }else if(openR){
+        choice = rightPosition(openR);
+        loopFixAttempt = true;
+      }
+      framesSinceFood = 0;
+      positionPlaceCounter = choice;
+      moveMade = true;
+    }else{
+      choice = pathOpen(moveArr, "Best");
+      loopFixAttempt = false;
+    }
   }
   if(orderOfPositions[choice]!==undefined&&orderOfPositions[positionPlaceCounter]!==undefined){
     if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
@@ -3185,6 +3214,7 @@ let topViewWord = new p5(( sketch ) => {
       sketch.textAlign(BOTTOM, CENTER);
       sketch.textSize(20);
       sketch.text("Top View",0,0);
+      sketch.text(framesSinceFood,-25,0);
   };
 });
 
