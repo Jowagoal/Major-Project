@@ -2043,7 +2043,7 @@ function calculateMove(moveArr){
     positionPlaceCounter=0;
   }
   if(snakeLength>200){
-    if(framesSinceFood>snakeLength*2||loopFixAttempt){
+    if(framesSinceFood>snakeLength*1.36||loopFixAttempt){
       loopFixAttempt = true;
       if(foodPosition[2]===0){
         let openU = up();
@@ -3244,7 +3244,11 @@ function keyPressed(){
     }
   }else{
     if(keyIsDown(106)){
-      framesSinceFood = 250;
+      if(snakeLength>200){
+        framesSinceFood = snakeLength*1.36;
+      }else{
+        framesSinceFood = 250;
+      }
     }
   }
 }
