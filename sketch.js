@@ -147,6 +147,7 @@ let train;
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
 let framesSinceFood = 0;
+let loopFixAttempt = false;
 
 function preload(){
   //preloads text font
@@ -632,6 +633,7 @@ function resetAllValues(){
 
   orderOfPositions = [];
   positionPlaceCounter = 0;
+  loopFixAttempt = false;
 }
 
 function selectGameType(){
@@ -1401,23 +1403,53 @@ function gameStart(){
   //food function makes the food
   food();
   if(gameMode==="AI"){
-   arr.push(push0);
-   arr.push(push1);
-   arr.push(push2);
-   arr.push(push3);
-   moveSnake();
-
-   let arrayOfNeighborPositions = neighboringPositions();
-   calculateMove(arrayOfNeighborPositions);
+    //memory system has been entirely restructured, 
+    //the old array filled up too fast
+    if(firstIteration){
+      position[0]+=push0;
+      position[1]+=push1;
+      position[2]+=push2;
+    }else{
+      bodyPosition.push(position[0]);
+      bodyPosition.push(position[1]);
+      bodyPosition.push(position[2]);
+      secondPosition[0]=position[0];
+      secondPosition[1]=position[1];
+      secondPosition[2]=position[2];
+      if(bodyPosition.length>(snakeLength-1)*3){
+        bodyPosition.splice(0,3);
+      }
+      position[0]+=push0;
+      position[1]+=push1;
+      position[2]+=push2;
+    }
+    moveSnake();
+    
+    let arrayOfNeighborPositions = neighboringPositions();
+    calculateMove(arrayOfNeighborPositions);
 
   }else{
     if(gameMode!=="Two Player"){
-      //arr is the memory of the moves
-      //push0 through push3 tells the array which of 6 directions to move
-      arr.push(push0);
-      arr.push(push1);
-      arr.push(push2);
-      arr.push(push3);
+      //memory system has been entirely restructured, 
+      //the old array filled up too fast
+      if(firstIteration){
+        position[0]+=push0;
+        position[1]+=push1;
+        position[2]+=push2;
+      }else{
+        bodyPosition.push(position[0]);
+        bodyPosition.push(position[1]);
+        bodyPosition.push(position[2]);
+        secondPosition[0]=position[0];
+        secondPosition[1]=position[1];
+        secondPosition[2]=position[2];
+        if(bodyPosition.length>(snakeLength-1)*3){
+          bodyPosition.splice(0,3);
+        }
+        position[0]+=push0;
+        position[1]+=push1;
+        position[2]+=push2;
+      }
       //moves the snake
       moveSnake();
     }else{
@@ -1454,61 +1486,23 @@ function timer(){
 }
     
 function moveSnake(){
-   //resets the current position to 0
-  position[0]=0;
-  position[1]=0;
-  position[2]=0;
-  //resets second position to 0
-  secondPosition[0]=0;
-  secondPosition[1]=0;
-  secondPosition[2]=0;
-  //for loop reads every 4 elements (bit) of the array
-  for(var i=0; i<=arr.length; i+=4){
-    //translates by the first 3 elements of a bit (x,y,z) 
-    translate(arr[i],arr[i+1],arr[i+2]);
-    //updates position and secondPosition
-    if(arr[i+0]===50||arr[i+0]===-50||arr[i+1]===50||arr[i+1]===-50||arr[i+2]===50||arr[i+2]===-50){
-      position[0]=position[0]+arr[i+0];
-      position[1]=position[1]+arr[i+1];
-      position[2]=position[2]+arr[i+2];
-      secondPosition[0]=secondPosition[0]+arr[i-4];
-      secondPosition[1]=secondPosition[1]+arr[i-3];
-      secondPosition[2]=secondPosition[2]+arr[i-2];
-    }
-    //if the position is outside the border, state changes to game over and calls setup
-    if(position[0]<0||position[0]>950||position[1]<0||position[1]>950||position[2]>0||position[2]<-950){
-      playerHasDied(1);
-    }
-    //if the fourth element of a bit is equal to 1, calls the placeBox function
-    if(arr[i+3]===1){
-      if(i+3!==arr.length-1){
-        placeBox();
-      }else{
-        placeBox(true);
-      }
-    }
-    //checks a snakeLength bit back if the third element is equal to 1
-    //if so, changes it to 0
-    //this keeps the length of the snake equal to snakelength
-    if(arr[i-4*snakeLength+3]===1){
-      arr[i-4*snakeLength+3]=0;
-    }
+  push();
+  translate(position[0], position[1], position[2]);
+  placeBox(position[0],position[1],position[2],true);
+  pop();
+  for(var i=bodyPosition.length-3; i>=0; i-=3){
+    push();
+    translate(bodyPosition[i+0], bodyPosition[i+1], bodyPosition[i+2]);
+    placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
+    pop();
   }
-  
-  //pushes the secondPosition into the bodyPosition
-  bodyPosition.push(secondPosition[0]);
-  bodyPosition.push(secondPosition[1]);
-  bodyPosition.push(secondPosition[2]);
-
-  //if bodyPosition is greater than the snake length
-  //the first three elements are deleted since they are no longer a part of the body
-  if(bodyPosition.length>snakeLength*3){
-    bodyPosition.splice(0,3);
+  //if the position is outside the border, state changes to game over and calls setup
+  if(position[0]<0||position[0]>950||position[1]<0||position[1]>950||position[2]>0||position[2]<-950){
+    playerHasDied(1);
   }
-
   //checks if the position is equal to any of the body positions
   //if so, state changes to game over and calls setup
-  for(var j=0; j<=bodyPosition.length; j+=3){
+  for(var j=0; j<bodyPosition.length; j+=3){
     if((position[0]===bodyPosition[j]&&position[1]===bodyPosition[j+1]&&position[2]===bodyPosition[j+2])||(position[0]+push[0]===bodyPositionP2[j]&&position[1]+push[1]===bodyPositionP2[j+1]&&position[2]+push[2]===bodyPositionP2[j+2])&&p1Died===false){
       playerHasDied(1);
     }
@@ -1520,10 +1514,10 @@ function moveSnake(){
 }
 
 //function shows the snake on screen
-function placeBox(head){
-  let x = position[0];
-  let y = position[1];
-  let z = position[2];
+function placeBox(x1,y1,z1,head){
+  let x = x1;
+  let y = y1;
+  let z = z1;
   //if the position is 1 box away from the border, place a box with the color red
   if(x<=0||x>=950||y<=0||y>=950||z<=-950||z>=0){
     fill(255,0,0,50);
@@ -1555,14 +1549,12 @@ function moveSnakeP2(){
     //translates by the first 3 elements of a bit (x,y,z) 
     translate(arrP2[i],arrP2[i+1],arrP2[i+2]);
     //updates position and secondPosition
-    if(arrP2[i+0]===50||arrP2[i+0]===-50||arrP2[i+1]===50||arrP2[i+1]===-50||arrP2[i+2]===50||arrP2[i+2]===-50){
-      positionP2[0]=positionP2[0]+arrP2[i+0];
-      positionP2[1]=positionP2[1]+arrP2[i+1];
-      positionP2[2]=positionP2[2]+arrP2[i+2];
-      secondPositionP2[0]=secondPositionP2[0]+arrP2[i-4];
-      secondPositionP2[1]=secondPositionP2[1]+arrP2[i-3];
-      secondPositionP2[2]=secondPositionP2[2]+arrP2[i-2];
-    }
+    positionP2[0]=positionP2[0]+arrP2[i+0];
+    positionP2[1]=positionP2[1]+arrP2[i+1];
+    positionP2[2]=positionP2[2]+arrP2[i+2];
+    secondPositionP2[0]=secondPositionP2[0]+arrP2[i-4];
+    secondPositionP2[1]=secondPositionP2[1]+arrP2[i-3];
+    secondPositionP2[2]=secondPositionP2[2]+arrP2[i-2];
     //if the position is outside the border, state changes to game over and calls setup
     if(positionP2[0]<0||positionP2[0]>950||positionP2[1]<0||positionP2[1]>950||positionP2[2]>0||positionP2[2]<-950){
       playerHasDied(2);
@@ -2044,7 +2036,6 @@ function labelPositions(){
 function calculateMove(moveArr){
   let choice;
   let moveMade = false;
-  let loopFixAttempt = false;
   if(positionPlaceCounter===8001){
     push0 = 50;
     push1 = 0;
@@ -2052,40 +2043,54 @@ function calculateMove(moveArr){
     positionPlaceCounter=0;
   }
   if(snakeLength>200){
-    if(framesSinceFood>snakelength*2&&!loopFixAttempt){
-      let openF = forward();
-      let openR = right();
-      if(openF){
-        choice = forwardPosition(openF);
-        loopFixAttempt = true;
-      }else if(openR){
-        choice = rightPosition(openR);
-        loopFixAttempt = true;
+    if(framesSinceFood>snakeLength*2||loopFixAttempt){
+      loopFixAttempt = true;
+      if(foodPosition[2]===0){
+        let openU = up();
+        if(openU){
+          choice = upPosition(openU);
+        }else if(position[1]===0){
+          if(position[0]!==950){
+            choice = rightPosition(true);
+          }else{
+            choice = pathOpen(moveArr, "Best");
+            loopFixAttempt = false;
+          }
+        }else{
+          choice = pathOpen(moveArr, "Best");
+        }
+      }else{
+        choice = pathOpen(moveArr, "Best");
       }
       framesSinceFood = 0;
-      positionPlaceCounter = choice;
       moveMade = true;
     }else{
       choice = pathOpen(moveArr, "Best");
-      loopFixAttempt = false;
     }
   }else{
-    if(framesSinceFood>250&&!loopFixAttempt){
-      let openF = forward();
-      let openR = right();
-      if(openF){
-        choice = forwardPosition(openF);
-        loopFixAttempt = true;
-      }else if(openR){
-        choice = rightPosition(openR);
-        loopFixAttempt = true;
+    if(framesSinceFood>250||loopFixAttempt){
+      loopFixAttempt = true;
+      if(foodPosition[2]===0){
+        let openU = up();
+        if(openU){
+          choice = upPosition(openU);
+        }else if(position[1]===0){
+          if(position[0]!==950){
+            choice = rightPosition(true);
+          }else{
+            choice = pathOpen(moveArr, "Best");
+            loopFixAttempt = false;
+          }
+        }else{
+          choice = pathOpen(moveArr, "Best");
+        }
+      }else{
+        choice = pathOpen(moveArr, "Best");
       }
       framesSinceFood = 0;
-      positionPlaceCounter = choice;
       moveMade = true;
     }else{
       choice = pathOpen(moveArr, "Best");
-      loopFixAttempt = false;
     }
   }
   if(orderOfPositions[choice]!==undefined&&orderOfPositions[positionPlaceCounter]!==undefined){
@@ -2125,6 +2130,48 @@ function calculateMove(moveArr){
     }
     positionPlaceCounter++;
     moveMade = true;
+  }
+}
+
+let swap = false;
+
+function findPath(x){
+  let openF = forward();
+  let openR = right();
+  let openD = down();
+  let openL = left();
+  let openB = back();
+  let openU = up();
+  if(x!=='forward/back'){
+    if(openR){
+      return forwardPosition(openR);
+    }else if(openD){
+      return forwardPosition(openD);
+    }else if(openL){
+      return forwardPosition(openL);
+    }else if(openU){
+      return forwardPosition(openU);
+    }
+  }else if(x!=='right/left'){
+    if(openF){
+      return forwardPosition(openF);
+    }else if(openD){
+      return forwardPosition(openD);
+    }else if(openB){
+      return forwardPosition(openB);
+    }else if(openU){
+      return forwardPosition(openU);
+    }
+  }else if(x!=='up/down'){
+    if(openF){
+      return forwardPosition(openF);
+    }else if(openR){
+      return forwardPosition(openR);
+    }else if(openL){
+      return forwardPosition(openL);
+    }else if(openB){
+      return forwardPosition(openB);
+    }
   }
 }
 
@@ -2210,17 +2257,31 @@ function pathOpen(array, option){
 
 function willIMissFood(x, array, pathTest){
   if(x==="Double"){
-    for(var j=positionPlaceCounter+1; j<8000; j++){
-      if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
-        return true;
+    if(swap===false){
+      for(var j=positionPlaceCounter+1; j<8000; j++){
+        if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+          return true;
+        }
       }
-    }
-    for(var j=0; j<array[pathTest]; j++){
-      if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
-        return true;
+      for(var j=0; j<array[pathTest]; j++){
+        if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+          return true;
+        }
       }
+      return false;
+    }else{
+      for(var j=positionPlaceCounter+1; j<8000; j++){
+        if(!(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2])){
+          return true;
+        }
+      }
+      for(var j=0; j<array[pathTest]; j++){
+        if(!(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2])){
+          return true;
+        }
+      }
+      return false;
     }
-    return false;
   }else{
     for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
       if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
@@ -3091,48 +3152,36 @@ function keyPressed(){
           push0=50;
           push1=0;
           push2=0;
-          //updates current position
-          position[0]=position[0]+50;
         }
       }else if(keyIsDown(i)&&i===p1Controls.lKeyCode){
         if(secondPosition[0]!==position[0]-50){
           push0=-50;
           push1=0;
           push2=0;
-          //updates current position
-          position[0]=position[0]-50;
         }
       }else if(keyIsDown(i)&&i===p1Controls.fKeyCode){
         if(secondPosition[2]!==position[2]-50){
           push0=0;
           push1=0;
           push2=-50;
-          //updates current position
-          position[2]=position[2]-50;
         }
       }else if(keyIsDown(i)&&i===p1Controls.bKeyCode){
         if(secondPosition[2]!==position[2]+50){
           push0=0;
           push1=0;
           push2=50;
-          //updates current position
-          position[2]=position[2]+50;
         }
       }else if(keyIsDown(i)&&i===p1Controls.uKeyCode){
         if(secondPosition[1]!==position[1]-50){
           push0=0;
           push1=-50;
           push2=0;
-          //updates current position
-          position[1]=position[1]-50;
         }
       }else if(keyIsDown(i)&&i===p1Controls.dKeyCode){
         if(secondPosition[1]!==position[1]+50){
           push0=0;
           push1=50;
           push2=0;
-          //updates current position
-          position[1]=position[1]+50;
         }
       }
       if(gameMode==="Two Player"){
@@ -3193,6 +3242,10 @@ function keyPressed(){
         money+=1000;
       }
     }
+  }else{
+    if(keyIsDown(106)){
+      framesSinceFood = 250;
+    }
   }
 }
 
@@ -3249,44 +3302,28 @@ let topView = new p5(( sketch ) => {
     }
   };
   
-  sketch.moveSnake = () => {
-    //by the time the program gets to this point, it has deleted a block of the end of the snake
-    //if I were to do nothing, the side views length would be one less then the 3d snake
-    if(arr[arr.length-(4*snakeLength-3)]===0){
-      arr[arr.length-(4*snakeLength-3)]=1;
-    }
+  sketch.moveSnake = () => {    
     //since the z coordinate is negative and the side views are positive
     //this translation aligns the snake with the canvas
     sketch.translate(0,y-y/20);
-    //resets position values
-    position[0]=0;
-    position[1]=0;
-    position[2]=0;
-    //reads the array and translates by x and z of the arr, 
-    //in the top view x is the same as 3d x, but y is the 3d z
-    for(var i=0; i<=arr.length; i+=4){
-      sketch.translate(arr[i]/50*x/20,arr[i+2]/50*y/20);
-      if(arr[i+0]===50||arr[i+0]===-50||arr[i+1]===50||arr[i+1]===-50||arr[i+2]===50||arr[i+2]===-50){
-        position[0]=position[0]+arr[i+0];
-        position[1]=position[1]+arr[i+1];
-        position[2]=position[2]+arr[i+2];
-      }
-      //places a box
-      if(arr[i+3]===1){
-        sketch.placeBox();
-      }
-    }
-    //returns the arr back to what it was
-    if(arr[arr.length-(4*snakeLength-3)]===1){
-      arr[arr.length-(4*snakeLength-3)]=0;
+    
+    sketch.push();
+    sketch.translate(position[0]/50*x/20, position[2]/50*y/20);
+    sketch.placeBox(position[0],position[1],position[2],true);
+    sketch.pop();
+    for(var i=bodyPosition.length-3; i>=0; i-=3){
+      sketch.push();
+      sketch.translate(bodyPosition[i+0]/50*x/20, bodyPosition[i+2]/50*y/20);
+      sketch.placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
+      sketch.pop();
     }
   };
   
   //function is the same as 3d function
-  sketch.placeBox = () => {
-    let x1 = position[0];
-    let y1 = position[1];
-    let z1 = position[2];
+  sketch.placeBox = (x2,y2,z2) => {
+    let x1 = x2;
+    let y1 = y2;
+    let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
       sketch.fill(255,0,0,50);
       sketch.rect(0,0,x/20,y/20);
@@ -3407,35 +3444,25 @@ let sideView = new p5(( sketch ) => {
   };
   
   sketch.moveSnake = () => {
-    if(arr[arr.length-(4*snakeLength-3)]===0){
-      arr[arr.length-(4*snakeLength-3)]=1;
-    }
-    //corrects x(z) axis
+    //in side view, x is 3d z and y is the same as 3d y
     sketch.translate(y-y/20,0);
-    position[0]=0;
-    position[1]=0;
-    position[2]=0;
-    for(var i=0; i<=arr.length; i+=4){
-      //in side view, x is 3d z and y is the same as 3d y
-      sketch.translate(arr[i+2]/50*x/20,arr[i+1]/50*y/20);
-      if(arr[i+0]===50||arr[i+0]===-50||arr[i+1]===50||arr[i+1]===-50||arr[i+2]===50||arr[i+2]===-50){
-        position[0]=position[0]+arr[i+0];
-        position[1]=position[1]+arr[i+1];
-        position[2]=position[2]+arr[i+2];
-      }
-      if(arr[i+3]===1){
-        sketch.placeBox();
-      }
-    }
-    if(arr[arr.length-(4*snakeLength-3)]===1){
-      arr[arr.length-(4*snakeLength-3)]=0;
+    
+    sketch.push();
+    sketch.translate(position[2]/50*x/20, position[1]/50*y/20);
+    sketch.placeBox(position[0],position[1],position[2],true);
+    sketch.pop();
+    for(var i=bodyPosition.length-3; i>=0; i-=3){
+      sketch.push();
+      sketch.translate(bodyPosition[i+2]/50*x/20, bodyPosition[i+1]/50*y/20);
+      sketch.placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
+      sketch.pop();
     }
   };
   
-  sketch.placeBox = () => {
-    let x1 = position[0];
-    let y1 = position[1];
-    let z1 = position[2];
+  sketch.placeBox = (x2,y2,z2) => {
+    let x1 = x2;
+    let y1 = y2;
+    let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
       sketch.fill(255,0,0,50);
       sketch.rect(0,0,x/20,y/20);
@@ -3546,34 +3573,24 @@ let frontView = new p5(( sketch ) => {
   };
   
   sketch.moveSnake = () => {
-    if(arr[arr.length-(4*snakeLength-3)]===0){
-      arr[arr.length-(4*snakeLength-3)]=1;
-    }
-    //front view does not need to be translated since x and y are the same as 3d x and y
-    position[0]=0;
-    position[1]=0;
-    position[2]=0;
-    for(var i=0; i<=arr.length; i+=4){
-      //in front view, x and y are the same as 3d x and y
-      sketch.translate(arr[i]/50*x/20,arr[i+1]/50*y/20);
-      if(arr[i+0]===50||arr[i+0]===-50||arr[i+1]===50||arr[i+1]===-50||arr[i+2]===50||arr[i+2]===-50){
-        position[0]=position[0]+arr[i+0];
-        position[1]=position[1]+arr[i+1];
-        position[2]=position[2]+arr[i+2];
-      }
-      if(arr[i+3]===1){
-        sketch.placeBox();
-      }
-    }
-    if(arr[arr.length-(4*snakeLength-3)]===1){
-      arr[arr.length-(4*snakeLength-3)]=0;
+    //in front view, x and y are the same as 3d x and y
+    
+    sketch.push();
+    sketch.translate(position[0]/50*x/20, position[1]/50*y/20);
+    sketch.placeBox(position[0],position[1],position[2],true);
+    sketch.pop();
+    for(var i=bodyPosition.length-3; i>=0; i-=3){
+      sketch.push();
+      sketch.translate(bodyPosition[i+0]/50*x/20, bodyPosition[i+1]/50*y/20);
+      sketch.placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
+      sketch.pop();
     }
   };
   
-  sketch.placeBox = () => {
-    let x1 = position[0];
-    let y1 = position[1];
-    let z1 = position[2];
+  sketch.placeBox = (x2,y2,z2) => {
+    let x1 = x2;
+    let y1 = y2;
+    let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
       sketch.fill(255,0,0,50);
       sketch.rect(0,0,x/20,y/20);
