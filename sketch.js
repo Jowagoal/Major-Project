@@ -148,6 +148,7 @@ let orderOfPositions = [];
 let positionPlaceCounter = 0;
 let framesSinceFood = 0;
 let loopFixAttempt = false;
+let shadowFoodPosition = [];
 
 function preload(){
   //preloads text font
@@ -314,15 +315,25 @@ function setup() {
     
     //sets initial position of food
     
-    foodPosition[0]=ceil(random(-0.9,19))*50;
-    foodPosition[1]=ceil(random(-0.9,19))*50;
-    foodPosition[2]=ceil(random(-19,-0.9))*50;
-    
     /*
-    foodPosition[0]=5*50;
-    foodPosition[1]=0*50;
-    foodPosition[2]=0*50;
+    foodPosition[0]=10*50;
+    foodPosition[1]=1*50;
+    foodPosition[2]=-19*50;
     */
+   foodPosition[0]=ceil(random(-0.9,19))*50;
+   foodPosition[1]=ceil(random(-0.9,19))*50;
+   foodPosition[2]=ceil(random(-19,0))*50;
+   
+    if(foodPosition[2]===0){
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2]-50;
+    }else{
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2];
+    }
+    
 
     //shows all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "visible";
@@ -1831,26 +1842,53 @@ function food(){
   //having these two scenarios will stop the snake from going straight through the food
   //when the snake has 'eaten' the food, a new piece will randomly be chosen
   if(position[0]+push0===foodPosition[0]&&position[1]+push1===foodPosition[1]&&position[2]+push2===foodPosition[2]){
-    foodPosition[0]=ceil(random(0,19))*50;
-    foodPosition[1]=ceil(random(0,19))*50;
+    foodPosition[0]=ceil(random(-0.9,19))*50;
+    foodPosition[1]=ceil(random(-0.9,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
+    if(foodPosition[2]===0){
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2]-50;
+    }else{
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2];
+    }
     snakeLength++;
     points++;
     framesSinceFood = 0;
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
-    foodPosition[0]=ceil(random(0,19))*50;
-    foodPosition[1]=ceil(random(0,19))*50;
+    foodPosition[0]=ceil(random(-0.9,19))*50;
+    foodPosition[1]=ceil(random(-0.9,19))*50;
     foodPosition[2]=ceil(random(-19,0))*50;
+    if(foodPosition[2]===0){
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2]-50;
+    }else{
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2];
+    }
     snakeLength++;
     points++;
     framesSinceFood = 0;
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
-      foodPosition[0]=ceil(random(0,19))*50;
-      foodPosition[1]=ceil(random(0,19))*50;
+      foodPosition[0]=ceil(random(-0.9,19))*50;
+      foodPosition[1]=ceil(random(-0.9,19))*50;
       foodPosition[2]=ceil(random(-19,0))*50;
+    if(foodPosition[2]===0){
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2]-50;
+    }else{
+      shadowFoodPosition[0] = foodPosition[0];
+      shadowFoodPosition[1] = foodPosition[1];
+      shadowFoodPosition[2] = foodPosition[2];
+    }
       snakeLength++;
       points++;
       framesSinceFood = 0;
@@ -2042,16 +2080,18 @@ function calculateMove(moveArr){
     push2 = 0;
     positionPlaceCounter=0;
   }
+  /*
   if(snakeLength>200){
     if(framesSinceFood>snakeLength*1.36||loopFixAttempt){
       loopFixAttempt = true;
       if(foodPosition[2]===0){
         let openU = up();
+        let openR = right();
         if(openU){
           choice = upPosition(openU);
         }else if(position[1]===0){
-          if(position[0]!==950){
-            choice = rightPosition(true);
+          if(position[0]!==950&&openR){
+            choice = rightPosition(openR);
           }else{
             choice = pathOpen(moveArr, "Best");
             loopFixAttempt = false;
@@ -2092,6 +2132,25 @@ function calculateMove(moveArr){
     }else{
       choice = pathOpen(moveArr, "Best");
     }
+  }
+  */
+
+  if(shadowFoodPosition[2]!==foodPosition[2]){
+    if(shadowFoodPosition[2]===-50){
+      if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
+        choice = backPosition(true);
+      }else{
+        choice = pathOpen(moveArr, "Best");
+      }
+    }else if(shadowFoodPosition[2]===-900){
+      if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
+        choice = forwardPosition(true);
+      }else{
+        choice = pathOpen(moveArr, "Best");
+      }
+    }
+  }else{
+    choice = pathOpen(moveArr, "Best");
   }
   if(orderOfPositions[choice]!==undefined&&orderOfPositions[positionPlaceCounter]!==undefined){
     if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
@@ -2259,24 +2318,24 @@ function willIMissFood(x, array, pathTest){
   if(x==="Double"){
     if(swap===false){
       for(var j=positionPlaceCounter+1; j<8000; j++){
-        if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+        if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
           return true;
         }
       }
       for(var j=0; j<array[pathTest]; j++){
-        if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+        if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
           return true;
         }
       }
       return false;
     }else{
       for(var j=positionPlaceCounter+1; j<8000; j++){
-        if(!(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2])){
+        if(!(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2])){
           return true;
         }
       }
       for(var j=0; j<array[pathTest]; j++){
-        if(!(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2])){
+        if(!(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2])){
           return true;
         }
       }
@@ -2284,7 +2343,7 @@ function willIMissFood(x, array, pathTest){
     }
   }else{
     for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
-      if(foodPosition[0]===orderOfPositions[j][0]&&foodPosition[1]===orderOfPositions[j][1]&&foodPosition[2]===orderOfPositions[j][2]){
+      if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
         return true;
       }
     }
