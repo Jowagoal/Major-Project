@@ -146,8 +146,6 @@ let train;
 
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
-let framesSinceFood = 0;
-let loopFixAttempt = false;
 let shadowFoodPosition = [];
 
 function preload(){
@@ -296,7 +294,7 @@ function setup() {
     document.getElementById("defaultCanvas6").style.visibility = "hidden";
     document.getElementById("defaultCanvas7").style.visibility = "hidden";
     document.getElementById("defaultCanvas8").style.visibility = "hidden";
-    document.getElementById("defaultCanvas9").style.visibility = "hidden";
+    
   }
   
   if(state==="Menu"){
@@ -350,7 +348,6 @@ function setup() {
     }
     if(gameMode==="AI"){
       labelPositions();
-      document.getElementById("defaultCanvas9").style.visibility = "visible";
     }
   }else if(state==="Game Over"){
     createCanvas(windowWidth, windowHeight);
@@ -370,7 +367,7 @@ function setup() {
     document.getElementById("defaultCanvas6").style.visibility = "hidden";
     document.getElementById("defaultCanvas7").style.visibility = "hidden";
     document.getElementById("defaultCanvas8").style.visibility = "hidden";
-    document.getElementById("defaultCanvas9").style.visibility = "hidden";
+    
   }else if(state==="LeaderBoard"){
     createCanvas(windowWidth, windowHeight);
   }
@@ -647,7 +644,6 @@ function resetAllValues(){
 
   orderOfPositions = [];
   positionPlaceCounter = 0;
-  loopFixAttempt = false;
 }
 
 function selectGameType(){
@@ -726,6 +722,27 @@ function optionMenu(){
   textSize(25);
   controls();
   
+  if(gameMode!=="AI"){
+    difficultyBar();
+  }
+  
+  //red back rectangle, changes the state back to menu
+  stroke(0);
+  fill(255,0,0);
+  rectMode(CENTER);
+  rect(width*0.9,-125, 30, 20);
+  if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
+    state="Menu";
+    changingBingingsP1=false;
+    changingBingingsP2=false;
+    setup();
+  }
+  
+  //translates the origin back to the top left of the screen
+  translate(0,-25*instructionsP1.length);
+}
+
+function difficultyBar(){
   stroke(0);
   fill(255);
   //difficulty slider bar
@@ -792,29 +809,22 @@ function optionMenu(){
     sliderX=100+25*10;
     difficulty = 15;
   }
-  
-  //red back rectangle, changes the state back to menu
-  fill(255,0,0);
-  rectMode(CENTER);
-  rect(width*0.9,-125, 30, 20);
-  if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
-    state="Menu";
-    changingBingingsP1=false;
-    changingBingingsP2=false;
-    setup();
-  }
-
-  //translates the origin back to the top left of the screen
-  translate(0,-25*instructionsP1.length);
 }
 
 function controls(){
-  if(gameMode!=="Two Player"){
+  if(gameMode==="Single Player"){
     changePlayer1Bindings();
-  }else{
+  }else if(gameMode==="Two Player"){
     changePlayer1Bindings();
     changePlayer2Bindings();
     translate(-250,0);
+  }else{
+    text("Controls:", 100, 100);
+    translate(0, 25);
+    text("UpArrow = Increase Simulation Speed", 100, 100);
+    translate(0, 25);
+    text("DownArrow = Decrease Simulation Speed", 100, 100);
+    translate(0, 125);
   }
 }
 
@@ -1511,7 +1521,6 @@ function gameStart(){
     }
   }
   firstIteration=false;
-  framesSinceFood++;
 }
 
 function timer(){
@@ -1849,7 +1858,6 @@ function food(){
     }
     snakeLength++;
     points++;
-    framesSinceFood = 0;
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(-0.9,19))*50;
@@ -1866,7 +1874,6 @@ function food(){
     }
     snakeLength++;
     points++;
-    framesSinceFood = 0;
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
@@ -1884,7 +1891,6 @@ function food(){
     }
       snakeLength++;
       points++;
-      framesSinceFood = 0;
     }
   }
 
@@ -2073,61 +2079,6 @@ function calculateMove(moveArr){
     push2 = 0;
     positionPlaceCounter=0;
   }
-  /*
-  if(snakeLength>200){
-    if(framesSinceFood>snakeLength*1.36||loopFixAttempt){
-      loopFixAttempt = true;
-      if(foodPosition[2]===0){
-        let openU = up();
-        let openR = right();
-        if(openU){
-          choice = upPosition(openU);
-        }else if(position[1]===0){
-          if(position[0]!==950&&openR){
-            choice = rightPosition(openR);
-          }else{
-            choice = pathOpen(moveArr, "Best");
-            loopFixAttempt = false;
-          }
-        }else{
-          choice = pathOpen(moveArr, "Best");
-        }
-      }else{
-        choice = pathOpen(moveArr, "Best");
-      }
-      framesSinceFood = 0;
-      moveMade = true;
-    }else{
-      choice = pathOpen(moveArr, "Best");
-    }
-  }else{
-    if(framesSinceFood>250||loopFixAttempt){
-      loopFixAttempt = true;
-      if(foodPosition[2]===0){
-        let openU = up();
-        if(openU){
-          choice = upPosition(openU);
-        }else if(position[1]===0){
-          if(position[0]!==950){
-            choice = rightPosition(true);
-          }else{
-            choice = pathOpen(moveArr, "Best");
-            loopFixAttempt = false;
-          }
-        }else{
-          choice = pathOpen(moveArr, "Best");
-        }
-      }else{
-        choice = pathOpen(moveArr, "Best");
-      }
-      framesSinceFood = 0;
-      moveMade = true;
-    }else{
-      choice = pathOpen(moveArr, "Best");
-    }
-  }
-  */
-
   if(shadowFoodPosition[2]!==foodPosition[2]){
     if(shadowFoodPosition[2]===-50){
       if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
@@ -3277,19 +3228,17 @@ function keyPressed(){
       }
     }
     
-    if(gameMode==="Single Player"){
+    if(gameMode!=="Two Player"){
       if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
         money+=1000;
       }
     }
-  }else{
-    if(keyIsDown(106)){
-      if(snakeLength>200){
-        framesSinceFood = snakeLength*1.36;
-      }else{
-        framesSinceFood = 250;
-      }
-    }
+  }
+  if(keyIsDown(38)&&difficulty!==60){
+    difficulty++
+  }
+  if(keyIsDown(40)&&difficulty!==1){
+    difficulty--
   }
 }
 
@@ -3311,7 +3260,6 @@ let topViewWord = new p5(( sketch ) => {
       sketch.textAlign(BOTTOM, CENTER);
       sketch.textSize(20);
       sketch.text("Top View",0,0);
-      sketch.text(framesSinceFood,-25,0);
   };
 });
 
@@ -3656,10 +3604,10 @@ let frontView = new p5(( sketch ) => {
   };
 });
 
-let timerDisplay = new p5(( sketch ) => {
+let display = new p5(( sketch ) => {
 
-  let x = 150;
-  let y = 50;
+  let x = 250;
+  let y = 100;
 
   //creates canvas
   sketch.setup = () => {
@@ -3674,6 +3622,11 @@ let timerDisplay = new p5(( sketch ) => {
     sketch.textSize(50);
     if(gameMode==="Two Player"){
       sketch.text(time,0,10);
+    }
+    if(gameMode==="AI"){
+      sketch.text("Score: " + (snakeLength-3).toString(10),-30,10);
+      sketch.textSize(30);
+      sketch.text("Speed: " + difficulty.toString(10),0,60);
     }
   };
 });
@@ -3721,70 +3674,6 @@ let p2Points = new p5(( sketch ) => {
     if(gameMode==="Two Player"){
       sketch.text(pointsP2,0,10);
     }
-  };
-});
-
-let AISpeed = new p5(( sketch ) => {
-
-  let x = 100;
-  let y = 50;
-
-  let slider;
-
-  //creates canvas
-  sketch.setup = () => {
-    sketch.createCanvas(x, y);
-    sketch.background(220);
-    
-  };
-
-  //writes word
-  sketch.draw = () => {
-  //the slider
-  sketch.stroke(0);
-  sketch.fill(150);
-  sketch.rect(sliderX, 300, 9, 25);
-  
-  //if the mouse is down on any part of the bar, the slider will move to that position
-  if(mouseX>100&&mouseX<350&&mouseY>474-12&&mouseY<474+12&&mouseIsPressed){
-    slider=mouseX;
-  }else 
-  //when the mouse is released, the slider will snap to its nearest notch
-  //each notch changes the difficulty of the game
-  if(slider<100+25/2){
-    slider=100;
-    difficulty = 5;
-  }else if(slider>=100+25/2&&slider<100+25/2*3){
-    slider=100+25;
-    difficulty = 6;
-  }else if(slider>=100+25/2*3&&slider<100+25/2*5){
-    slider=100+25*2;
-    difficulty = 7;
-  }else if(slider>=100+25/2*5&&slider<100+25/2*7){
-    slider=100+25*3;
-    difficulty = 8;
-  }else if(slider>=100+25/2*7&&slider<100+25/2*9){
-    slider=100+25*4;
-    difficulty = 9;
-  }else if(slider>=100+25/2*9&&slider<100+25/2*11){
-    slider=100+25*5;
-    difficulty = 10;
-  }else if(slider>=100+25/2*11&&slider<100+25/2*13){
-    slider=100+25*6;
-    difficulty = 11;
-  }else if(slider>=100+25/2*13&&slider<100+25/2*15){
-    slider=100+25*7;
-    difficulty = 12;
-  }else if(slider>=100+25/2*15&&slider<100+25/2*17){
-    slider=100+25*8;
-    difficulty = 13;
-  }else if(slider>=100+25/2*17&&slider<100+25/2*19){
-    slider=100+25*9;
-    difficulty = 14;
-  }else if(slider>=100+25/2*19){
-    slider=100+25*10;
-    difficulty = 15;
-  }
   };
 });
 
