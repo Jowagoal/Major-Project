@@ -352,10 +352,12 @@ function setup() {
   }else if(state==="Game Over"){
     createCanvas(windowWidth, windowHeight);
 
-    //calculates money gained for round
-    moneyGained = (snakeLength-3)*difficulty;
-    //adds money gained to total money(it adds twice for some reason)
-    money+=moneyGained/2;
+    if(gameMode!=="AI"){
+      //calculates money gained for round
+      moneyGained = (snakeLength-3)*difficulty;
+      //adds money gained to total money(it adds twice for some reason)
+      money+=moneyGained/2;
+    }
     
     //hides all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "hidden";
