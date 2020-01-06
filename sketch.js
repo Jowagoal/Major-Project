@@ -1997,7 +1997,6 @@ function playerHasDied(p){
 function labelPositions(){
   let currentPosition = [50,0,0];
   let directionX = 'right';
-  let directionY = 'down';
   let directionZ = 'forward';
   for(var y=0; y<20; y++){
     for(var z=0; z<20; z++){
@@ -2070,6 +2069,12 @@ function labelPositions(){
   if(orderOfPositions.length>8001){
     orderOfPositions.splice(8002, 8001);
   }
+
+  for(var i=0; i<8; i++){
+    for(var j=761*i; j<761*i+379; j++){
+      orderOfPositions[j][2]-=50;
+    }
+  }
 }
 
 function calculateMove(moveArr){
@@ -2120,21 +2125,23 @@ function calculateMove(moveArr){
     }
   }
   if(moveMade===false){
-    if(orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0]!==0){
-      push0 = orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0];
-      push1 = 0;
-      push2 = 0;
-    }else if(orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1]!==0){
-      push0 = 0;
-      push1 = orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1];
-      push2 = 0;
-    }else{
-      push0 = 0;
-      push1 = 0;
-      push2 = orderOfPositions[positionPlaceCounter+1][2]-orderOfPositions[positionPlaceCounter][2];
+    if(orderOfPositions[positionPlaceCounter+1]!==undefined){
+      if(orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0]!==0){
+        push0 = orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0];
+        push1 = 0;
+        push2 = 0;
+      }else if(orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1]!==0){
+        push0 = 0;
+        push1 = orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1];
+        push2 = 0;
+      }else{
+        push0 = 0;
+        push1 = 0;
+        push2 = orderOfPositions[positionPlaceCounter+1][2]-orderOfPositions[positionPlaceCounter][2];
+      }
+      positionPlaceCounter++;
+      moveMade = true;
     }
-    positionPlaceCounter++;
-    moveMade = true;
   }
 }
 
