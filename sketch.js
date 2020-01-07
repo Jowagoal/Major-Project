@@ -2043,9 +2043,10 @@ function playerHasDied(p){
 }
 
 function labelPositions(){
-  let currentPosition = [50,0,0];
+  //let currentPosition = [50,0,0];
   let directionX = 'right';
-  let directionZ = 'forward';
+  let directionZ;
+  /*
   for(var y=0; y<20; y++){
     for(var z=0; z<20; z++){
       for(var x=0; x<19; x++){
@@ -2084,6 +2085,18 @@ function labelPositions(){
           currentPosition[1]=900;
           directionX='left';
         }
+        if(orderOfPositions.length===6858){
+          orderOfPositions.push([950, 900, -50]);
+          currentPosition[1]=900;
+          currentPosition[2]=-50;
+          for(var i=0; i<18; i++){
+            currentPosition = [...currentPosition];
+            currentPosition[0]-=50;
+            orderOfPositions.push([...currentPosition]);
+          }
+          currentPosition[1]=900;
+          directionX='left';
+        }
       }
       if(directionX==='right'){
         directionX='left';
@@ -2103,7 +2116,26 @@ function labelPositions(){
     }
     currentPosition[1]+=50;
   }
+  */
 
+  currentPosition = [0,0,0];
+
+  for(var y=0; y<20; y++){
+    if(y%2===0){
+      createLayer('forward');
+    }else{
+      createLayer('back');
+    }
+    currentPosition[1]+=50;
+  }
+  for(var j=0; j<8; j++){
+    for(var i=1139+760*j; i>759+760*j; i--){
+      orderOfPositions[i][2]+=50;
+    }
+  }
+
+  orderOfPositions.splice(7600,1);
+  
   currentPosition = [...currentPosition];
   currentPosition[0] -= 50;
   currentPosition[1] = 950;
@@ -2145,6 +2177,44 @@ function labelPositions(){
       orderOfPositions[j][2]+=50;
     }
   }
+}
+
+function createLayer(direction){
+  for(var z=0; z>-20; z--){
+    if(z%2===0){
+      createRow('right');
+    }else{
+      createRow('left');
+    }
+    if(z!==-19){
+      if(direction==='forward'){
+        currentPosition[2]-=50;
+      }
+      if(direction==='back'){
+        currentPosition[2]+=50;
+      }
+    }
+  }
+}
+
+let bufferX;
+
+function createRow(direction){
+  for(var x=0; x<19; x++){
+    currentPosition = [...currentPosition];
+    if(!bufferX){
+      if(direction==="right"){
+        currentPosition[0]+=50;
+      }
+      if(direction==="left"){
+        currentPosition[0]-=50;
+      }
+    }else{
+      bufferX = false;
+    }
+    orderOfPositions.push([...currentPosition]);
+  }
+  bufferX = true;
 }
 
 let nextChoice = false;
