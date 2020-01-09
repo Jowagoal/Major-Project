@@ -131,6 +131,7 @@ let isotopeSkin;
 let eyesSkin;
 let topHatSkin;
 let trainSkin;
+let scalesSkin;
 let theSmoke = [];
 
 //variables for 2D array
@@ -143,6 +144,9 @@ let lines;
 let iso;
 let topHat;
 let train;
+let greenScales;
+let blueScales;
+let redScales;
 
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
