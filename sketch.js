@@ -147,7 +147,6 @@ let train;
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
 let shadowFoodPosition = [];
-let foodPlaceCounter;
 
 function preload(){
   //preloads text font
@@ -337,8 +336,7 @@ function setup() {
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2];
     }
-    
-    foodPlaceCounter = foodNumberedPosition();
+  
 
     //shows all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "visible";
@@ -1873,8 +1871,7 @@ function food(){
       shadowFoodPosition[2] = foodPosition[2];
     }
     snakeLength++;
-    points++;
-    foodPlaceCounter = foodNumberedPosition();
+    points++
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(-0.9,19))*50;
@@ -1894,8 +1891,7 @@ function food(){
       shadowFoodPosition[2] = foodPosition[2];
     }
     snakeLength++;
-    points++;
-    foodPlaceCounter = foodNumberedPosition();
+    points++
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
@@ -1917,7 +1913,6 @@ function food(){
     }
       snakeLength++;
       points++;
-      foodPlaceCounter = foodNumberedPosition();
     }
   }
 
@@ -2119,14 +2114,6 @@ function calculateMove(moveArr){
         choice = forwardPosition(true);
       }else{
         choice = pathOpen(moveArr);
-      }
-      let forwardP = forwardPosition(true);
-      if(forwardP===foodPlaceCounter){
-        if(choice!==forwardP){
-          console.log('');
-        }else{
-          choice = forwardP;
-        }
       }
     }
   }else if(foodPosition[0]===0){
