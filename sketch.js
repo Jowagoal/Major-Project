@@ -147,6 +147,7 @@ let train;
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
 let shadowFoodPosition = [];
+let foodPlaceCounter;
 
 function preload(){
   //preloads text font
@@ -323,28 +324,21 @@ function setup() {
    foodPosition[1]=ceil(random(-0.9,19))*50;
    foodPosition[2]=ceil(random(-19.9,0))*50;
    
-   if(foodPosition[0]===0&&foodPosition[2]===-950){
-      shadowFoodPosition[0] = foodPosition[0]-50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
-   }else if(foodPosition[2]===0){
+    if(foodPosition[2]===0){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]-50;
-    }else if(foodPosition[2]===-950){
+    }else if(foodPosition[2]===-950||foodPosition[2]===-900){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]+50;
-    }else if(foodPosition[0]===0){
-      shadowFoodPosition[0] = foodPosition[0]+50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
     }else{
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2];
     }
     
+    foodPlaceCounter = foodNumberedPosition();
 
     //shows all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "visible";
@@ -440,9 +434,12 @@ function pointerDot(){
 function mainMenu(){
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
-  if(restarted===true){
+  if(restarted){
     translate(-1/2*width,-1/2*height);
   }
+
+  //resets difficulty for when the user switches gameModes
+  difficulty = 10;
 
   background(100);
   rectMode(CENTER);
@@ -510,7 +507,7 @@ function mainMenu(){
 function startScreen(){
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
-  if(restarted===true){
+  if(restarted){
     translate(-1/2*width,-1/2*height);
   }
 
@@ -658,11 +655,12 @@ function resetAllValues(){
 
   orderOfPositions = [];
   positionPlaceCounter = 0;
+  shadowFoodPosition = [];
 }
 
 function selectGameType(){
 
-  if(restarted===true){
+  if(restarted){
     translate(-1/2*width,-1/2*height);
   }
 
@@ -714,7 +712,7 @@ function selectGameType(){
   text("most food in a limited", width/2+width/4, height*20/32);
   text("amount of time.", width/2+width/4, height*22/32);
 
-  text("Players lose 3 points if", width/2+width/4, height*26/32);
+  text("Players lose 1 point if", width/2+width/4, height*26/32);
   text("they die, then respawn.", width/2+width/4, height*28/32);
 }
 
@@ -725,7 +723,7 @@ function optionMenu(){
   
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
-  if(restarted===true){
+  if(restarted){
     translate(-1/2*width,-1/2*height);
   }
   
@@ -1239,7 +1237,7 @@ function storeMenu(){
 
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
-  if(restarted===true){
+  if(restarted){
     translate(-1/2*width,-1/2*height);
   }
 
@@ -1861,11 +1859,7 @@ function food(){
     foodPosition[0]=ceil(random(-0.9,19))*50;
     foodPosition[1]=ceil(random(-0.9,19))*50;
     foodPosition[2]=ceil(random(-19.9,0))*50;
-    if(foodPosition[0]===0&&foodPosition[2]===-950){
-      shadowFoodPosition[0] = foodPosition[0]-50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
-    }else if(foodPosition[2]===0){
+    if(foodPosition[2]===0){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]-50;
@@ -1873,10 +1867,6 @@ function food(){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]+50;
-    }else if(foodPosition[0]===0){
-      shadowFoodPosition[0] = foodPosition[0]+50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
     }else{
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
@@ -1884,16 +1874,13 @@ function food(){
     }
     snakeLength++;
     points++;
+    foodPlaceCounter = foodNumberedPosition();
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(-0.9,19))*50;
     foodPosition[1]=ceil(random(-0.9,19))*50;
     foodPosition[2]=ceil(random(-19.9,0))*50;
-    if(foodPosition[0]===0&&foodPosition[2]===-950){
-      shadowFoodPosition[0] = foodPosition[0]-50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
-    }else if(foodPosition[2]===0){
+    if(foodPosition[2]===0){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]-50;
@@ -1901,10 +1888,6 @@ function food(){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]+50;
-    }else if(foodPosition[0]===0){
-      shadowFoodPosition[0] = foodPosition[0]+50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
     }else{
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
@@ -1912,17 +1895,14 @@ function food(){
     }
     snakeLength++;
     points++;
+    foodPlaceCounter = foodNumberedPosition();
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
       foodPosition[0]=ceil(random(-0.9,19))*50;
       foodPosition[1]=ceil(random(-0.9,19))*50;
       foodPosition[2]=ceil(random(-19.9,0))*50;
-    if(foodPosition[0]===0&&foodPosition[2]===-950){
-        sadowFoodPosition[0] = foodPosition[0]-50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
-    }else if(foodPosition[2]===0){
+    if(foodPosition[2]===0){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]-50;
@@ -1930,10 +1910,6 @@ function food(){
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2]+50;
-    }else if(foodPosition[0]===0){
-      shadowFoodPosition[0] = foodPosition[0]+50;
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
     }else{
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
@@ -1941,6 +1917,7 @@ function food(){
     }
       snakeLength++;
       points++;
+      foodPlaceCounter = foodNumberedPosition();
     }
   }
 
@@ -2001,7 +1978,7 @@ function playerHasDied(p){
       push3 = 1;
       snakeLength = 3;
 
-      points-=3;
+      points-=1;
       if(points<0){
         points=0;
       }
@@ -2029,7 +2006,7 @@ function playerHasDied(p){
       push3P2 = 1;
       snakeLengthP2 = 3;
 
-      pointsP2-=3;
+      pointsP2-=1;
       if(pointsP2<0){
         pointsP2=0;
       }
@@ -2043,83 +2020,15 @@ function playerHasDied(p){
 }
 
 function labelPositions(){
-  //let currentPosition = [50,0,0];
-  let directionX = 'right';
-  let directionZ;
-  /*
-  for(var y=0; y<20; y++){
-    for(var z=0; z<20; z++){
-      for(var x=0; x<19; x++){
-        currentPosition = [...currentPosition];
-        if(x!==0){
-          if(directionX==='right'){
-            currentPosition[0]+=50;
-          }else{
-            currentPosition[0]-=50;
-          }
-        }
-        if(currentPosition[2]===-1000){
-          currentPosition[2]=-950;
-        }
-        orderOfPositions.push([...currentPosition]);
-        if(orderOfPositions.length===6840){
-          orderOfPositions.push([50, 900, 0]);
-          currentPosition[1]=900;
-          for(var i=0; i<18; i++){
-            currentPosition = [...currentPosition];
-            currentPosition[0]+=50;
-            orderOfPositions.push([...currentPosition]);
-          }
-          currentPosition[1]=850;
-          directionX='right';
-        }
-        if(orderOfPositions.length===7239){
-          orderOfPositions.push([950, 900, -950]);
-          currentPosition[1]=900;
-          currentPosition[2]=-950;
-          for(var i=0; i<18; i++){
-            currentPosition = [...currentPosition];
-            currentPosition[0]-=50;
-            orderOfPositions.push([...currentPosition]);
-          }
-          currentPosition[1]=900;
-          directionX='left';
-        }
-        if(orderOfPositions.length===6858){
-          orderOfPositions.push([950, 900, -50]);
-          currentPosition[1]=900;
-          currentPosition[2]=-50;
-          for(var i=0; i<18; i++){
-            currentPosition = [...currentPosition];
-            currentPosition[0]-=50;
-            orderOfPositions.push([...currentPosition]);
-          }
-          currentPosition[1]=900;
-          directionX='left';
-        }
-      }
-      if(directionX==='right'){
-        directionX='left';
-      }else{
-        directionX='right';
-      }
-      if(directionZ==='forward'){
-        currentPosition[2]-=50;
-      }else{
-        currentPosition[2]+=50;
-      }
-    }
-    if(directionZ==='forward'){
-      directionZ='back';
-    }else{
-      directionZ='forward';
-    }
-    currentPosition[1]+=50;
+  if(restarted){
+    currentPosition = [50,0,0];
+  }else{
+    currentPosition = [0,0,0];
   }
-  */
 
-  currentPosition = [0,0,0];
+ let directionZ;
 
+  //labels each layer 
   for(var y=0; y<20; y++){
     if(y%2===0){
       createLayer('forward');
@@ -2128,28 +2037,22 @@ function labelPositions(){
     }
     currentPosition[1]+=50;
   }
-  for(var j=0; j<8; j++){
-    for(var i=1139+760*j; i>759+760*j; i--){
-      orderOfPositions[i][2]+=50;
-    }
-  }
-
-  orderOfPositions.splice(7600,1);
+  
   
   currentPosition = [...currentPosition];
-  currentPosition[0] -= 50;
+  currentPosition[0] = 0;
   currentPosition[1] = 950;
-  currentPosition[2] -= 50;
+  currentPosition[2] = 0;
 
-
+  //labels left wall to return back to starting space
   for(var j=0; j<20; j++){
     for(var k=0; k<20; k++){
       currentPosition = [...currentPosition];
       if(k!==0){
         if(directionZ==="forward"){
-          currentPosition[2]-=50;
-        }else{
           currentPosition[2]+=50;
+        }else{
+          currentPosition[2]-=50;
         }
       }
       orderOfPositions.push([...currentPosition]);
@@ -2160,22 +2063,6 @@ function labelPositions(){
       directionZ='forward';
     }
     currentPosition[1]-=50;
-  }
-
-  if(orderOfPositions.length>8040){
-    orderOfPositions.splice(8041, 8001);
-  }
-
-  for(var i=1; i<9; i++){
-    for(var j=760*i; j<761*i+379; j++){
-      orderOfPositions[j][2]-=50;
-    }
-  }
-
-  for(var i=0; i<7; i++){
-    for(var j=1900+760*i; j<=1900+760*i+i; j++){
-      orderOfPositions[j][2]+=50;
-    }
   }
 }
 
@@ -2217,50 +2104,48 @@ function createRow(direction){
   bufferX = true;
 }
 
-let nextChoice = false;
-
 function calculateMove(moveArr){
   let choice;
-  let choiceMade = false;
   let moveMade = false;
-  if(positionPlaceCounter===8001){
-    push0 = 50;
-    push1 = 0;
-    push2 = 0;
-    positionPlaceCounter=0;
-  }
-  if(nextChoice){
-    choice = forwardPosition(true);
-    nextChoice = false;
-    choiceMade = true;
-  }
-  if(choiceMade===false){
-    if(shadowFoodPosition[2]!==foodPosition[2]){
-      if(shadowFoodPosition[2]===-50){
-        if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
-          choice = backPosition(true);
+  if(shadowFoodPosition[2]!==foodPosition[2]){
+    if(shadowFoodPosition[2]===-50){
+      if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
+        choice = backPosition(true);
+      }else{
+        choice = pathOpen(moveArr);
+      }
+    }else if(shadowFoodPosition[2]===-900||shadowFoodPosition[2]===-850){
+      if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
+        choice = forwardPosition(true);
+      }else{
+        choice = pathOpen(moveArr);
+      }
+      let forwardP = forwardPosition(true);
+      if(forwardP===foodPlaceCounter){
+        if(choice!==forwardP){
+          console.log('');
         }else{
-          choice = pathOpen(moveArr, "Best");
-        }
-      }else if(shadowFoodPosition[2]===-900){
-        if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
-          choice = forwardPosition(true);
-        }else{
-          choice = pathOpen(moveArr, "Best");
+          choice = forwardP;
         }
       }
-    }else if(shadowFoodPosition[0]!==foodPosition[0]){
-      if(shadowFoodPosition[0]===50){
-        if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
-          choice = leftPosition(true);
-          nextChoice = true;
-        }else{
-          choice = pathOpen(moveArr, "Best");
-        }
+    }
+  }else if(foodPosition[0]===0){
+    if(position[0]===0&&position[1]===foodPosition[1]){
+      if(position[2]>foodPosition[2]){
+        choice = forwardPosition(true);
+      }else{
+        choice = backPosition(true);
       }
     }else{
-      choice = pathOpen(moveArr, "Best");
+      choice = pathOpen(moveArr);
     }
+  }else{
+    choice = pathOpen(moveArr);
+  }
+  //choice = pathOpen(moveArr);
+  //choice = positionPlaceCounter+1;
+  if(positionPlaceCounter===7999){
+    choice = 0;
   }
   if(orderOfPositions[choice]!==undefined&&orderOfPositions[positionPlaceCounter]!==undefined){
     if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
@@ -2662,6 +2547,14 @@ function downPosition(x){
     }
   }else{
     return false;
+  }
+}
+
+function foodNumberedPosition(){
+  for(var i=0; i<orderOfPositions.length; i++){
+    if(foodPosition[0]===orderOfPositions[i][0]&&foodPosition[1]===orderOfPositions[i][1]&&foodPosition[2]===orderOfPositions[i][2]){
+      return i;
+    }
   }
 }
 
@@ -3396,17 +3289,19 @@ function keyPressed(){
       }
     }
     
-    if(gameMode!=="Two Player"){
-      if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
-        money+=1000;
-      }
+  }
+  if(gameMode!=="Two Player"){
+    if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
+      money+=1000;
     }
   }
-  if(keyIsDown(38)&&difficulty!==60){
-    difficulty++
-  }
-  if(keyIsDown(40)&&difficulty!==1){
-    difficulty--
+  if(gameMode==="AI"&&state==="Play"){
+    if(keyIsDown(38)&&difficulty!==60){
+      difficulty++
+    }
+    if(keyIsDown(40)&&difficulty!==1){
+      difficulty--
+    }
   }
 }
 
@@ -3847,5 +3742,7 @@ let p2Points = new p5(( sketch ) => {
 
 //calls set up when window is resized
 function windowResized(){
-  setup();
+  if(state!=="Play"){
+    setup();
+  }
 }
