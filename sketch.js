@@ -147,6 +147,7 @@ let train;
 let greenScales;
 let blueScales;
 let redScales;
+let scales;
 
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
@@ -162,6 +163,10 @@ function preload(){
   snakeEyes = loadImage('assets/snake eyes.PNG');
   topHat = loadImage('assets/top hat.PNG');
   train = loadImage('assets/train.PNG');
+  greenScales = loadImage('assets/green scales.png');
+  blueScales = loadImage('assets/blue scales.png');
+  redScales = loadImage('assets/red scales.png');
+  scales = loadImage('assets/scales.PNG');
   
   noSkin = {
     name: 'No Skin',
@@ -210,6 +215,14 @@ function preload(){
     active: 'no',
     picture: train,
   };
+
+  scalesSkin = {
+    name: 'Scales',
+    cost: 2500,
+    bought: 'no',
+    active: 'no',
+    picture: scales,
+  };
   
   /*
     1  2  5  10 17 26
@@ -222,10 +235,11 @@ function preload(){
 
   skins.push(noSkin);
   skins.push(lineSkin);
+  skins.push(isotopeSkin);
   skins.push(eyesSkin);
   skins.push(topHatSkin);
-  skins.push(isotopeSkin);
   skins.push(trainSkin);
+  skins.push(scalesSkin);
 
   if(getItem("High Scores 5")===null){
     highScores5 = [];
@@ -443,21 +457,23 @@ function mainMenu(){
   //resets difficulty for when the user switches gameModes
   difficulty = 10;
 
-  background(100);
+  background(0);
+  image(greenScales,0,0,windowWidth,windowHeight*2);
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
   textFont(inconsolata);
   
   //sets stroke, size, and fill for title
-  noStroke();
+  stroke(0);
+  strokeWeight(5);
   textSize(150);
-  fill(0,255,100);
+  fill(255,255,0);
   //title
   text("3D Snake",width/2, height*2/8);
   
   //sets stroke and fill for the buttons
   stroke(0);
-  fill(200);
+  fill(0,200,0);
   //creates buttons
   rect(width/2, height/2+height*1/8, width/4, height/8);
   rect(width/3, height/2+height*3/8, width/4, height/8);
@@ -513,23 +529,23 @@ function startScreen(){
     translate(-1/2*width,-1/2*height);
   }
 
-  background(100);
+  background(0);
+  image(redScales,0,0,windowWidth,windowHeight*2);
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
   textFont(inconsolata);
   
   //sets stroke, size, and fill for title
-  noStroke();
+  stroke(0);
+  strokeWeight(5);
   textSize(100);
-  fill(0,255,100);
+  fill(0,255,0);
 
   //title
   text("3D Snake",width/2, height/8);
   
   //buttons
-  stroke(0);
-  strokeWeight(1);
-  fill(200);
+  fill(200,0,0);
   rect(width/2, height/2, width/4, height/8);
   rect(width/2, height/2+height*1/4, width/4, height/8);
 
@@ -588,15 +604,15 @@ function settingIcon(on){
   translate(width*1/16, height*1/8);
   noStroke();
   if(!on){
-    fill(50);
+    fill(0,0,255);
   }else{
-    fill(0,0,150);
+    fill(0,255,0);
   }
   for(var i=0; i<12; i++){
     ellipse(0, 0, 50, 10);
     rotate(10);
   }
-  fill(100);
+  fill(200,0,0);
   circle(0, 0, 34);
   pop();
 }
@@ -606,11 +622,11 @@ function StoreIcon(on){
   push();
   translate(width*15/16, height*1/8);
   if(!on){
-    fill(50);
-    stroke(50);
+    fill(200,0,0);
+    stroke(0,0,255);
   }else{
-    fill(0,0,150);
-    stroke(0,0,150);
+    fill(200,0,0);
+    stroke(0,255,0);
   }
   quad(-15,-15,25,-10,20,15,-10,15);
   strokeWeight(3);
@@ -720,27 +736,29 @@ function selectGameType(){
 
 //this function does everything on the options screen
 function optionMenu(){
-  background(200);
-  fill(0);
+  background(0);
+  fill(255,165,0);
   
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
   if(restarted){
     translate(-1/2*width,-1/2*height);
   }
+  image(blueScales,0,0,windowWidth,windowHeight*2);
   
   //writes the instructions on screen
   textAlign(LEFT, TOP);
   textFont(inconsolata);
-  noStroke();
+  strokeWeight(1);
+  stroke(255,165,0);
   textSize(25);
+
   controls();
   
   if(gameMode!=="AI"){
     difficultyBar();
   }
   
-  //red back rectangle, changes the state back to menu
   stroke(0);
   fill(255,0,0);
   rectMode(CENTER);
@@ -757,20 +775,21 @@ function optionMenu(){
 }
 
 function difficultyBar(){
+  fill(0,0,200);
   stroke(0);
-  fill(255);
+  strokeWeight(3);
   //difficulty slider bar
   rect(225, 300, 250, 20);
   
   //notches on slider bar
-  noStroke();
-  fill(220);
-  for(var j=0; j<9; j++){
-    rect(125+25*j, 300, 5, 20);
+  fill(255,165,0);
+  stroke(255,165,0);
+  strokeWeight(1);
+  for(var j=0; j<11; j++){
+    rect(100+25*j, 300, 5, 20);
   }
   
   //text for difficulty
-  fill(0);
   textAlign(CENTER, CENTER);
   text("Difficulty", 225, 250);
   textSize(15);
@@ -780,8 +799,9 @@ function difficultyBar(){
   
   //the slider
   stroke(0);
-  fill(150);
-  rect(sliderX, 300, 9, 25);
+  strokeWeight(2);
+  fill(255,185,0);
+  rect(sliderX, 300, 9, 30);
   
   //if the mouse is down on any part of the bar, the slider will move to that position
   if(mouseX>100&&mouseX<350&&mouseY>474-12&&mouseY<474+12&&mouseIsPressed){
@@ -855,15 +875,19 @@ function changePlayer1Bindings(){
   
   if(changingBingingsP1===false){
     //button for key bindings
-    stroke(100);
-    fill(255);
+    stroke(0);
+    strokeWeight(3);
+    fill(0,0,255);
     rect(200, 150, 200, 30);
-    fill(0);
-    stroke(255);
+
+    fill(255,165,0);
+    stroke(255,165,0);
+    strokeWeight(1);
     text("Change Bindings", 105, 135);
   }else{
     text("Click box to", 105, 135);
     text("set new binding.", 105, 165);
+    stroke(0);
   
     //left binding
     if(mouseX>75-7&&mouseX<75+7&&mouseY>150-19&&mouseY<150-5&&mouseIsPressed){
@@ -873,6 +897,12 @@ function changePlayer1Bindings(){
       backBindP1=false;
       upBindP1=false;
       downBindP1=false;
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
     }
     if(leftBindP1===true){
       fill(255,255,0);
@@ -898,6 +928,12 @@ function changePlayer1Bindings(){
       backBindP1=false;
       upBindP1=false;
       downBindP1=false;
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
     }
     if(rightBindP1===true){
       fill(255,255,0);
@@ -923,6 +959,12 @@ function changePlayer1Bindings(){
       backBindP1=false;
       upBindP1=false;
       downBindP1=false;
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
     }
     if(forwardBindP1===true){
       fill(255,255,0);
@@ -948,6 +990,12 @@ function changePlayer1Bindings(){
       backBindP1=true;
       upBindP1=false;
       downBindP1=false;
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
     }
     if(backBindP1===true){
       fill(255,255,0);
@@ -973,6 +1021,12 @@ function changePlayer1Bindings(){
       backBindP1=false;
       upBindP1=true;
       downBindP1=false;
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
     }
     if(upBindP1===true){
       fill(255,255,0);
@@ -998,6 +1052,12 @@ function changePlayer1Bindings(){
       backBindP1=false;
       upBindP1=false;
       downBindP1=true;
+      leftBindP2=false;
+      rightBindP2=false;
+      forwardBindP2=false;
+      backBindP2=false;
+      upBindP2=false;
+      downBindP2=false;
     }
     if(downBindP1===true){
       fill(255,255,0);
@@ -1025,9 +1085,11 @@ function changePlayer2Bindings(){
   translate(250, -25*instructionsP1.length);
   textAlign(LEFT, TOP);
   textFont(inconsolata);
-  noStroke();
+
+  strokeWeight(1);
+  stroke(255,165,0);
+  fill(255,165,0);
   textSize(25);
-  fill(0);
 
   for(var i=0; i<instructionsP2.length; i++){
     text(instructionsP2[i], 100, 100);
@@ -1036,15 +1098,19 @@ function changePlayer2Bindings(){
   
   if(changingBingingsP2===false){
     //button for key bindings
-    stroke(100);
-    fill(255);
+    stroke(0);
+    strokeWeight(3);
+    fill(0,0,255);
     rect(200, 150, 200, 30);
-    fill(0);
-    stroke(255);
+    
+    fill(255,165,0);
+    stroke(255,165,0);
+    strokeWeight(1);
     text("Change Bindings", 105, 135);
   }else{
     text("Click box to", 105, 135);
     text("set new binding.", 105, 165);
+    stroke(0);
   
     //left binding
     if(mouseX>75-7+250&&mouseX<75+7+250&&mouseY>150-19&&mouseY<150-5&&mouseIsPressed){
@@ -1235,13 +1301,14 @@ function changePlayer2Bindings(){
 }
 
 function storeMenu(){
-  background(200);
-
+  background(0);
+  
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
   if(restarted){
     translate(-1/2*width,-1/2*height);
   }
+  image(blueScales,0,0,windowWidth,windowHeight*2);
 
   //creates creates the smallest possible rectangular grid based on the number of skins available
   if(skins.length<3){
@@ -1566,11 +1633,13 @@ function moveSnake(){
   }
   push();
   translate(position[0], position[1], position[2]);
+  //head
   placeBox(position[0],position[1],position[2],true);
   pop();
   for(var i=bodyPosition.length-3; i>=0; i-=3){
     push();
     translate(bodyPosition[i+0], bodyPosition[i+1], bodyPosition[i+2]);
+    //body
     placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
     pop();
   }
@@ -1584,16 +1653,16 @@ function placeBox(x1,y1,z1,head){
   //if the position is 1 box away from the border, place a box with the color red
   if(x<=0||x>=950||y<=0||y>=950||z<=-950||z>=0){
     fill(255,0,0,50);
-    applySkin(head);
+    applySkin(head, true, false, false);
   }else 
   //if the position is 2-3 boxs away from the border, place a box with the color blue
   if(x<=100||x>=850||y<=100||y>=850||z<=-850||z>=-100){
     fill(0,0,255,50);
-    applySkin(head);
+    applySkin(head, false, false, true);
   }else{
     //otherwise, place a box with the color green
     fill(0,255,0,50);
-    applySkin(head);
+    applySkin(head, false, true, false);
   }
   //the color scheme is a warning system for the user, tells them how close they are to the border
 }
@@ -1649,7 +1718,7 @@ function placeBoxP2(x1,y1,z1,head){
 }
 
 //applys the skin with the input of which box is the head
-function applySkin(head){
+function applySkin(head, r, g, b){
   //creates line skin on box
   if(gameMode!=="Two Player"){
     if(skin==="Line"){
@@ -1776,6 +1845,30 @@ function applySkin(head){
           pop();
         }
       }
+    }else if(skin==="Scales"){
+      box(50);
+        if(r){
+          applyScales(-25,-25,-25,1.58,0,redScales);
+          applyScales(-25,25,-25,1.58,0,redScales);
+          applyScales(-25,-25,-25,0,0,redScales);
+          applyScales(-25,-25,25,0,0,redScales);
+          applyScales(-25,-25,25,0,1.58,redScales);
+          applyScales(25,-25,25,0,1.58,redScales);
+        }else if(b){
+          applyScales(-25,-25,-25,1.58,0,blueScales);
+          applyScales(-25,25,-25,1.58,0,blueScales);
+          applyScales(-25,-25,-25,0,0,blueScales);
+          applyScales(-25,-25,25,0,0,blueScales);
+          applyScales(-25,-25,25,0,1.58,blueScales);
+          applyScales(25,-25,25,0,1.58,blueScales);
+        }else if(g){
+          applyScales(-25,-25,-25,1.58,0,greenScales);
+          applyScales(-25,25,-25,1.58,0,greenScales);
+          applyScales(-25,-25,-25,0,0,greenScales);
+          applyScales(-25,-25,25,0,0,greenScales);
+          applyScales(-25,-25,25,0,1.58,greenScales);
+          applyScales(25,-25,25,0,1.58,greenScales);
+        }
     }else{
       //no skin
       box(50);
@@ -1783,6 +1876,16 @@ function applySkin(head){
   }else{
     box(50);
   }
+}
+
+function applyScales(x,y,z,rX,rY,c){
+  push();
+  translate(x,y,z);
+  rotateX(rX);
+  rotateY(rY);
+  image(c,0,0,50,50,0,0,200,200);
+  pop();
+
 }
 
 class Smoke {
@@ -2570,14 +2673,16 @@ function deathScreen(){
   frameRate(60);
   textFont(inconsolata);
   textAlign(CENTER, CENTER);
-  background(200);
   //screen is displaced, translation fixes it
   translate(-1/2*width,-1/2*height);
+  background(0);
+  image(greenScales,0,0,windowWidth,windowHeight*2);
   
   if(gameMode!=="Two Player"){
     //says 'You Died!' at top of screen
+    stroke(0);
+    textSize(75);
     fill(255,0,0);
-    textSize(50);
     if(gameMode==="Single Player"){
       text("You Died!", width/2, height/8);
     }else{
@@ -2585,7 +2690,7 @@ function deathScreen(){
     }
 
     //displays the users score
-    fill(0);
+    fill(220,220,0);
     textSize(25);
     text("Score: " + snakeLength, width/2, height*5/16);
   }
@@ -2908,7 +3013,7 @@ function deathScreen(){
 
   //makes Back to Menu button
   stroke(0);
-  fill(255);
+  fill(0,220,0);
   textSize(25);
   rectMode(CENTER);
   rect(width/2,height/2+height/8, width/4, height/8);
@@ -2928,9 +3033,9 @@ function leaderBoardIcon(on){
   translate(width*15/16, height*1/8);
   noStroke();
   if(!on){
-    fill(100);
+    fill(0,0,255);
   }else{
-    fill(0,0,150);
+    fill(255,255,0);
   }
   rectMode(CENTER);
   rect(0,0,17,50/2);
@@ -2940,21 +3045,21 @@ function leaderBoardIcon(on){
 }
 
 function leaderBoard(){
-  background(200);
-
   translate(-1*width/2, -1*height/2);
+  
+  image(blueScales,0,0,windowWidth,windowHeight*2);
 
   textSize(75);
-  fill(255,0,255);
+  fill(200,0,200);
   text("High Scores", width/2, height*1/8);
 
-  textSize(25);
+  textSize(40);
   fill(200,0,200);
   text("For difficulty " + difficulty, width/2, height*7/32);
 
   //writes top scores
   textSize(50);
-  fill(0);
+  fill(255,165,0);
   push();
 
   if(difficulty===5){
