@@ -150,7 +150,7 @@ let redScales;
 let scales;
 
 let gameBackground;
-let img = 2;
+let img = 1;
 
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
@@ -389,7 +389,7 @@ function setup() {
       //calculates money gained for round
       moneyGained = (snakeLength-3)*difficulty;
       //adds money gained to total money(it adds twice for some reason)
-      money+=moneyGained/2;
+      money+=moneyGained;
     }
     
     //hides all additional canvases
@@ -2699,7 +2699,9 @@ function deathScreen(){
   translate(-1/2*width,-1/2*height);
   background(0);
   image(greenScales,0,0,windowWidth,windowHeight*2);
-  
+  // fill(255, 0, 0);
+  // rect(0, 0, 700, 700)
+
   if(gameMode!=="Two Player"){
     //says 'You Died!' at top of screen
     stroke(0);
@@ -3892,6 +3894,6 @@ let p2Points = new p5(( sketch ) => {
 //calls set up when window is resized
 function windowResized(){
   if(state!=="Play"){
-    setup();
+    resizeCanvas(windowWidth,windowHeight);
   }
 }
