@@ -149,6 +149,9 @@ let blueScales;
 let redScales;
 let scales;
 
+let gameBackground;
+let img = 2;
+
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
 let shadowFoodPosition = [];
@@ -167,6 +170,11 @@ function preload(){
   blueScales = loadImage('assets/blue scales.png');
   redScales = loadImage('assets/red scales.png');
   scales = loadImage('assets/scales.PNG');
+  if(img===1){
+    gameBackground = loadImage('assets/game background.webp');
+  }else{
+    gameBackground = loadImage('assets/game background 2.jpg');
+  }
   
   noSkin = {
     name: 'No Skin',
@@ -367,6 +375,9 @@ function setup() {
     if(gameType==="Points"){
       document.getElementById("defaultCanvas7").style.visibility = "visible";
       document.getElementById("defaultCanvas8").style.visibility = "visible";
+    }
+    if(gameType==="Points"||gameMode==="AI"){
+      document.getElementById("defaultCanvas6").style.visibility = "visible";
     }
     if(gameMode==="AI"){
       labelPositions();
@@ -1446,7 +1457,18 @@ function enterItem(col, row, centerX, centerY, wh){
 
 //gameplay is split into two parts, board creation and the part that the user plays
 function gamePlay(){
-  background(220);
+  background(0);
+  push();
+  if(img===1){
+    translate(1300,2000,-500);
+  }else{
+    translate(1000,1500,-1000);
+  }
+  rotateY(-0.65);
+  rotateX(0.63);
+  rotateZ(-0.02);
+  image(gameBackground, 6500/-2, 3600/-2, 6500, 3600);
+  pop();
   
   createBoard();
 
@@ -1652,16 +1674,16 @@ function placeBox(x1,y1,z1,head){
   let z = z1;
   //if the position is 1 box away from the border, place a box with the color red
   if(x<=0||x>=950||y<=0||y>=950||z<=-950||z>=0){
-    fill(255,0,0,50);
+    fill(255,0,0,100);
     applySkin(head, true, false, false);
   }else 
   //if the position is 2-3 boxs away from the border, place a box with the color blue
   if(x<=100||x>=850||y<=100||y>=850||z<=-850||z>=-100){
-    fill(0,0,255,50);
+    fill(0,0,255,100);
     applySkin(head, false, false, true);
   }else{
     //otherwise, place a box with the color green
-    fill(0,255,0,50);
+    fill(0,255,0,100);
     applySkin(head, false, true, false);
   }
   //the color scheme is a warning system for the user, tells them how close they are to the border
@@ -1702,16 +1724,16 @@ function placeBoxP2(x1,y1,z1,head){
   let z = z1;
   //if the position is 1 box away from the border, place a box with the color red
   if(x<=0||x>=950||y<=0||y>=950||z<=-950||z>=0){
-    fill(255,0,0,50);
+    fill(255,0,0,100);
     box(50);
   }else 
   //if the position is 2-3 boxs away from the border, place a box with the color blue
   if(x<=100||x>=850||y<=100||y>=850||z<=-850||z>=-100){
-    fill(0,0,255,50);
+    fill(0,0,255,100);
     box(50);
   }else{
     //otherwise, place a box with the color green
-    fill(0,255,0,50);
+    fill(0,255,0,100);
     box(50);
   }
   //the color scheme is a warning system for the user, tells them how close they are to the border
@@ -3414,7 +3436,8 @@ let topViewWord = new p5(( sketch ) => {
 
   //writes word
   sketch.draw = () => {
-      sketch.background(220);
+      sketch.background(0);
+      sketch.fill(255,0,255);
       sketch.translate(30,15);
       sketch.textAlign(BOTTOM, CENTER);
       sketch.textSize(20);
@@ -3439,7 +3462,16 @@ let topView = new p5(( sketch ) => {
 
   //each view follows most of the same functions as the normal program
   sketch.gamePlay = () => {
-    sketch.background(200);
+    sketch.background(0);
+
+    sketch.push();
+    sketch.stroke(255,0,0);
+    sketch.strokeWeight(1);
+    sketch.line(0,0,150,0);
+    sketch.line(150,0,150,150);
+    sketch.line(150,150,0,150);
+    sketch.line(0,150,0,0);
+    sketch.pop();
     
     sketch.food();
     
@@ -3476,13 +3508,13 @@ let topView = new p5(( sketch ) => {
     let y1 = y2;
     let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
-      sketch.fill(255,0,0,50);
+      sketch.fill(255,0,0,150);
       sketch.rect(0,0,x/20,y/20);
     }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
-      sketch.fill(0,0,255,50);
+      sketch.fill(0,0,255,150);
       sketch.rect(0,0,x/20,y/20);
     }else{
-      sketch.fill(0,255,0,50);
+      sketch.fill(0,255,0,150);
       sketch.rect(0,0,x/20,y/20);
     }
   };
@@ -3510,13 +3542,13 @@ let topView = new p5(( sketch ) => {
     let y1 = y2;
     let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
-      sketch.fill(255,0,0,50);
+      sketch.fill(255,0,0,150);
       sketch.rect(0,0,x/20,y/20);
     }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
-      sketch.fill(0,0,255,50);
+      sketch.fill(0,0,255,150);
       sketch.rect(0,0,x/20,y/20);
     }else{
-      sketch.fill(0,255,0,50);
+      sketch.fill(0,255,0,150);
       sketch.rect(0,0,x/20,y/20);
     }
   };
@@ -3541,7 +3573,8 @@ let sideViewWord = new p5(( sketch ) => {
 
   //writes word
   sketch.draw = () => {
-      sketch.background(220);
+      sketch.background(0);
+      sketch.fill(255,0,255);
       sketch.translate(30,15);
       sketch.textAlign(BOTTOM, CENTER);
       sketch.textSize(20);
@@ -3564,7 +3597,16 @@ let sideView = new p5(( sketch ) => {
   };
 
   sketch.gamePlay = () => {
-    sketch.background(200);
+    sketch.background(0);
+
+    sketch.push();
+    sketch.stroke(255,0,0);
+    sketch.strokeWeight(1);
+    sketch.line(0,0,150,0);
+    sketch.line(150,0,150,150);
+    sketch.line(150,150,0,150);
+    sketch.line(0,150,0,0);
+    sketch.pop();
     
     sketch.food();
     
@@ -3599,13 +3641,13 @@ let sideView = new p5(( sketch ) => {
     let y1 = y2;
     let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
-      sketch.fill(255,0,0,50);
+      sketch.fill(255,0,0,150);
       sketch.rect(0,0,x/20,y/20);
     }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
-      sketch.fill(0,0,255,50);
+      sketch.fill(0,0,255,150);
       sketch.rect(0,0,x/20,y/20);
     }else{
-      sketch.fill(0,255,0,50);
+      sketch.fill(0,255,0,150);
       sketch.rect(0,0,x/20,y/20);
     }
   };
@@ -3631,13 +3673,13 @@ let sideView = new p5(( sketch ) => {
     let y1 = y2;
     let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
-      sketch.fill(255,0,0,50);
+      sketch.fill(255,0,0,150);
       sketch.rect(0,0,x/20,y/20);
     }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
-      sketch.fill(0,0,255,50);
+      sketch.fill(0,0,255,150);
       sketch.rect(0,0,x/20,y/20);
     }else{
-      sketch.fill(0,255,0,50);
+      sketch.fill(0,255,0,150);
       sketch.rect(0,0,x/20,y/20);
     }
   };
@@ -3661,7 +3703,8 @@ let frontViewWord = new p5(( sketch ) => {
 
   //writes word
   sketch.draw = () => {
-    sketch.background(220);
+    sketch.background(0);
+    sketch.fill(255,0,255);
     sketch.translate(30,15);
     sketch.textAlign(BOTTOM, CENTER);
     sketch.textSize(20);
@@ -3681,9 +3724,18 @@ let frontView = new p5(( sketch ) => {
   sketch.draw = () => {
     sketch.gamePlay();
   };
-
+  
   sketch.gamePlay = () => {
-    sketch.background(200);
+    sketch.background(0);
+
+    sketch.push();
+    sketch.stroke(255,0,0);
+    sketch.strokeWeight(1);
+    sketch.line(0,0,150,0);
+    sketch.line(150,0,150,150);
+    sketch.line(150,150,0,150);
+    sketch.line(0,150,0,0);
+    sketch.pop();
     
     sketch.food();
     
@@ -3716,13 +3768,13 @@ let frontView = new p5(( sketch ) => {
     let y1 = y2;
     let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
-      sketch.fill(255,0,0,50);
+      sketch.fill(255,0,0,150);
       sketch.rect(0,0,x/20,y/20);
     }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
-      sketch.fill(0,0,255,50);
+      sketch.fill(0,0,255,150);
       sketch.rect(0,0,x/20,y/20);
     }else{
-      sketch.fill(0,255,0,50);
+      sketch.fill(0,255,0,150);
       sketch.rect(0,0,x/20,y/20);
     }
   };
@@ -3746,13 +3798,13 @@ let frontView = new p5(( sketch ) => {
     let y1 = y2;
     let z1 = z2;
     if(x1<=0||x1>=950||y1<=0||y1>=950||z1<=-950||z1>=0){
-      sketch.fill(255,0,0,50);
+      sketch.fill(255,0,0,150);
       sketch.rect(0,0,x/20,y/20);
     }else if(x1<=100||x1>=850||y1<=100||y1>=850||z1<=-850||z1>=-100){
-      sketch.fill(0,0,255,50);
+      sketch.fill(0,0,255,150);
       sketch.rect(0,0,x/20,y/20);
     }else{
-      sketch.fill(0,255,0,50);
+      sketch.fill(0,255,0,150);
       sketch.rect(0,0,x/20,y/20);
     }
   };
@@ -3775,10 +3827,11 @@ let display = new p5(( sketch ) => {
 
   //writes word
   sketch.draw = () => {
-    sketch.background(220);
+    sketch.background(0);
     sketch.translate(30,15);
     sketch.textAlign(BOTTOM, CENTER);
     sketch.textSize(50);
+    sketch.fill(255,165,0);
     if(gameMode==="Two Player"){
       sketch.text(time,0,10);
     }
@@ -3802,7 +3855,7 @@ let p1Points = new p5(( sketch ) => {
 
   //writes word
   sketch.draw = () => {
-    sketch.background(220);
+    sketch.background(0);
     sketch.translate(30,15);
     sketch.textAlign(BOTTOM, CENTER);
     sketch.textSize(50);
@@ -3825,7 +3878,7 @@ let p2Points = new p5(( sketch ) => {
 
   //writes word
   sketch.draw = () => {
-    sketch.background(220);
+    sketch.background(0);
     sketch.translate(30,15);
     sketch.textAlign(BOTTOM, CENTER);
     sketch.textSize(50);
