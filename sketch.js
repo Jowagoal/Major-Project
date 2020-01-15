@@ -343,20 +343,10 @@ function setup() {
    foodPosition[0]=ceil(random(-0.9,gameSize))*50;
    foodPosition[1]=ceil(random(-0.9,gameSize))*50;
    foodPosition[2]=floor(random(-1*gameSize,0.9))*50;
-   
-    if(foodPosition[2]===0){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]-50;
-    }else if(foodPosition[2]===-50*gameSize){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]+50;
-    }else{
+
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2];
-    }
   
 
     //shows all additional canvases
@@ -1978,40 +1968,22 @@ function food(){
   if(position[0]+push0===foodPosition[0]&&position[1]+push1===foodPosition[1]&&position[2]+push2===foodPosition[2]){
     foodPosition[0]=ceil(random(-0.9,gameSize))*50;
     foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[2]=floor(random(-1* gameSize,0.9))*50;
-    if(foodPosition[2]===0){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]-50;
-    }else if(foodPosition[2]===-50*gameSize){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]+50;
-    }else{
+    foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2];
-    }
     snakeLength++;
     points++
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     foodPosition[0]=ceil(random(-0.9,gameSize))*50;
     foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[2]=floor(random(-1* gameSize,0.9))*50;
-    if(foodPosition[2]===0){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]-50;
-    }else if(foodPosition[2]===-50*gameSize){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]+50;
-    }else{
+    foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2];
-    }
     snakeLength++;
     points++
   }
@@ -2019,22 +1991,11 @@ function food(){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
       foodPosition[0]=ceil(random(-0.9,gameSize))*50;
       foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-      foodPosition[2]=floor(random(-1* gameSize,0.9))*50;
-    if(foodPosition[2]===0){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]-50;
-    }else if(foodPosition[2]===-50*gameSize){
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2]+50;
-    }else{
+      foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
       shadowFoodPosition[2] = foodPosition[2];
-    }
-      snakeLength++;
-      points++;
     }
   }
 
@@ -2221,78 +2182,29 @@ function createRow(direction){
 
 function calculateMove(moveArr){
   let choice;
-  let moveMade = false;
-  if(shadowFoodPosition[2]!==foodPosition[2]){
-    if(shadowFoodPosition[2]===-50){
-      if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
-        choice = backPosition(true);
-      }else{
-        choice = pathOpen(moveArr);
-      }
-    }else if(shadowFoodPosition[2]===-900||shadowFoodPosition[2]===-850){
-      if(position[0]===shadowFoodPosition[0]&&position[1]===shadowFoodPosition[1]&&position[2]===shadowFoodPosition[2]){
-        choice = forwardPosition(true);
-      }else{
-        choice = pathOpen(moveArr);
-      }
-    }
-  }else if(foodPosition[0]===0){
-    if(position[0]===0&&position[1]===foodPosition[1]){
-      if(position[2]>foodPosition[2]){
-        choice = forwardPosition(true);
-      }else{
-        choice = backPosition(true);
-      }
-    }else{
-      choice = pathOpen(moveArr);
-    }
-  }else{
-    choice = pathOpen(moveArr);
-  }
-  //choice = pathOpen(moveArr);
+  choice = pathOpen(moveArr);
   //choice = positionPlaceCounter+1;
-  if(positionPlaceCounter===7999){
+  if(positionPlaceCounter===orderOfPositions.length-1){
     choice = 0;
   }
-  if(orderOfPositions[choice]!==undefined&&orderOfPositions[positionPlaceCounter]!==undefined){
-    if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
-      push0 = orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0];
-      push1 = 0;
-      push2 = 0;
-      positionPlaceCounter = choice;
-      moveMade = true;
-    }else if(orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1]!==0){
-      push0 = 0;
-      push1 = orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1];
-      push2 = 0;
-      positionPlaceCounter = choice;
-      moveMade = true;
-    }else if(orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2]!==0){
-      push0 = 0;
-      push1 = 0;
-      push2 = orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2];
-      positionPlaceCounter = choice;
-      moveMade = true;
-    }
-  }
-  if(moveMade===false){
-    if(orderOfPositions[positionPlaceCounter+1]!==undefined){
-      if(orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0]!==0){
-        push0 = orderOfPositions[positionPlaceCounter+1][0]-orderOfPositions[positionPlaceCounter][0];
-        push1 = 0;
-        push2 = 0;
-      }else if(orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1]!==0){
-        push0 = 0;
-        push1 = orderOfPositions[positionPlaceCounter+1][1]-orderOfPositions[positionPlaceCounter][1];
-        push2 = 0;
-      }else{
-        push0 = 0;
-        push1 = 0;
-        push2 = orderOfPositions[positionPlaceCounter+1][2]-orderOfPositions[positionPlaceCounter][2];
-      }
-      positionPlaceCounter++;
-      moveMade = true;
-    }
+  if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
+    push0 = orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0];
+    push1 = 0;
+    push2 = 0;
+    positionPlaceCounter = choice;
+    moveMade = true;
+  }else if(orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1]!==0){
+    push0 = 0;
+    push1 = orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1];
+    push2 = 0;
+    positionPlaceCounter = choice;
+    moveMade = true;
+  }else if(orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2]!==0){
+    push0 = 0;
+    push1 = 0;
+    push2 = orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2];
+    positionPlaceCounter = choice;
+    moveMade = true;
   }
 }
 
@@ -2533,7 +2445,7 @@ function neighboringPositions(){
 
 function right(){
   for(var i=0; i<=bodyPosition.length; i+=3){
-    if(position[0]+50===1000||(position[0]+50===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+    if(position[0]+50===gameSize*50+50||(position[0]+50===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
       return false;
     }
   }
@@ -2551,7 +2463,7 @@ function left(){
 
 function forward(){
   for(var i=0; i<=bodyPosition.length; i+=3){
-    if(position[2]-50===-1000||(position[0]===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]-50===bodyPosition[i+2])){
+    if(position[2]-50===-gameSize*50-50||(position[0]===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]-50===bodyPosition[i+2])){
       return false;
     }
   }
@@ -2578,7 +2490,7 @@ function up(){
 
 function down(){
   for(var i=0; i<=bodyPosition.length; i+=3){
-    if(position[1]+50===1000||(position[0]===bodyPosition[i+0]&&position[1]+50===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+    if(position[1]+50===gameSize*50+50||(position[0]===bodyPosition[i+0]&&position[1]+50===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
       return false;
     }
   }
