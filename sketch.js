@@ -144,14 +144,21 @@ let blueScales;
 let redScales;
 let scales;
 
+let menuBackground;
 let gameBackground;
 let img = 1;
 
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
 let shadowFoodPosition = [];
+let bufferX;
+
+let menuMusic;
+let gameMusic;
 
 function preload(){
+  gameMusic = new Audio("assets/echelon.mp3");
+  menuMusic = new Audio("assets/streetsound_150_bpm.mp3");
   //preloads text font
   inconsolata = loadFont('assets/Inconsolata.otf');
   //preloads pictures for store
@@ -165,6 +172,7 @@ function preload(){
   blueScales = loadImage('assets/blue scales.png');
   redScales = loadImage('assets/red scales.png');
   scales = loadImage('assets/scales.PNG');
+  menuBackground = loadImage('assets/game background.jpg');
   if(img===1){
     gameBackground = loadImage('assets/game background.webp');
   }else{
@@ -433,6 +441,12 @@ function checkState(){
     leaderBoard();
     pointerDot();
   }
+  if(gameMusic.currentTime===gameMusic.duration){
+    gameMusic.currentTime = 0;
+  }
+  if(menuMusic.currentTime===menuMusic.duration){
+    menuMusic.currentTime = 0;
+  }
 }
 
 //this just puts a red dot on the mouse
@@ -444,6 +458,10 @@ function pointerDot(){
 
 //this function does everything on the start screen
 function mainMenu(){
+  //user has to interact with the screen before it can play music
+  if(mouseX!==pmouseX&&firstIteration){
+    menuMusic.play();
+  }
   //after the program is restarted, everything on the screen is displaced
   //this corrects that displacement
   if(restarted){
@@ -454,7 +472,7 @@ function mainMenu(){
   difficulty = 10;
 
   background(0);
-  image(greenScales,0,0,windowWidth,windowHeight*2);
+  image(menuBackground,0,0,windowWidth,windowHeight);
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
   textFont(inconsolata);
@@ -526,7 +544,7 @@ function startScreen(){
   }
 
   background(0);
-  image(redScales,0,0,windowWidth,windowHeight*2);
+  image(menuBackground,0,0,windowWidth,windowHeight);
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
   textFont(inconsolata);
@@ -676,7 +694,8 @@ function selectGameType(){
     translate(-1/2*width,-1/2*height);
   }
 
-  background(200);
+  background(0);
+  image(menuBackground,0,0,windowWidth,windowHeight);
   fill(50,255,50);
   textSize(75);
   text("Select Game Mode", width/2, height/10);
@@ -709,10 +728,11 @@ function selectGameType(){
   }
   
   textSize(40);
-  fill(25);
+  fill(0);
   text("Survival", width/2-width/4, height/2-height/8);
   text("Points", width/2+width/4, height/2-height/8);
 
+  fill(255,165,0);
   textSize(30);
   text("Play aginst your", width/2-width/4, height*16/32);
   text("opponent until", width/2-width/4, height*18/32);
@@ -738,7 +758,7 @@ function optionMenu(){
   if(restarted){
     translate(-1/2*width,-1/2*height);
   }
-  image(blueScales,0,0,windowWidth,windowHeight*2);
+  image(menuBackground,0,0,windowWidth,windowHeight);
   
   //writes the instructions on screen
   textAlign(LEFT, TOP);
@@ -1302,7 +1322,7 @@ function storeMenu(){
   if(restarted){
     translate(-1/2*width,-1/2*height);
   }
-  image(blueScales,0,0,windowWidth,windowHeight*2);
+  image(menuBackground,0,0,windowWidth,windowHeight);
 
   //creates creates the smallest possible rectangular grid based on the number of skins available
   if(skins.length<3){
@@ -1440,6 +1460,10 @@ function enterItem(col, row, centerX, centerY, wh){
 
 //gameplay is split into two parts, board creation and the part that the user plays
 function gamePlay(){
+  menuMusic.pause();
+  menuMusic.currentTime = 0;
+  gameMusic.play();
+
   background(0);
   push();
   if(img===1){
@@ -2160,8 +2184,6 @@ function createLayer(direction){
   }
 }
 
-let bufferX;
-
 function createRow(direction){
   for(var x=0; x<gameSize; x++){
     currentPosition = [...currentPosition];
@@ -2595,13 +2617,16 @@ function bubbleSort(thisArray){
 
 //when the user dies the death screen is shown
 function deathScreen(){
+  menuMusic.play();
+  gameMusic.pause();
+  gameMusic.currentTime = 0;
   frameRate(60);
   textFont(inconsolata);
   textAlign(CENTER, CENTER);
   //screen is displaced, translation fixes it
   translate(-1/2*width,-1/2*height);
   background(0);
-  image(greenScales,0,0,windowWidth,windowHeight*2);
+  image(menuBackground,0,0,windowWidth,windowHeight);
   // fill(255, 0, 0);
   // rect(0, 0, 700, 700)
 
@@ -2916,13 +2941,12 @@ function deathScreen(){
       text("Difficulty: 15", width/2, height*4/16);
       text("High Score: " + getItem("High Scores 15")[0].score, width/2, height*6/16);
     }
-    
-    
 
     //displays money gained for the round
     text("Money Gained: " + moneyGained, width/2, height*7/16);
   }else if(gameMode==="Two Player"){
     if(gameType==="Survival"){
+      textSize(75);
       text("Player " + playerDeath + " Died!", width/2, height/8);
     }else{
       textSize(75);
@@ -2974,7 +2998,7 @@ function leaderBoardIcon(on){
 function leaderBoard(){
   translate(-1*width/2, -1*height/2);
   
-  image(blueScales,0,0,windowWidth,windowHeight*2);
+  image(menuBackground,0,0,windowWidth,windowHeight);
 
   textSize(75);
   fill(200,0,200);
