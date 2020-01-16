@@ -323,7 +323,6 @@ function setup() {
     document.getElementById("defaultCanvas6").style.visibility = "hidden";
     document.getElementById("defaultCanvas7").style.visibility = "hidden";
     document.getElementById("defaultCanvas8").style.visibility = "hidden";
-    
   }
   
   if(state==="Menu"){
@@ -395,7 +394,6 @@ function setup() {
     document.getElementById("defaultCanvas6").style.visibility = "hidden";
     document.getElementById("defaultCanvas7").style.visibility = "hidden";
     document.getElementById("defaultCanvas8").style.visibility = "hidden";
-    
   }else if(state==="LeaderBoard"){
     createCanvas(windowWidth, windowHeight);
   }
@@ -2205,6 +2203,9 @@ function createRow(direction){
 function calculateMove(moveArr){
   let choice;
   choice = pathOpen(moveArr);
+  if(choice===undefined){
+    choice = positionPlaceCounter+1;
+  }
   //choice = positionPlaceCounter+1;
   if(positionPlaceCounter===orderOfPositions.length-1){
     choice = 0;
@@ -3768,6 +3769,9 @@ let display = new p5(( sketch ) => {
       sketch.text("Score: " + (snakeLength-3).toString(10),-30,10);
       sketch.textSize(30);
       sketch.text("Speed: " + difficulty.toString(10),0,60);
+    }
+    if(gameMode==="Single Player"){
+      sketch.text("Score: " + (snakeLength-3).toString(10),-30,10);
     }
   };
 });
