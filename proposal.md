@@ -27,6 +27,7 @@ The classic game of snake made in a 3D world.  The user is a snake that moves ar
     - Money system
     - Shop
     - Skins for the snake in-game
+  - Death screen
   - Snake color Scheme
     - change color based on how far from the border it is
   - Orthographic views of the game
@@ -34,10 +35,16 @@ The classic game of snake made in a 3D world.  The user is a snake that moves ar
     - Side view
     - Front view
     - (each view shows where the snake is and where the food is from its corresponding view)
-  
-  
-- Extra items
   - Single player mode
   - Two-player mode
-  - Online mode
+    - different game modes (survival and points)
   - AI
+  - adjustable area of play
+  - adjustable difficulty
+  - Music
+  - Leader board (for each difficulty)
+  - key mapping (for both players)
+  - game backgrounds
+  
+- Extra items
+  - Online mode

@@ -214,7 +214,7 @@ function preload(){
   
   topHatSkin = {
     name: 'Top Hat',
-    cost: 500,
+    cost: 1000,
     bought: 'no',
     active: 'no',
     picture: topHat,
@@ -222,7 +222,7 @@ function preload(){
 
   trainSkin = {
     name: 'Train',
-    cost: 1000,
+    cost: 2500,
     bought: 'no',
     active: 'no',
     picture: train,
@@ -230,7 +230,7 @@ function preload(){
 
   scalesSkin = {
     name: 'Scales',
-    cost: 2500,
+    cost: 500,
     bought: 'no',
     active: 'no',
     picture: scales,
@@ -249,9 +249,9 @@ function preload(){
   skins.push(lineSkin);
   skins.push(isotopeSkin);
   skins.push(eyesSkin);
+  skins.push(scalesSkin);
   skins.push(topHatSkin);
   skins.push(trainSkin);
-  skins.push(scalesSkin);
 
   if(getItem("High Scores 5")===null){
     highScores5 = [];
@@ -610,6 +610,21 @@ function startScreen(){
       StoreIcon(false);
     }
   }
+
+  //leaderboard
+  if(gameMode==="Single Player"){
+    if(mouseX>width*15/16-25&&mouseX<width*15/16+25&&mouseY>height*1/8-25/2+100&&mouseY<height*1/8+25/2+100){
+      leaderBoardIcon(true, 100);
+      if(mouseIsPressed){
+        //when mouse clicks store icon, sets state to store and calls setup again to open store screen
+        state="LeaderBoard";
+        leaderBoardFrom = 'Menu';
+        setup();
+      }
+    }else{
+      leaderBoardIcon(false, 100);
+    }
+  }
 }
 
 //draws the setting icon
@@ -776,7 +791,11 @@ function optionMenu(){
   stroke(0);
   fill(255,0,0);
   rectMode(CENTER);
-  rect(width*0.9,-125, 30, 20);
+  rect(width*0.9,-125, 30, 20)
+  fill(255);
+  stroke(255);
+  textSize(20)
+  text("X", width*0.9, -125);
   if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
     state="Menu";
     changingBingingsP1=false;
@@ -1449,6 +1468,10 @@ function storeMenu(){
   rectMode(CENTER);
   stroke(0);
   rect(width*0.9, 50, 30, 20);
+  fill(255);
+  stroke(255);
+  textSize(20)
+  text("X", width*0.9, 50);
   if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
     state="Menu";
     setup();
@@ -1478,7 +1501,7 @@ function enterItem(col, row, centerX, centerY, wh){
     text("Active", centerX, centerY+wh*4/16);
   }
   //checks if the mouse is clicked on the button
-  if(mouseX>centerX-(wh*5/8)/2&&mouseX<centerX+(wh*5/8)/2&&mouseY>centerY+wh*4/16-(wh*1/8)/2&&mouseY<centerY+wh*4/16+(wh*1/8)/2&&mouseIsPressed){
+  if(mouseX>centerX-wh/2&&mouseX<centerX+wh/2&&mouseY>centerY-wh/2&&mouseY<centerY+wh/2&&mouseIsPressed){
     //if the skin is not bought and the user has enough to buy it...
     if(store[row][col].bought==='no'&&money>=store[row][col].cost){
       for (let y = 0; y < rows; y++) {
@@ -2702,7 +2725,11 @@ function deathScreen(){
     if(gameMode==="Single Player"){
       text("You Died!", width/2, height/8);
     }else{
-      text("AI Died!", width/2, height/8);
+      if(snakeLength===Math.pow(gameSize+1,3)+1){
+        text("AI Beat the Board!", width/2, height/8);
+      }else{
+        text("AI Died!", width/2, height/8);
+      }
     }
 
     //displays the users score
@@ -2718,6 +2745,7 @@ function deathScreen(){
       if(mouseIsPressed){
         //when mouse clicks store icon, sets state to store and calls setup again to open store screen
         state="LeaderBoard";
+        leaderBoardFrom = 'Game Over';
         setup();
       }
     }else{
@@ -3043,14 +3071,17 @@ function deathScreen(){
 }
 
 //draws the leader board icon
-function leaderBoardIcon(on){
+function leaderBoardIcon(on, y){
   push();
+  if(y!==undefined){
+    translate(0, y);
+  }
   translate(width*15/16, height*1/8);
-  noStroke();
+  fill(255,0,0);
   if(!on){
-    fill(0,0,255);
+    stroke(0,0,255);
   }else{
-    fill(255,255,0);
+    stroke(0,255,0);
   }
   rectMode(CENTER);
   rect(0,0,17,50/2);
@@ -3060,7 +3091,11 @@ function leaderBoardIcon(on){
 }
 
 function leaderBoard(){
-  translate(-1*width/2, -1*height/2);
+  if(restarted){
+    translate(-1*width/2, -1*height/2);
+  }
+
+  background(0);
   
   image(menuBackground,0,0,windowWidth,windowHeight);
 
@@ -3094,7 +3129,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 5").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 5")[i].month + " " +  getItem("High Scores 5")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 5")[i].month + " " +  getItem("High Scores 5")[i].day + ", " +  getItem("High Scores 5")[i].year, 0, 0);
     }
     pop();
   }
@@ -3115,7 +3150,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 6").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 6")[i].month + " " +  getItem("High Scores 6")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 6")[i].month + " " +  getItem("High Scores 6")[i].day + ", " +  getItem("High Scores 6")[i].year, 0, 0);
     }
     pop();
   }
@@ -3136,7 +3171,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 7").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 7")[i].month + " " +  getItem("High Scores 7")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 7")[i].month + " " +  getItem("High Scores 7")[i].day + ", " +  getItem("High Scores 7")[i].year, 0, 0);
     }
     pop();
   }
@@ -3157,7 +3192,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 8").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 8")[i].month + " " +  getItem("High Scores 8")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 8")[i].month + " " +  getItem("High Scores 8")[i].day + ", " +  getItem("High Scores 8")[i].year, 0, 0);
     }
     pop();
   }
@@ -3178,7 +3213,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 9").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 9")[i].month + " " +  getItem("High Scores 9")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 9")[i].month + " " +  getItem("High Scores 9")[i].day + ", " +  getItem("High Scores 9")[i].year, 0, 0);
     }
     pop();
   }
@@ -3220,7 +3255,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 11").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 11")[i].month + " " +  getItem("High Scores 11")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 11")[i].month + " " +  getItem("High Scores 11")[i].day + ", " +  getItem("High Scores 11")[i].year, 0, 0);
     }
     pop();
   }
@@ -3241,7 +3276,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 12").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 12")[i].month + " " +  getItem("High Scores 12")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 12")[i].month + " " +  getItem("High Scores 12")[i].day + ", " +  getItem("High Scores 12")[i].year, 0, 0);
     }
     pop();
   }
@@ -3262,7 +3297,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 13").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 13")[i].month + " " +  getItem("High Scores 13")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 13")[i].month + " " +  getItem("High Scores 13")[i].day + ", " +  getItem("High Scores 13")[i].year, 0, 0);
     }
     pop();
   }
@@ -3283,7 +3318,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 14").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 14")[i].month + " " +  getItem("High Scores 14")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 14")[i].month + " " +  getItem("High Scores 14")[i].day + ", " +  getItem("High Scores 14")[i].year, 0, 0);
     }
     pop();
   }
@@ -3304,7 +3339,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 15").length; i++){
       translate(0, height*1/16);
-      text(getItem("High Scores 15")[i].month + " " +  getItem("High Scores 15")[i].day + ", " +  getItem("High Scores")[i].year, 0, 0);
+      text(getItem("High Scores 15")[i].month + " " +  getItem("High Scores 15")[i].day + ", " +  getItem("High Scores 15")[i].year, 0, 0);
     }
     pop();
   }
@@ -3313,8 +3348,16 @@ function leaderBoard(){
   rectMode(CENTER);
   stroke(0);
   rect(width*0.9, 50, 30, 20);
+  fill(255);
+  stroke(255);
+  textSize(20)
+  text("X", width*0.9, 50);
   if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
-    state="Game Over";
+    if(leaderBoardFrom==='Menu'){
+      state="Menu";
+    }else{
+      state="Game Over";
+    }
     setup();
   }
 }
@@ -3843,7 +3886,7 @@ let display = new p5(( sketch ) => {
       }
     }
     if(gameMode==="Single Player"){
-      sketch.text("Score: " + (snakeLength-3).toString(10),-30,10);
+      sketch.text("Score: " + (snakeLength).toString(10),-30,10);
     }
   };
 });
