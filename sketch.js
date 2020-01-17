@@ -13,7 +13,7 @@ let gameMode;
 let gameType;
 
 //these variables are the memory of the program
-let gameSize = 19;
+let gameSize = 13;
 
 let position = [0,0,0];
 let secondPosition = [0,0,0];
@@ -64,6 +64,7 @@ let snakeLengthP2;
 //these variables are for text and the difficulty slider in the options menu
 let inconsolata;
 let sliderX = 225;
+let gameSliderX = 225+300;
 let difficulty = 10;
 let changingBingingsP1 = false;
 let changingBingingsP2 = false;
@@ -468,6 +469,7 @@ function mainMenu(){
 
   //resets difficulty for when the user switches gameModes
   difficulty = 10;
+  gameSize = 13;
 
   background(0);
   image(menuBackground,0,0,windowWidth,windowHeight);
@@ -742,8 +744,7 @@ function selectGameType(){
   text("most food in a limited", width/2+width/4, height*20/32);
   text("amount of time.", width/2+width/4, height*22/32);
 
-  text("Players lose 1 point if", width/2+width/4, height*26/32);
-  text("they die, then respawn.", width/2+width/4, height*28/32);
+  text("Players respawn if they die.", width/2+width/4, height*26/32);
 }
 
 //this function does everything on the options screen
@@ -770,6 +771,7 @@ function optionMenu(){
   if(gameMode!=="AI"){
     difficultyBar();
   }
+  gameBar();
   
   stroke(0);
   fill(255,0,0);
@@ -784,6 +786,78 @@ function optionMenu(){
   
   //translates the origin back to the top left of the screen
   translate(0,-25*instructionsP1.length);
+}
+
+function gameBar(){
+  fill(0,0,200);
+  stroke(0);
+  strokeWeight(3);
+  //game size slider bar
+  rect(225+300, 300, 250, 20);
+  
+  //notches on slider bar
+  fill(255,165,0);
+  stroke(255,165,0);
+  strokeWeight(1);
+  for(var j=0; j<11; j++){
+    rect(100+25*j+300, 300, 5, 20);
+  }
+  
+  //text for difficulty
+  textSize(25);
+  textAlign(CENTER, CENTER);
+  text("Area of Play", 225+300, 250);
+  textSize(15);
+  text("Small", 100+300, 325);
+  text("Medium", 225+300, 325);
+  text("Large", 350+300, 325);
+  
+  //the slider
+  stroke(0);
+  strokeWeight(2);
+  fill(255,185,0);
+  rect(gameSliderX, 300, 9, 30);
+  
+  //if the mouse is down on any part of the bar, the slider will move to that position
+  if(mouseX>100+300&&mouseX<350+300&&mouseY>474-12&&mouseY<474+12&&mouseIsPressed){
+    gameSliderX=mouseX;
+  }else 
+  //when the mouse is released, the slider will snap to its nearest notch
+  //each notch changes the difficulty of the game
+  if(gameSliderX<100+300+25/2){
+    gameSliderX=100+300;
+    gameSize = 3;
+  }else if(gameSliderX>=100+300+25/2&&gameSliderX<100+300+25/2*3){
+    gameSliderX=100+300+25;
+    gameSize = 5;
+  }else if(gameSliderX>=100+300+25/2*3&&gameSliderX<100+300+25/2*5){
+    gameSliderX=100+300+25*2;
+    gameSize = 7;
+  }else if(gameSliderX>=100+300+25/2*5&&gameSliderX<100+300+25/2*7){
+    gameSliderX=100+300+25*3;
+    gameSize = 9;
+  }else if(gameSliderX>=100+300+25/2*7&&gameSliderX<100+300+25/2*9){
+    gameSliderX=100+300+25*4;
+    gameSize = 11;
+  }else if(gameSliderX>=100+300+25/2*9&&gameSliderX<100+300+25/2*11){
+    gameSliderX=100+300+25*5;
+    gameSize = 13;
+  }else if(gameSliderX>=100+300+25/2*11&&gameSliderX<100+300+25/2*13){
+    gameSliderX=100+300+25*6;
+    gameSize = 15;
+  }else if(gameSliderX>=100+300+25/2*13&&gameSliderX<100+300+25/2*15){
+    gameSliderX=100+300+25*7;
+    gameSize = 17;
+  }else if(gameSliderX>=100+300+25/2*15&&gameSliderX<100+300+25/2*17){
+    gameSliderX=100+300+25*8;
+    gameSize = 19;
+  }else if(gameSliderX>=100+300+25/2*17&&gameSliderX<100+300+25/2*19){
+    gameSliderX=100+300+25*9;
+    gameSize = 21;
+  }else if(gameSliderX>=100+300+25/2*19){
+    gameSliderX=100+300+25*10;
+    gameSize = 22;
+  }
 }
 
 function difficultyBar(){
@@ -1359,11 +1433,11 @@ function storeMenu(){
     for (let x = 0; x < cols*2-1; x++) {
       //only displays enough for the size of the grid
       if(y%2===0&&x%2===0){
-        stroke(0);
+        noStroke();
         fill(220);
         //if a part of the array is not filled, places a sqaure same color as background over top
         if(store[y/2][x/2]!==undefined){
-          rect(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5, cellSize*1.5);
+          //circle(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.75, cellSize*1.75);
           enterItem(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
         }
       }
@@ -1381,7 +1455,8 @@ function storeMenu(){
   }
 
   //displays money on right side
-  fill(255, 255, 0);
+  stroke(255,165,0);
+  fill(255, 165, 0);
   text("Money: " + money, width*0.9, height*0.2);
   
   pointerDot();
@@ -1393,20 +1468,17 @@ function enterItem(col, row, centerX, centerY, wh){
   textSize(wh*1/8);
   
   //displays if the item is active, bought, or the cost of the item
-  fill(150);
-  //rectangle for button
-  rect(centerX, centerY+wh*3/8, wh*5/8, wh*1/8);
-  fill(255, 255, 0);
+  fill(255, 165, 0);
   //displays text
   if(store[row][col]!==undefined&&store[row][col].bought==='no'){
-    text("Cost: " + store[row][col].cost, centerX, centerY+wh*3/8);
+    text("Cost: " + store[row][col].cost, centerX, centerY+wh*4/16);
   }else if(store[row][col]!==undefined&&store[row][col].bought==='yes'&&store[row][col].active==='no'){
-    text("Bought", centerX, centerY+wh*3/8);
+    text("Bought", centerX, centerY+wh*4/16);
   }else{
-    text("Active", centerX, centerY+wh*3/8);
+    text("Active", centerX, centerY+wh*4/16);
   }
   //checks if the mouse is clicked on the button
-  if(mouseX>centerX-(wh*5/8)/2&&mouseX<centerX+(wh*5/8)/2&&mouseY>centerY+wh*3/8-(wh*1/8)/2&&mouseY<centerY+wh*3/8+(wh*1/8)/2&&mouseIsPressed){
+  if(mouseX>centerX-(wh*5/8)/2&&mouseX<centerX+(wh*5/8)/2&&mouseY>centerY+wh*4/16-(wh*1/8)/2&&mouseY<centerY+wh*4/16+(wh*1/8)/2&&mouseIsPressed){
     //if the skin is not bought and the user has enough to buy it...
     if(store[row][col].bought==='no'&&money>=store[row][col].cost){
       for (let y = 0; y < rows; y++) {
@@ -1443,16 +1515,15 @@ function enterItem(col, row, centerX, centerY, wh){
   }
 
   //displays the name of the skin
-  fill(150);
-  rect(centerX, centerY+wh*3/16, wh*7/8, wh*1/8);
-  fill(0);
+  fill(255,165,0);
+  stroke(255,165,0);
   if(store[row][col]!==undefined){
-    text(store[row][col].name, centerX, centerY+wh*3/16);
+    text(store[row][col].name, centerX, centerY+wh*2/16);
   }
 
   //displays picture of the skin
   if(store[row][col]!==undefined){
-    image(store[row][col].picture, centerX-wh*1/3+1, centerY+wh*-1/2+1, wh*6/8, wh*5/8-4);
+    image(store[row][col].picture, centerX-wh/4, centerY-wh*1/2,wh/2,wh/2);
   }
 }
 
@@ -1472,7 +1543,9 @@ function gamePlay(){
   rotateY(-0.65);
   rotateX(0.63);
   rotateZ(-0.02);
-  image(gameBackground, 6500/-2, 3600/-2, 6500, 3600);
+  if(skin!=="Line"){
+    image(gameBackground, 6500/-2, 3600/-2, 6500, 3600);
+  }
   pop();
   
   createBoard();
@@ -1615,7 +1688,7 @@ function gameStart(){
         secondPositionP2[0]=positionP2[0];
         secondPositionP2[1]=positionP2[1];
         secondPositionP2[2]=positionP2[2];
-        if(bodyPositionP2.length>(snakeLength-1)*3){
+        if(bodyPositionP2.length>(snakeLengthP2-1)*3){
           bodyPositionP2.splice(0,3);
         }
         positionP2[0]+=push0P2;
@@ -2076,11 +2149,6 @@ function playerHasDied(p){
       push2 = 0;
       push3 = 1;
       snakeLength = 3;
-
-      points-=1;
-      if(points<0){
-        points=0;
-      }
       p1Died=true;
     }else{
       state = "Game Over";
@@ -2103,11 +2171,6 @@ function playerHasDied(p){
       push2P2 = 0;
       push3P2 = 1;
       snakeLengthP2 = 3;
-
-      pointsP2-=1;
-      if(pointsP2<0){
-        pointsP2=0;
-      }
       p2Died=true;
     }else{
       state = "Game Over";
@@ -3748,7 +3811,7 @@ let frontView = new p5(( sketch ) => {
 let display = new p5(( sketch ) => {
 
   let x = 250;
-  let y = 100;
+  let y = 150;
 
   //creates canvas
   sketch.setup = () => {
@@ -3769,6 +3832,15 @@ let display = new p5(( sketch ) => {
       sketch.text("Score: " + (snakeLength-3).toString(10),-30,10);
       sketch.textSize(30);
       sketch.text("Speed: " + difficulty.toString(10),0,60);
+      sketch.fill(0,0,255);
+      sketch.rect(-30,85,200,50);
+      sketch.fill(255,165,0);
+      sketch.text("Terminate",0,115);
+      if(state==="Play"&&sketch.mouseX>0&&sketch.mouseX<200&&sketch.mouseY>100&&sketch.mouseY<150&&mouseIsPressed){
+        state = "Game Over";
+        pop();
+        setup();
+      }
     }
     if(gameMode==="Single Player"){
       sketch.text("Score: " + (snakeLength-3).toString(10),-30,10);
