@@ -856,7 +856,7 @@ function gameBar(){
     gameSize = 21;
   }else if(gameSliderX>=100+300+25/2*19){
     gameSliderX=100+300+25*10;
-    gameSize = 22;
+    gameSize = 23;
   }
 }
 
