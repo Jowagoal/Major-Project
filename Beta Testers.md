@@ -26,7 +26,7 @@
 
 - What he said:
   - Ai dies immediately when going from singleplayer to ai mode
-  - mention that the easier the difficulty is, the less money    you get
+  - mention that the easier the difficulty is, the less money you get
   - maybe add time of day each high score was acheived
 
 - What I've done:
@@ -44,4 +44,4 @@
 
 - What I've done:
   - Added option for 'Axis Help'
-  - created second store menu for hats, user can wear a skin    and a hat at the same time
+  - created second store menu for hats, user can wear a skin and a hat at the same time

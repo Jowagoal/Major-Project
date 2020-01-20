@@ -1,8 +1,6 @@
-// 2D Grid - Snake
+// 3D Snake
 // Jordie Walter
-// Nov 12, 2019
-//
-// Extra for Experts: 
+// Jan 20, 2019
 
 //global variables
 
@@ -888,7 +886,7 @@ function gameBar(){
   rect(gameSliderX, 300, 9, 30);
   
   //if the mouse is down on any part of the bar, the slider will move to that position
-  if(mouseX>100+300&&mouseX<350+300&&mouseY>474-12&&mouseY<474+12&&mouseIsPressed){
+  if(mouseX>100+350&&mouseX<350+350&&mouseY>474-12&&mouseY<474+12&&mouseIsPressed){
     gameSliderX=mouseX-50;
   }else 
   //when the mouse is released, the slider will snap to its nearest notch
@@ -3013,6 +3011,7 @@ function pathOpen(array, option){
   }
 }
 
+//all positions to be skipped to see if the food will be missed
 function willIMissFood(x, array, pathTest){
   if(x==="Double"){
     for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
@@ -3073,7 +3072,7 @@ function deathScreen(){
   }
   
   if(gameMode==="Single Player"){
-    //leaderboard
+    //leaderboard icon
     if(mouseX>width*15/16-25&&mouseX<width*15/16+25&&mouseY>height*1/8-25/2&&mouseY<height*1/8+25/2){
       leaderBoardIcon(true);
       if(mouseIsPressed){
@@ -3086,7 +3085,9 @@ function deathScreen(){
       leaderBoardIcon(false);
     }
 
+    //only goes through once
     if(firstIterationDeath){
+      //creates object for this score
       let thisScore = {
         score: snakeLength,
         day: 0,
@@ -3097,6 +3098,7 @@ function deathScreen(){
       thisScore.day = day();
       thisScore.month = month();
       thisScore.year = year();
+      //changes month to a word
       if(thisScore.month===1){
         thisScore.month = "January"
       }else if(thisScore.month===2){
@@ -3123,11 +3125,14 @@ function deathScreen(){
         thisScore.month = "December"
       }
 
+      //enters score into its correct leaderboard
       if(thisScore.thisDifficulty===5){
         for(var i=0; i<10; i++){
           if(highScores5[i]!==undefined){
+            //places score into correct position
             if(thisScore.score>highScores5[i].score){
               highScores5.splice(i, 0, thisScore);
+              //keeps leader board at a length of 10
               if(highScores5.length>10){
                 highScores5.pop();
               }
@@ -3138,6 +3143,7 @@ function deathScreen(){
             break;
           }
         }
+        //stores new high score
         storeItem("High Scores 5", highScores5);
         firstIterationDeath=false;
       }
@@ -3323,6 +3329,7 @@ function deathScreen(){
       }
     }
 
+    //writes the difficulty the user was on and displays highscore
     if(difficulty===5){
       text("Difficulty: 5", width/2, height*4/16);
       text("High Score: " + getItem("High Scores 5")[0].score, width/2, height*6/16);
@@ -3372,9 +3379,11 @@ function deathScreen(){
     text("Money Gained: " + moneyGained, width/2, height*7/16);
   }else if(gameMode==="Two Player"){
     if(gameType==="Survival"){
+      //displays player who died
       textSize(75);
       text("Player " + playerDeath + " Died!", width/2, height/8);
     }else{
+      //displays scores
       textSize(75);
       fill(220,0,220);
       text("Time's Up!", width/2, height/8);
@@ -3424,15 +3433,17 @@ function leaderBoardIcon(on, y){
   pop();
 }
 
+//displays leaderboard for the difficulty the user was on
 function leaderBoard(){
   if(restarted){
     translate(-1*width/2, -1*height/2);
   }
 
+  //background
   background(0);
-  
   image(menuBackground,0,0,windowWidth,windowHeight);
 
+  //says high scores for the difficulty user was on
   textSize(75);
   fill(200,0,200);
   text("High Scores", width/2, height*1/8);
@@ -3446,6 +3457,7 @@ function leaderBoard(){
   fill(255,165,0);
   push();
 
+  //places each score on-screen
   if(difficulty===5){
     translate(width*11/32, height*2/8);
     for(var i=0; i<getItem("High Scores 5").length; i++){
@@ -3453,6 +3465,7 @@ function leaderBoard(){
       if(i===9){
         translate(-12,0);
       }
+      //score
       text((i+1) + ". " + getItem("High Scores 5")[i].score, 0, 0);
     }
     pop();
@@ -3463,6 +3476,7 @@ function leaderBoard(){
     textSize(30);
     for(var i=0; i<getItem("High Scores 5").length; i++){
       translate(0, height*1/16);
+      //date
       text(getItem("High Scores 5")[i].month + " " +  getItem("High Scores 5")[i].day + ", " +  getItem("High Scores 5")[i].year, 0, 0);
     }
     pop();
@@ -3678,6 +3692,7 @@ function leaderBoard(){
     pop();
   }
 
+  //red button to leave leaderboard
   fill(255,0,0);
   rectMode(CENTER);
   stroke(0);
@@ -3687,6 +3702,7 @@ function leaderBoard(){
   textSize(20)
   text("X", width*0.9, 50);
   if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
+    //returns to correct screen
     if(leaderBoardFrom==='Menu'){
       state="Menu";
     }else{
@@ -3698,6 +3714,7 @@ function leaderBoard(){
 
 function keyPressed(){
   if(gameMode!=="AI"){
+    //buttons move snake for their corresponding player
     for(var i=0; i<=222; i++){
       if(keyIsDown(i)&&i===p1Controls.rKeyCode){
         if(secondPosition[0]!==position[0]+50){
@@ -3776,23 +3793,25 @@ function keyPressed(){
         }
       }
     }
-    
   }
+  //cheat codes for money
   if(gameMode!=="Two Player"){
     if(keyIsDown(68)&&keyIsDown(65)&&keyIsDown(87)&&keyIsDown(83)&&keyIsDown(38)&&keyIsDown(40)){
       money+=1000;
     }
   }
+  //increase and decrease speed of Ai
   if(gameMode==="AI"&&state==="Play"){
     if(keyIsDown(38)&&difficulty!==60){
-      difficulty++
+      difficulty++;
     }
     if(keyIsDown(40)&&difficulty!==1){
-      difficulty--
+      difficulty--;
     }
   }
 }
 
+//function pushes the button for axis help when the mouse is released
 function mouseReleased(){
   if(mouseX>100-12&&mouseX<100+12&&mouseY>575-12&&mouseY<575+12&&gameMode!=="AI"&&state==="Options"){
     if(axisHelp){
@@ -4195,6 +4214,7 @@ let frontView = new p5(( sketch ) => {
   };
 });
 
+//display has different uses based on the game mode
 let display = new p5(( sketch ) => {
 
   let x = 250;
@@ -4205,23 +4225,25 @@ let display = new p5(( sketch ) => {
     sketch.createCanvas(x, y);
   };
 
-  //writes word
   sketch.draw = () => {
     sketch.background(0);
     sketch.translate(30,15);
     sketch.textAlign(BOTTOM, CENTER);
     sketch.textSize(50);
     sketch.fill(255,165,0);
+    //writes time for two player
     if(gameMode==="Two Player"){
       sketch.text(time,0,10);
     }
+    //writes score and speed for Ai
     if(gameMode==="AI"){
-      sketch.text("Score: " + (snakeLength-3).toString(10),-30,10);
+      sketch.text("Score: " + snakeLength.toString(10),-30,10);
       sketch.textSize(30);
       sketch.text("Speed: " + difficulty.toString(10),0,60);
       sketch.fill(0,0,255);
       sketch.rect(-30,85,200,50);
       sketch.fill(255,165,0);
+      //creates a button to end the program
       sketch.text("Terminate",0,115);
       if(state==="Play"&&sketch.mouseX>0&&sketch.mouseX<200&&sketch.mouseY>100&&sketch.mouseY<150&&mouseIsPressed){
         state = "Game Over";
@@ -4229,6 +4251,7 @@ let display = new p5(( sketch ) => {
         setup();
       }
     }
+    //writes score for single player
     if(gameMode==="Single Player"){
       sketch.text("Score: " + (snakeLength).toString(10),-30,10);
     }
@@ -4245,7 +4268,7 @@ let p1Points = new p5(( sketch ) => {
     sketch.createCanvas(x, y);
   };
 
-  //writes word
+  //writes points for player 1
   sketch.draw = () => {
     sketch.background(0);
     sketch.translate(30,15);
@@ -4268,7 +4291,7 @@ let p2Points = new p5(( sketch ) => {
     sketch.createCanvas(x, y);
   };
 
-  //writes word
+  //writes points for player 2
   sketch.draw = () => {
     sketch.background(0);
     sketch.translate(30,15);
@@ -4283,6 +4306,7 @@ let p2Points = new p5(( sketch ) => {
 
 //calls set up when window is resized
 function windowResized(){
+  //resizing during play will make the 3D canvas diasappear
   if(state!=="Play"){
     resizeCanvas(windowWidth,windowHeight);
   }
