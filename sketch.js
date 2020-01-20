@@ -497,6 +497,7 @@ function mainMenu(){
   gameSize = 13;
   gameSliderX = 225 + 300;
 
+  //sets background
   background(0);
   image(menuBackground,0,0,windowWidth,windowHeight);
   rectMode(CENTER);
@@ -523,16 +524,17 @@ function mainMenu(){
   noStroke();
   textSize(25);
   fill(0);
-  //start game button
+  //single player button
   text("Single Player",width/2, height/2+height*1/8);
   
-  //options button
+  //two player button
   text("Two Player",width/3, height/2+height*3/8);
 
+  //Ai button
   text("AI",width/3*2, height/2+height*3/8);
   
   if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2+height*1/8-height/16&&mouseY<height/2+height*1/8+height/16&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to start the game
+    //when mouse clicks single player button, sets state to menu and calls setup, resets player one controls
     gameMode="Single Player";
     state="Menu";
     p1Controls.up = 'ArrowUp';
@@ -543,7 +545,7 @@ function mainMenu(){
     instructionsP1[6]=p1Controls.down + " = Down";
     setup();
   }else if(mouseX>width/3-width/8&&mouseX<width/3+width/8&&mouseY>height/2+height*1/8-height/16+height/4&&mouseY<height/2+height*1/8+height/16+height/4&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to open options screen
+    //when mouse clicks two player button, sets state to menu and calls setup, resets player one controls
     gameMode="Two Player";
     state="Menu";
     p1Controls.up = 't';
@@ -554,7 +556,7 @@ function mainMenu(){
     instructionsP1[6]=p1Controls.down + " = Down";
     setup();
   }else if(mouseX>width/3*2-width/8&&mouseX<width/3*2+width/8&&mouseY>height/2+height*1/8-height/16+height/4&&mouseY<height/2+height*1/8+height/16+height/4&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to open options screen
+    //when mouse clicks ai button, sets state to menu and calls setup
     gameMode="AI";
     state="Menu";
     setup();
@@ -569,6 +571,7 @@ function startScreen(){
     translate(-1/2*width,-1/2*height);
   }
 
+  //sets background
   background(0);
   image(menuBackground,0,0,windowWidth,windowHeight);
   rectMode(CENTER);
@@ -597,16 +600,18 @@ function startScreen(){
   text("Main Menu",width/2, height/2+height*1/4);
 
   if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2-height/16&&mouseY<height/2+height/16&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to start the game
+    //if play is pressed
     if(gameMode==="Two Player"){
+      //selects game type for two player
       state="Select Game Type"
       setup();
     }else{
+      //starts game
       state="Play";
       setup();
     }
   }else if(mouseX>width/2-width/8&&mouseX<width/2+width/8&&mouseY>height/2+height*1/4-height/16&&mouseY<height/2+height*1/4+height/16&&mouseIsPressed){
-    //when mouse clicks options button, sets state to play and calls setup again to start the game
+    //returns to menu screen
     state="Main Menu";
     setup();
   }
@@ -729,12 +734,15 @@ function resetAllValues(){
   shadowFoodPosition = [];
 }
 
+//function allows the user to select a game mode to player in
 function selectGameType(){
-
+  //after the program is restarted, everything on the screen is displaced
+  //this corrects that displacement  
   if(restarted){
     translate(-1/2*width,-1/2*height);
   }
 
+  //background
   background(0);
   image(menuBackground,0,0,windowWidth,windowHeight);
   fill(50,255,50);
@@ -742,6 +750,7 @@ function selectGameType(){
   text("Select Game Mode", width/2, height/10);
 
   noStroke();
+  //survival game mode
   if(mouseX>width/2-width/4-width/8&&mouseX<width/2-width/4+width/8&&mouseY>height/2-height/8-height/16&&mouseY<height/2-height/8+height/16){
     fill(255,255,0);
     rect(width/2-width/4, height/2-height/8, width/4, height/8);
@@ -752,7 +761,9 @@ function selectGameType(){
       state = "Play";
       setup();
     }
-  }else if(mouseX>width/2+width/4-width/8&&mouseX<width/2+width/4+width/8&&mouseY>height/2-height/8-height/16&&mouseY<height/2-height/8+height/16){
+  }else 
+  //points game mode
+  if(mouseX>width/2+width/4-width/8&&mouseX<width/2+width/4+width/8&&mouseY>height/2-height/8-height/16&&mouseY<height/2-height/8+height/16){
     fill(255,255,0);
     rect(width/2+width/4, height/2-height/8, width/4, height/8);
     fill(200,0,200);
@@ -768,6 +779,7 @@ function selectGameType(){
     rect(width/2+width/4, height/2-height/8, width/4, height/8);
   }
   
+  //text for each game mode describes what they do
   textSize(40);
   fill(0);
   text("Survival", width/2-width/4, height/2-height/8);
@@ -807,14 +819,18 @@ function optionMenu(){
   stroke(255,165,0);
   textSize(25);
 
+  //displays controls
   controls();
   
   if(gameMode!=="AI"){
+    //makes the difficulty bar and option for axis help to people playing
     difficultyBar();
     axisHelpButton();
   }
+  //bar to select border size
   gameBar();
   
+  //red back button
   stroke(0);
   fill(255,0,0);
   rectMode(CENTER);
@@ -838,6 +854,7 @@ function optionMenu(){
   translate(0,-25*instructionsP1.length);
 }
 
+//creates bar to set the size of the border
 function gameBar(){
   fill(0,0,200);
   stroke(0);
@@ -855,7 +872,7 @@ function gameBar(){
     rect(100+25*j+300, 300, 5, 20);
   }
   
-  //text for difficulty
+  //text for size
   textSize(25);
   textAlign(CENTER, CENTER);
   text("Area of Play", 225+300, 250);
@@ -875,7 +892,7 @@ function gameBar(){
     gameSliderX=mouseX-50;
   }else 
   //when the mouse is released, the slider will snap to its nearest notch
-  //each notch changes the difficulty of the game
+  //each notch changes the size of the game
   if(gameSliderX<100+300+25/2){
     gameSliderX=100+300;
     gameSize = 3;
@@ -988,7 +1005,9 @@ function difficultyBar(){
   }
 }
 
+//function creats button to set the axis help on or off
 function axisHelpButton(){
+  //if help is on, button is green. otherwise red
   if(axisHelp){
     fill(0,255,0);
   }else{
@@ -1001,13 +1020,16 @@ function axisHelpButton(){
   stroke(255,165,0);
   strokeWeight(1);
   textSize(25);
+  //if help is on, text says disable. otherwise enable
   if(axisHelp){
     text("Disable Axis Help", 250, 400);
   }else{
     text("Enable Axis Help", 250, 400);
   }
+  //button is activated in the function mouseReleased
 }
 
+//displays controls for the different game modes
 function controls(){
   if(gameMode==="Single Player"){
     changePlayer1Bindings();
@@ -1016,6 +1038,7 @@ function controls(){
     changePlayer2Bindings();
     translate(-250,0);
   }else{
+    //ai
     text("Controls:", 100, 100);
     translate(0, 25);
     text("UpArrow = Increase Simulation Speed", 100, 100);
@@ -1025,6 +1048,7 @@ function controls(){
   }
 }
 
+//displays instructions and allows to re-bind them
 function changePlayer1Bindings(){
   if(mouseX>100&&mouseX<300&&mouseY>135+175&&mouseY<165+175&&mouseIsPressed){
     changingBingingsP1=true;
@@ -1054,6 +1078,7 @@ function changePlayer1Bindings(){
   
     //left binding
     if(mouseX>75-7&&mouseX<75+7&&mouseY>150-19&&mouseY<150-5&&mouseIsPressed){
+      //sets binding change to true for whichever button is pressed
       leftBindP1=true;
       rightBindP1=false;
       forwardBindP1=false;
@@ -1067,11 +1092,14 @@ function changePlayer1Bindings(){
       upBindP2=false;
       downBindP2=false;
     }
+    //when button for changing is active, the next button pressed is bound to that control
     if(leftBindP1===true){
       fill(255,255,0);
       rect(75, -25-12, 14, 14);
+      //keys are labeled up to 222, so it checks every key to see which is pressed
       for(var k=0; k<=222; k++){
         if(keyIsDown(k)&&k!==p1Controls.lKeyCode&&k!==p1Controls.rKeyCode&&k!==p1Controls.fKeyCode&&k!==p1Controls.bKeyCode&&k!==p1Controls.uKeyCode&&k!==p1Controls.dKeyCode&&k!==p2Controls.lKeyCode&&k!==p2Controls.rKeyCode&&k!==p2Controls.fKeyCode&&k!==p2Controls.bKeyCode&&k!==p2Controls.uKeyCode&&k!==p2Controls.dKeyCode){
+          //sets new key values
           p1Controls.lKeyCode = k;
           p1Controls.left = key;
           leftBindP1=false;
@@ -1240,6 +1268,7 @@ function changePlayer1Bindings(){
   }
 }
 
+//displays instructions and allows to re-bind them
 function changePlayer2Bindings(){
   if(mouseX>100+250&&mouseX<300+250&&mouseY>135+175&&mouseY<165+175&&mouseIsPressed){
     changingBingingsP2=true;
@@ -1253,7 +1282,7 @@ function changePlayer2Bindings(){
   stroke(255,165,0);
   fill(255,165,0);
   textSize(25);
-
+  //for loop allows for easy changes to the instructions
   for(var i=0; i<instructionsP2.length; i++){
     text(instructionsP2[i], 100, 100);
     translate(0, 25);
@@ -1463,6 +1492,7 @@ function changePlayer2Bindings(){
   }
 }
 
+//displays everything in the store
 function storeMenu(){
   background(0);
   
@@ -1471,23 +1501,29 @@ function storeMenu(){
   if(restarted){
     translate(-1/2*width,-1/2*height);
   }
+
+  //background
   image(menuBackground,0,0,windowWidth,windowHeight);
 
+  //sets store to display skins when skins is pressed
   if(mouseX>width/2&&mouseX<width/2+200&&mouseY>height*3/8-25&&mouseY<height*3/8+25&&mouseIsPressed){
     store = "Skins";
   }
 
+  //sets store to display hats when hats is pressed
   if(mouseX>width/2&&mouseX<width/2+200&&mouseY>height*5/8-25&&mouseY<height*5/8+25&&mouseIsPressed){
     store = "Hats";
   }
 
   strokeWeight(3);
   fill(0,0,255);
+  //colors stroke to show which store is open
   if(store==="Skins"){
     stroke(255,255,0);
   }else{
     stroke(0,0,255);
   }
+  //skins button
   rect(width/2+100, height*3/8, 200, 50);
   strokeWeight(1);
   stroke(255,165,0);
@@ -1496,17 +1532,20 @@ function storeMenu(){
 
   strokeWeight(3);
   fill(0,0,255);
+  //colors stroke to show which store is open
   if(store==="Hats"){
     stroke(255,255,0);
   }else{
     stroke(0,0,255);
   }
+  //hats button
   rect(width/2+100, height*5/8, 200, 50);
   strokeWeight(1);
   stroke(255,165,0);
   fill(255,165,0);
   text("Hats", width/2+100, height*5/8);
 
+  //displays active store
   if(store==="Skins"){
     displaySkinStore();
   }else{
@@ -1535,6 +1574,7 @@ function storeMenu(){
   pointerDot();
 }
 
+//displays the skins store
 function displaySkinStore(){
   //creates creates the smallest possible rectangular grid based on the number of skins available
   if(skins.length<3){
@@ -1577,7 +1617,6 @@ function displaySkinStore(){
         fill(220);
         //if a part of the array is not filled, places a sqaure same color as background over top
         if(skinStore[y/2][x/2]!==undefined){
-          //circle(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.75, cellSize*1.75);
           enterItemSkins(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
         }
       }
@@ -1585,6 +1624,7 @@ function displaySkinStore(){
   }
 }
 
+//displays hats store
 function displayHatStore(){
   //creates creates the smallest possible rectangular grid based on the number of skins available
   if(hats.length<3){
@@ -1627,7 +1667,6 @@ function displayHatStore(){
         fill(220);
         //if a part of the array is not filled, places a sqaure same color as background over top
         if(hatStore[y/2][x/2]!==undefined){
-          //circle(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.75, cellSize*1.75);
           enterItemHats(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
         }
       }
@@ -1700,7 +1739,7 @@ function enterItemSkins(col, row, centerX, centerY, wh){
   }
 }
 
-//displays a skin and its information into the store
+//displays a hat and its information into the store
 function enterItemHats(col, row, centerX, centerY, wh){
   textAlign(CENTER, CENTER);
   textSize(wh*1/8);
@@ -1717,11 +1756,11 @@ function enterItemHats(col, row, centerX, centerY, wh){
   }
   //checks if the mouse is clicked on the button
   if(mouseX>centerX-wh/2&&mouseX<centerX+wh/2&&mouseY>centerY-wh/2&&mouseY<centerY+wh/2&&mouseIsPressed){
-    //if the skin is not bought and the user has enough to buy it...
+    //if the hat is not bought and the user has enough to buy it...
     if(hatStore[row][col].bought==='no'&&money>=hatStore[row][col].cost){
       for (let y = 0; y < hatRows; y++) {
         for (let x = 0; x < hatCols; x++) {
-          //sets all other skins to not active
+          //sets all other hats to not active
           if(hatStore[y][x]!==undefined){
             hatStore[y][x].active='no';
           }
@@ -1729,7 +1768,7 @@ function enterItemHats(col, row, centerX, centerY, wh){
       }
       //subtracts money
       money-=hatStore[row][col].cost;
-      //set current skin to its name
+      //set current hat to its name
       hat = hatStore[row][col].name;
       //changes hat's bought and active to 'yes'
       hatStore[row][col].bought='yes';
@@ -1740,7 +1779,7 @@ function enterItemHats(col, row, centerX, centerY, wh){
       for (let a = 0; a < hatRows; a++) {
         for (let b = 0; b < hatCols; b++) {
           if(hatStore[a][b]!==undefined){
-            //sets all other skins to not active
+            //sets all other hats to not active
             hatStore[a][b].active='no';
           }
         }
@@ -1765,12 +1804,14 @@ function enterItemHats(col, row, centerX, centerY, wh){
   }
 }
 
-//gameplay is split into two parts, board creation and the part that the user plays
+//sets music, background, creates board and starts the game
 function gamePlay(){
+  //plays game music
   menuMusic.pause();
   menuMusic.currentTime = 0;
   gameMusic.play();
 
+  //sets game background
   background(0);
   push();
   if(img===1){
@@ -1820,9 +1861,11 @@ function gameStart(){
   //the difficulty changes the framerate
   frameRate(difficulty);
   
+  //resets values
   p1Died=false;
   p2Died=false;
   
+  //counts time for points gamemode
   if(firstIteration&&gameType==="Points"){
     gameTimeStarted = frameCount;
     time = 101;
@@ -1833,6 +1876,7 @@ function gameStart(){
   strokeWeight(2);
   stroke(0);
   
+  //updates smoke skin
   for (let i = theSmoke.length-1; i>=0; i--) {
     theSmoke[i].update();
     if (theSmoke[i].isDone()) {
@@ -1859,6 +1903,7 @@ function gameStart(){
       secondPosition[0]=position[0];
       secondPosition[1]=position[1];
       secondPosition[2]=position[2];
+      //sets body size here
       if(bodyPosition.length>(snakeLength-1)*3){
         bodyPosition.splice(0,3);
       }
@@ -1868,7 +1913,9 @@ function gameStart(){
     }
     moveSnake();
     
+    //finds neighboring positions
     let arrayOfNeighborPositions = neighboringPositions();
+    //calculates the move to make
     calculateMove(arrayOfNeighborPositions);
 
   }else{
@@ -1886,6 +1933,7 @@ function gameStart(){
         secondPosition[0]=position[0];
         secondPosition[1]=position[1];
         secondPosition[2]=position[2];
+        //sets body size here
         if(bodyPosition.length>(snakeLength-1)*3){
           bodyPosition.splice(0,3);
         }
@@ -1907,6 +1955,7 @@ function gameStart(){
         secondPosition[0]=position[0];
         secondPosition[1]=position[1];
         secondPosition[2]=position[2];
+        //sets body size here
         if(bodyPosition.length>(snakeLength-1)*3){
           bodyPosition.splice(0,3);
         }
@@ -1926,6 +1975,7 @@ function gameStart(){
         secondPositionP2[0]=positionP2[0];
         secondPositionP2[1]=positionP2[1];
         secondPositionP2[2]=positionP2[2];
+        //sets body size here
         if(bodyPositionP2.length>(snakeLengthP2-1)*3){
           bodyPositionP2.splice(0,3);
         }
@@ -1934,6 +1984,7 @@ function gameStart(){
         positionP2[2]+=push2P2;
       }
       moveSnakeP2();
+      //timer
       if(gameType==="Points"){
         timer();
       }
@@ -1942,17 +1993,21 @@ function gameStart(){
   firstIteration=false;
 }
 
+//logic for timer
 function timer(){
+  //finds out when a second has passed
   if((frameCount-gameTimeStarted)%difficulty===0){
     time--;
   }
+  //ends game when time is up
   if(time<=0){
     state = "Game Over";
     pop();
     setup();
   }
 }
-    
+
+//moves snake
 function moveSnake(){
   //if the position is outside the border, state changes to game over and calls setup
   if(position[0]<0||position[0]>gameSize*50||position[1]<0||position[1]>gameSize*50||position[2]>0||position[2]<-gameSize*50){
@@ -1965,6 +2020,7 @@ function moveSnake(){
       playerHasDied(1);
     }
   }
+  //if heads collide
   if(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2]&&gameMode==="Two Player"){
     playerHasDied(1);
     playerHasDied(2); 
@@ -1972,15 +2028,16 @@ function moveSnake(){
   for(var i=bodyPosition.length-3; i>=0; i-=3){
     push();
     translate(bodyPosition[i+0], bodyPosition[i+1], bodyPosition[i+2]);
-    //body
+    //places body
     placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
     pop();
   }
   push();
   translate(position[0], position[1], position[2]);
-  //head
+  //places head
   placeBox(position[0],position[1],position[2],true);  
   pop();
+  //applies axis help if activated
   if(gameMode!=="AI"&&axisHelp){
     addVisibility();
   }
@@ -2023,6 +2080,7 @@ function moveSnakeP2(){
       playerHasDied(2);
     }
   }
+  //if heads collide
   if(position[0]===positionP2[0]&&position[1]===positionP2[1]&&position[2]===positionP2[2]&&gameMode==="Two Player"){
     playerHasDied(1);
     playerHasDied(2); 
@@ -2037,6 +2095,7 @@ function moveSnakeP2(){
   translate(positionP2[0], positionP2[1], positionP2[2]);
   placeBoxP2(positionP2[0],positionP2[1],positionP2[2],true);
   pop();
+  //applies axis visibility if activated
   if(gameMode!=="AI"&&axisHelp){
     addVisibilityP2();
   }
@@ -2066,7 +2125,7 @@ function placeBoxP2(x1,y1,z1){
   //the color scheme is a warning system for the user, tells them how close they are to the border
 }
 
-//applys the skin with the input of which box is the head
+//applys the skin with the input of which color this body part is
 function applySkin(r, g, b){
   //creates line skin on box
   if(gameMode!=="Two Player"){
@@ -2125,7 +2184,7 @@ function applySkin(r, g, b){
   }
 }
 
-//applys the skin with the input of which box is the head
+//applies the hat with the input of which box is the head
 function applyHat(head){
   //creates line skin on box
   if(gameMode!=="Two Player"){
@@ -2158,6 +2217,7 @@ function applyHat(head){
         }
       }
     }else if(hat==="Top Hat"){
+      //places a top hat on the head based on the direction it is going
       if(head){
         fill(0);
         if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
@@ -2194,6 +2254,7 @@ function applyHat(head){
         }
       }
     }else if(hat==="Train"){
+      //places smoke stake on the head based on the direction the snake is going
       if(head){
         if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
           push();
@@ -2206,6 +2267,7 @@ function applyHat(head){
           translate(0,-37.5,0);
           cylinder(12,5,30,30);
           translate(0,-7.5,0);
+          //sends smoke out of smoke stack
           let mySmoke = new Smoke(position[0],position[1],position[2],false);
           theSmoke.push(mySmoke);
           pop();
@@ -2222,7 +2284,8 @@ function applyHat(head){
           rotateX(1.4);
           cylinder(12,5,30,30);
           rotateX(-1.4);
-          translate(0,0,7.5)
+          translate(0,0,7.5);
+          //sends smoke out of smoke stack
           let mySmoke = new Smoke(position[0],position[1],position[2],true);
           theSmoke.push(mySmoke);
           pop();
@@ -2234,6 +2297,7 @@ function applyHat(head){
   }
 }
 
+//rotates and translates to correct position to add scales
 function applyScales(x,y,z,rX,rY,c){
   push();
   translate(x,y,z);
@@ -2241,9 +2305,9 @@ function applyScales(x,y,z,rX,rY,c){
   rotateY(rY);
   image(c,0,0,50,50,0,0,200,200);
   pop();
-
 }
 
+//creates smoke
 class Smoke {
   constructor(x,y,z,upDown) {
     this.x = x;
@@ -2261,11 +2325,13 @@ class Smoke {
     noStroke();
     fill(100,this.alpha);
     push();
+    //moves to current position
     if(this.upDown){
       translate(this.x,this.y,this.z+50);
     }else{
       translate(this.x,this.y-50,this.z);
     }
+    //places smoke and translates by its waver amount, to appear more like smoke
     sphere(this.radius);
     translate(25+this.waverX,-12.5+this.waverY,0+this.waverZ);
     sphere(this.radius);
@@ -2276,6 +2342,7 @@ class Smoke {
     pop();
   }
 
+  //updates values
   update() {
     this.y-=5;
     this.radius-=1;
@@ -2286,6 +2353,7 @@ class Smoke {
     this.waverZ += random(-1,1);
   }
 
+  //checks if smoke has dissapated
   isDone() {
     return this.alpha <= 0;
   }
@@ -2294,27 +2362,29 @@ class Smoke {
 function drawEye(x,y,z,aX,aY,aZ,rX,rY,rZ){
   push();
   
-  //translates and rotates to position of eye
+  //translates to position of eye
   translate(x,y,z);
   
   //places eyes
   fill(255);
   stroke(255);
+  //white eye
   ellipsoid(rX,rY,rZ);
   fill(0);
   stroke(0);
   translate(aX,aY,aZ);
+  //pupil
   ellipsoid(rX/2,rY/2,rZ/2);
-
   pop();
 }
 
 function addVisibility(){
   //Player 1
   strokeWeight(5);
-  //x axis
+  //places x axis
   stroke(255,0,0);
   if(position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
+    //if snake is on same x axis, line stops at food
     if(position[0]<foodPosition[0]){
       line(-25,position[1],position[2],foodPosition[0]-25,position[1],position[2]);
     }else{
@@ -2323,9 +2393,10 @@ function addVisibility(){
   }else{
     line(-25,position[1],position[2],gameSize*50+25,position[1],position[2]);
   }
-  //y axis
+  //places y axis
   stroke(0,0,255);
   if(position[0]===foodPosition[0]&&position[2]===foodPosition[2]){
+    //if snake is on same y axis, line stops at food
     if(position[1]<foodPosition[1]){
       line(position[0],-25,position[2],position[0],foodPosition[1]-25,position[2]);
     }else{
@@ -2334,9 +2405,10 @@ function addVisibility(){
   }else{
     line(position[0],-25,position[2],position[0],gameSize*50+25,position[2]);
   }
-  //z axis
+  //places z axis
   stroke(0,255,0);
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]){
+    //if snake is on same z axis, line stops at food
     if(position[2]<foodPosition[2]){
       line(position[0],position[1],foodPosition[2]-25,position[0],position[1],gameSize*-50-25);
     }else{
@@ -2348,7 +2420,7 @@ function addVisibility(){
 }
 
 function addVisibilityP2(){
-  //x axis
+  //x
   stroke(255,0,0);
   if(positionP2[1]===foodPosition[1]&&positionP2[2]===foodPosition[2]){
     if(positionP2[0]<foodPosition[0]){
@@ -2359,7 +2431,7 @@ function addVisibilityP2(){
   }else{
     line(-25,positionP2[1],positionP2[2],gameSize*50+25,positionP2[1],positionP2[2]);
   }
-  //y axis
+  //y
   stroke(0,0,255);
   if(positionP2[0]===foodPosition[0]&&positionP2[2]===foodPosition[2]){
     if(positionP2[1]<foodPosition[1]){
@@ -2370,7 +2442,7 @@ function addVisibilityP2(){
   }else{
     line(positionP2[0],-25,positionP2[2],positionP2[0],gameSize*50+25,positionP2[2]);
   }
-  //z axis
+  //z
   stroke(0,255,0);
   if(positionP2[0]===foodPosition[0]&&positionP2[1]===foodPosition[1]){
     if(positionP2[2]<foodPosition[2]){
@@ -2396,9 +2468,9 @@ function food(){
     foodPosition[1]=ceil(random(-0.9,gameSize))*50;
     foodPosition[2]=floor(random(-1* gameSize,0.9))*50
 
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
+    shadowFoodPosition[0] = foodPosition[0];
+    shadowFoodPosition[1] = foodPosition[1];
+    shadowFoodPosition[2] = foodPosition[2];
     snakeLength++;
     points++
   }
@@ -2407,9 +2479,9 @@ function food(){
     foodPosition[1]=ceil(random(-0.9,gameSize))*50;
     foodPosition[2]=floor(random(-1* gameSize,0.9))*50
 
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
+    shadowFoodPosition[0] = foodPosition[0];
+    shadowFoodPosition[1] = foodPosition[1];
+    shadowFoodPosition[2] = foodPosition[2];
     snakeLength++;
     points++
   }
@@ -2464,6 +2536,7 @@ function food(){
   stroke(2);
 }
 
+//when a player has died, depending on the gameMode and gameType it will display death screen or reset player
 function playerHasDied(p){
   if(p===1){
     if(gameType==="Survival"){
@@ -2512,6 +2585,7 @@ function playerHasDied(p){
   }
 }
 
+//labels every position on the board for the ai to follow
 function labelPositions(){
   if(aiRestarted){
     currentPosition = [50,0,0];
@@ -2559,6 +2633,7 @@ function labelPositions(){
   }
 }
 
+//labels a layer
 function createLayer(direction){
   for(var z=0; z>-(gameSize+1); z--){
     if(z%2===0){
@@ -2577,6 +2652,7 @@ function createLayer(direction){
   }
 }
 
+//labels each row
 function createRow(direction){
   for(var x=0; x<gameSize; x++){
     currentPosition = [...currentPosition];
@@ -2595,197 +2671,9 @@ function createRow(direction){
   bufferX = true;
 }
 
-function calculateMove(moveArr){
-  let choice;
-  choice = pathOpen(moveArr);
-  if(choice===undefined){
-    choice = positionPlaceCounter+1;
-  }
-  //choice = positionPlaceCounter+1;
-  if(positionPlaceCounter===orderOfPositions.length-1){
-    choice = 0;
-  }
-  if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
-    push0 = orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0];
-    push1 = 0;
-    push2 = 0;
-    positionPlaceCounter = choice;
-    moveMade = true;
-  }else if(orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1]!==0){
-    push0 = 0;
-    push1 = orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1];
-    push2 = 0;
-    positionPlaceCounter = choice;
-    moveMade = true;
-  }else if(orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2]!==0){
-    push0 = 0;
-    push1 = 0;
-    push2 = orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2];
-    positionPlaceCounter = choice;
-    moveMade = true;
-  }
-}
-
-let swap = false;
-
-function findPath(x){
-  let openF = forward();
-  let openR = right();
-  let openD = down();
-  let openL = left();
-  let openB = back();
-  let openU = up();
-  if(x!=='forward/back'){
-    if(openR){
-      return forwardPosition(openR);
-    }else if(openD){
-      return forwardPosition(openD);
-    }else if(openL){
-      return forwardPosition(openL);
-    }else if(openU){
-      return forwardPosition(openU);
-    }
-  }else if(x!=='right/left'){
-    if(openF){
-      return forwardPosition(openF);
-    }else if(openD){
-      return forwardPosition(openD);
-    }else if(openB){
-      return forwardPosition(openB);
-    }else if(openU){
-      return forwardPosition(openU);
-    }
-  }else if(x!=='up/down'){
-    if(openF){
-      return forwardPosition(openF);
-    }else if(openR){
-      return forwardPosition(openR);
-    }else if(openL){
-      return forwardPosition(openL);
-    }else if(openB){
-      return forwardPosition(openB);
-    }
-  }
-}
-
-function pathOpen(array, option){
-  let counter;
-  if(option==="Next Best"){
-    counter = 0;
-  }
-  let pathNotFound = true;
-  let pathTest = array.length-1;
-  let pathIsBad = false;
-  while(pathNotFound){
-    if(pathTest===0){
-      return array[0];
-    }
-    pathIsBad = false;
-    if(array[pathTest]<positionPlaceCounter){
-      for(var i=0; i<=bodyPosition.length; i+=3){
-        for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
-          if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
-            pathIsBad = true;
-          }
-        }
-      }
-      if(!pathIsBad){
-        for(var i=0; i<=bodyPosition.length; i+=3){
-          for(var j=0; j<array[pathTest]; j++){
-            if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
-              pathIsBad = true;
-            }
-          }
-        }
-      }
-      if(!pathIsBad){
-        let missFood = willIMissFood("Double", array, pathTest);
-        if(option==="Next Best"){
-          if(!missFood&&counter<1&&pathTest!==array.length-1){
-            return array[pathTest];
-          }else{
-            pathTest--;
-            counter--;
-          }
-        }else{
-          if(!missFood){
-            return array[pathTest];
-          }else{
-            pathTest--;
-          }
-        }
-      }else{
-        pathTest--;
-      }
-    }else{
-      for(var i=0; i<=bodyPosition.length; i+=3){
-        for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
-          if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
-            pathIsBad = true;
-          }
-        }
-      }
-      if(!pathIsBad){
-        let missFood = willIMissFood("Single", array, pathTest);
-        if(option==="Next Best"){
-          if(!missFood&&counter<1&&pathTest!==array.length-1){
-            return array[pathTest];
-          }else{
-            pathTest--;
-            counter--;
-          }
-        }else{
-          if(!missFood){
-            return array[pathTest];
-          }else{
-            pathTest--;
-          }
-        }
-      }else{
-        pathTest--;
-      }
-    }
-  }
-}
-
-function willIMissFood(x, array, pathTest){
-  if(x==="Double"){
-    if(swap===false){
-      for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
-        if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
-          return true;
-        }
-      }
-      for(var j=0; j<array[pathTest]; j++){
-        if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
-          return true;
-        }
-      }
-      return false;
-    }else{
-      for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
-        if(!(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2])){
-          return true;
-        }
-      }
-      for(var j=0; j<array[pathTest]; j++){
-        if(!(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2])){
-          return true;
-        }
-      }
-      return false;
-    }
-  }else{
-    for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
-      if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
-        return true;
-      }
-    }
-    return false;
-  }
-}
-
+//creates a list of the neighboring positions
 function neighboringPositions(){
+  //checks if immediate neighbors are open
   let openR = right();
   let openL = left();
   let openF = forward();
@@ -2793,6 +2681,7 @@ function neighboringPositions(){
   let openU = up();
   let openD = down();
 
+  //finds the position number of neighboring positions that are open
   let positionR = rightPosition(openR);
   let positionL = leftPosition(openL); 
   let positionF = forwardPosition(openF); 
@@ -2800,9 +2689,10 @@ function neighboringPositions(){
   let positionU = upPosition(openU); 
   let positionD = downPosition(openD); 
 
+  //puts each open position into an array
+  //if position is larger that current position, it goes into greater thatn array, otherwise less then array
   let neighborPositionsGreaterThan = [];
   let neighborPositionsLessThan = [];
-
   if(openR){
     if(positionR<positionPlaceCounter){
       neighborPositionsLessThan.push(positionR);
@@ -2851,9 +2741,11 @@ function neighboringPositions(){
     }
   }
 
+  //sorts each array from smallest to largest
   let greaterArr = bubbleSort(neighborPositionsGreaterThan);
   let lessArr = bubbleSort(neighborPositionsLessThan);
 
+  //orders all positions into one array from smallest skip to largest skip
   for(var i=0; i<lessArr.length; i++){
     greaterArr.push(lessArr[i]);
   }
@@ -2861,6 +2753,7 @@ function neighboringPositions(){
   return greaterArr;
 }
 
+//checks neighbors to see if they are open
 function right(){
   for(var i=0; i<=bodyPosition.length; i+=3){
     if(position[0]+50===gameSize*50+50||(position[0]+50===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
@@ -2915,6 +2808,7 @@ function down(){
   return true;
 }
 
+//finds position of open neighbors
 function rightPosition(x){
   if(x){
     for(var i=0; i<orderOfPositions.length; i++){
@@ -2987,20 +2881,14 @@ function downPosition(x){
   }
 }
 
-function foodNumberedPosition(){
-  for(var i=0; i<orderOfPositions.length; i++){
-    if(foodPosition[0]===orderOfPositions[i][0]&&foodPosition[1]===orderOfPositions[i][1]&&foodPosition[2]===orderOfPositions[i][2]){
-      return i;
-    }
-  }
-}
-
+//sorter
 function bubbleSort(thisArray){
   let again = true;
   while(again){
     again = false;
     for(var i=0; i<thisArray.length-1; i++){
       if(thisArray[i]>thisArray[i+1]){
+        //swap
         let hold = thisArray [i];
         thisArray[i]=thisArray[i+1];
         thisArray[i+1]=hold;
@@ -3009,6 +2897,143 @@ function bubbleSort(thisArray){
     }
   }
   return thisArray;
+}
+
+//calculates the best move to make
+function calculateMove(moveArr){
+  let choice;
+  //chooses the position that skips the most spaces
+  //skipped spaces must not have a body part or the food in it
+  choice = pathOpen(moveArr);
+  //incase a choice is not made
+  if(choice===undefined){
+    choice = positionPlaceCounter+1;
+  }
+  //when the snake is at the end of the labeled positions
+  //returns to the first position
+  if(positionPlaceCounter===orderOfPositions.length-1){
+    choice = 0;
+  }
+  //changes the pushes to move to the corresponding choice, also sets the position counter
+  if(orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0]!==0){
+    push0 = orderOfPositions[choice][0]-orderOfPositions[positionPlaceCounter][0];
+    push1 = 0;
+    push2 = 0;
+    positionPlaceCounter = choice;
+  }else if(orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1]!==0){
+    push0 = 0;
+    push1 = orderOfPositions[choice][1]-orderOfPositions[positionPlaceCounter][1];
+    push2 = 0;
+    positionPlaceCounter = choice;
+  }else if(orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2]!==0){
+    push0 = 0;
+    push1 = 0;
+    push2 = orderOfPositions[choice][2]-orderOfPositions[positionPlaceCounter][2];
+    positionPlaceCounter = choice;
+  }
+}
+
+//checks if a path is open based on its neighboring positions
+function pathOpen(array, option){
+  let pathNotFound = true;
+  let pathTest = array.length-1;
+  let pathIsBad = false;
+  while(pathNotFound){
+    if(pathTest===0){
+      return array[0];
+    }
+    pathIsBad = false;
+    if(array[pathTest]<positionPlaceCounter){
+      //checks if there is a body in the positions to be skipped
+      for(var i=0; i<=bodyPosition.length; i+=3){
+        for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
+          if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
+            pathIsBad = true;
+          }
+        }
+      }
+      //checks if there is a body in the positions to be skipped (looped back to start)
+      if(!pathIsBad){
+        for(var i=0; i<=bodyPosition.length; i+=3){
+          for(var j=0; j<array[pathTest]; j++){
+            if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
+              pathIsBad = true;
+            }
+          }
+        }
+      }
+      //if path is open, checks if the food will be missed
+      if(!pathIsBad){
+        let missFood = willIMissFood("Double", array, pathTest);
+        if(option==="Next Best"){
+          if(!missFood&&pathTest!==array.length-1){
+            return array[pathTest];
+          }else{
+            pathTest--;
+          }
+        }else{
+          if(!missFood){
+            return array[pathTest];
+          }else{
+            pathTest--;
+          }
+        }
+      }else{
+        pathTest--;
+      }
+    }else{
+      //checks if there is a body in the positions to be skipped
+      for(var i=0; i<=bodyPosition.length; i+=3){
+        for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
+          if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
+            pathIsBad = true;
+          }
+        }
+      }
+      //if path is open, checks if the food will be missed
+      if(!pathIsBad){
+        let missFood = willIMissFood("Single", array, pathTest);
+        if(option==="Next Best"){
+          if(!missFood&&pathTest!==array.length-1){
+            return array[pathTest];
+          }else{
+            pathTest--;
+          }
+        }else{
+          if(!missFood){
+            return array[pathTest];
+          }else{
+            pathTest--;
+          }
+        }
+      }else{
+        pathTest--;
+      }
+    }
+  }
+}
+
+function willIMissFood(x, array, pathTest){
+  if(x==="Double"){
+    for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
+      if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
+        return true;
+      }
+    }
+    for(var j=0; j<array[pathTest]; j++){
+      if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
+        return true;
+      }
+    }
+    return false;
+  }else{
+    for(var j=positionPlaceCounter+1; j<array[pathTest]; j++){
+      if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 //when the user dies the death screen is shown
