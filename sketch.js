@@ -15,13 +15,17 @@ let gameType;
 //these variables are the memory of the program
 let gameSize = 13;
 
+//player 1
 let position = [0,0,0];
 let secondPosition = [0,0,0];
-let foodPosition = [0,0,0];
 let bodyPosition = [];
 let points;
 let p1Died;
 
+//food
+let foodPosition = [0,0,0];
+
+//player 2
 let positionP2 = [0,gameSize*50,0];
 let secondPositionP2 = [0,0,0];
 let foodPositionP2 = [0,0,0];
@@ -29,7 +33,9 @@ let bodyPositionP2 = [];
 let pointsP2;
 let p2Died;
 
+//which player dies
 let playerDeath;
+//leaderboards
 let highScores;
 let highScores5;
 let highScores6;
@@ -43,10 +49,10 @@ let highScores13;
 let highScores14;
 let highScores15;
 
-let firstIteration = true;
-let firstIterationDeath = true;
+//for timed gamemode
 let gameTimeStarted;
 let time;
+
 
 //these variables determine how the snake moves aswell as how long the snake is
 let push0 = 50;
@@ -61,11 +67,14 @@ let push2P2 = 0;
 let push3P2 = 1;
 let snakeLengthP2;
 
-//these variables are for text and the difficulty slider in the options menu
+//these variables are for items in the options menu
 let inconsolata;
+//sliders
 let sliderX = 225;
 let gameSliderX = 225+300;
 let difficulty = 10;
+let axisHelp = false;
+//variables for changing controls
 let changingBingingsP1 = false;
 let changingBingingsP2 = false;
 let leftBindP1 = false;
@@ -113,15 +122,23 @@ let instructionsP2 = ["Controls:", p2Controls.left + ' = Left', p2Controls.right
 
 //this variable kees track of if the game has been restarted
 let restarted = false;
+let aiRestarted = false;
+let firstIteration = true;
+let firstIterationDeath = true;
 
 //variables for store and skins
 let skin = "none";
-let store;
+let hat = "none";
+let skinStore;
+let hatStore;
+let store = "Skins"
 let money = 0;
 let moneyGained = 0;
-//skins array holds all skins
+//skins/hats array holds all skins/hats
 let skins = [];
+let hats = [];
 let noSkin;
+let noHat;
 let lineSkin;
 let isotopeSkin;
 let eyesSkin;
@@ -130,10 +147,14 @@ let trainSkin;
 let scalesSkin;
 let theSmoke = [];
 
-//variables for 2D array
-let cols;
-let rows;
+//variables for 2D arrays
+let skinCols;
+let skinRows;
 
+let hatCols;
+let hatRows;
+
+//variables for pictures
 let bare;
 let snakeEyes;
 let lines;
@@ -145,19 +166,23 @@ let blueScales;
 let redScales;
 let scales;
 
+//backgrounds
 let menuBackground;
 let gameBackground;
 let img = 1;
 
+//Ai variables
 let orderOfPositions = [];
 let positionPlaceCounter = 0;
 let shadowFoodPosition = [];
 let bufferX;
 
+//music
 let menuMusic;
 let gameMusic;
 
 function preload(){
+  //preloads audio
   gameMusic = new Audio("assets/echelon.mp3");
   menuMusic = new Audio("assets/streetsound_150_bpm.mp3");
   //preloads text font
@@ -180,8 +205,17 @@ function preload(){
     gameBackground = loadImage('assets/game background 2.jpg');
   }
   
+  //sets each skin/hat to their object value
   noSkin = {
     name: 'No Skin',
+    cost: 'free',
+    bought: 'yes',
+    active: 'yes',
+    picture: bare,
+  };
+
+  noHat = {
+    name: 'No Hat',
     cost: 'free',
     bought: 'yes',
     active: 'yes',
@@ -190,7 +224,7 @@ function preload(){
   
   lineSkin = {
     name: 'Line',
-    cost: 50,
+    cost: 10,
     bought: 'no',
     active: 'no',
     picture: lines,
@@ -198,7 +232,7 @@ function preload(){
 
   isotopeSkin = {
     name: 'Isotope',
-    cost: 150,
+    cost: 50,
     bought: 'no',
     active: 'no',
     picture: iso,
@@ -206,7 +240,7 @@ function preload(){
 
   eyesSkin = {
     name: 'Eyes',
-    cost: 250,
+    cost: 100,
     bought: 'no',
     active: 'no',
     picture: snakeEyes,
@@ -214,7 +248,7 @@ function preload(){
   
   topHatSkin = {
     name: 'Top Hat',
-    cost: 1000,
+    cost: 500,
     bought: 'no',
     active: 'no',
     picture: topHat,
@@ -222,7 +256,7 @@ function preload(){
 
   trainSkin = {
     name: 'Train',
-    cost: 2500,
+    cost: 1000,
     bought: 'no',
     active: 'no',
     picture: train,
@@ -230,29 +264,24 @@ function preload(){
 
   scalesSkin = {
     name: 'Scales',
-    cost: 500,
+    cost: 250,
     bought: 'no',
     active: 'no',
     picture: scales,
   };
-  
-  /*
-    1  2  5  10 17 26
-    3  4  6  11 18 27
-    7  8  9  12 19 28
-    13 14 15 16 20 29
-    21 22 23 24 25 30
-    31 32 33 34 35 36
-  */
 
+  //pushes hats/skins into their corresponding array
   skins.push(noSkin);
   skins.push(lineSkin);
   skins.push(isotopeSkin);
-  skins.push(eyesSkin);
   skins.push(scalesSkin);
-  skins.push(topHatSkin);
-  skins.push(trainSkin);
 
+  hats.push(noHat);
+  hats.push(eyesSkin);
+  hats.push(topHatSkin);
+  hats.push(trainSkin);
+
+  //sets variables to the stored leaderboards
   if(getItem("High Scores 5")===null){
     highScores5 = [];
   }else{
@@ -314,7 +343,7 @@ function preload(){
 function setup() {
   if(state==="Main Menu"){
     createCanvas(windowWidth, windowHeight);
-
+    //hides all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "hidden";
     document.getElementById("defaultCanvas1").style.visibility = "hidden";
     document.getElementById("defaultCanvas2").style.visibility = "hidden";
@@ -325,7 +354,6 @@ function setup() {
     document.getElementById("defaultCanvas7").style.visibility = "hidden";
     document.getElementById("defaultCanvas8").style.visibility = "hidden";
   }
-  
   if(state==="Menu"){
     createCanvas(windowWidth, windowHeight);
   }else if(state==="Select Game Type"){
@@ -342,20 +370,12 @@ function setup() {
     camera(-300,-400,600,500,700,-500);
     
     //sets initial position of food
-    
-    /*
-    foodPosition[0]=10*50;
-    foodPosition[1]=1*50;
-    foodPosition[2]=-19*50;
-    */
-   foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-   foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-   foodPosition[2]=floor(random(-1*gameSize,0.9))*50;
-
-      shadowFoodPosition[0] = foodPosition[0];
-      shadowFoodPosition[1] = foodPosition[1];
-      shadowFoodPosition[2] = foodPosition[2];
-  
+    foodPosition[0]=ceil(random(-0.9,gameSize))*50;
+    foodPosition[1]=ceil(random(-0.9,gameSize))*50;
+    foodPosition[2]=floor(random(-1*gameSize,0.9))*50;
+    shadowFoodPosition[0] = foodPosition[0];
+    shadowFoodPosition[1] = foodPosition[1];
+    shadowFoodPosition[2] = foodPosition[2];
 
     //shows all additional canvases
     document.getElementById("defaultCanvas0").style.visibility = "visible";
@@ -433,6 +453,9 @@ function checkState(){
   }
   if(state==="Game Over"){
     restarted=true;
+    if(gameMode==="AI"){
+      aiRestarted = true;
+    }
     deathScreen();
     pointerDot();
   }
@@ -440,6 +463,7 @@ function checkState(){
     leaderBoard();
     pointerDot();
   }
+  //resets music if it reaches the end of its track
   if(gameMusic.currentTime===gameMusic.duration){
     gameMusic.currentTime = 0;
   }
@@ -469,7 +493,9 @@ function mainMenu(){
 
   //resets difficulty for when the user switches gameModes
   difficulty = 10;
+  sliderX = 225;
   gameSize = 13;
+  gameSliderX = 225 + 300;
 
   background(0);
   image(menuBackground,0,0,windowWidth,windowHeight);
@@ -785,6 +811,7 @@ function optionMenu(){
   
   if(gameMode!=="AI"){
     difficultyBar();
+    axisHelpButton();
   }
   gameBar();
   
@@ -795,7 +822,11 @@ function optionMenu(){
   fill(255);
   stroke(255);
   textSize(20)
-  text("X", width*0.9, -125);
+  if(gameMode==="AI"){
+    text("X", width*0.9-5, -125-10);
+  }else{
+    text("X", width*0.9, -125);
+  }
   if(mouseX>width*0.9-15&&mouseX<width*0.9+15&&mouseY>38&&mouseY<60&&mouseIsPressed){
     state="Menu";
     changingBingingsP1=false;
@@ -811,6 +842,8 @@ function gameBar(){
   fill(0,0,200);
   stroke(0);
   strokeWeight(3);
+  push();
+  translate(50,0);
   //game size slider bar
   rect(225+300, 300, 250, 20);
   
@@ -839,7 +872,7 @@ function gameBar(){
   
   //if the mouse is down on any part of the bar, the slider will move to that position
   if(mouseX>100+300&&mouseX<350+300&&mouseY>474-12&&mouseY<474+12&&mouseIsPressed){
-    gameSliderX=mouseX;
+    gameSliderX=mouseX-50;
   }else 
   //when the mouse is released, the slider will snap to its nearest notch
   //each notch changes the difficulty of the game
@@ -877,6 +910,7 @@ function gameBar(){
     gameSliderX=100+300+25*10;
     gameSize = 23;
   }
+  pop();
 }
 
 function difficultyBar(){
@@ -901,6 +935,10 @@ function difficultyBar(){
   text("Easy", 100, 325);
   text("Normal", 225, 325);
   text("Hard", 350, 325);
+  if(gameMode==="Single Player"){
+    text("Less Money", 100, 350);
+    text("More Money", 350, 350);
+  }
   
   //the slider
   stroke(0);
@@ -947,6 +985,26 @@ function difficultyBar(){
   }else if(sliderX>=100+25/2*19){
     sliderX=100+25*10;
     difficulty = 15;
+  }
+}
+
+function axisHelpButton(){
+  if(axisHelp){
+    fill(0,255,0);
+  }else{
+    fill(255,0,0);
+  }
+  stroke(0);
+  rect(100,400,24,24);
+
+  fill(255,165,0);
+  stroke(255,165,0);
+  strokeWeight(1);
+  textSize(25);
+  if(axisHelp){
+    text("Disable Axis Help", 250, 400);
+  }else{
+    text("Enable Axis Help", 250, 400);
   }
 }
 
@@ -1415,52 +1473,44 @@ function storeMenu(){
   }
   image(menuBackground,0,0,windowWidth,windowHeight);
 
-  //creates creates the smallest possible rectangular grid based on the number of skins available
-  if(skins.length<3){
-    store = [[]]
-  }else if(skins.length<7){
-    store = [[],[]]
-  }else if(skins.length<13){
-    store = [[],[],[]]
-  }else if(skins.length<21){
-    store = [[],[],[],[]]
-  }else if(skins.length<31){
-    store = [[],[],[],[],[]]
-  }
-  let h = 0;
-  for(var i=0; i<ceil(sqrt(skins.length)); i++){
-    for(var j=0; j<floor(sqrt(skins.length)+0.42); j++){
-      //sets number of rows and columns in grid
-      rows = j+1;
-      cols = i+1;
-
-      //pushes skins into the grid
-      if(store[i]===undefined){
-        store[j][i] = skins[h];
-      }else{
-        store[i][j] = skins[h];
-      }
-      h++;
-    }
+  if(mouseX>width/2&&mouseX<width/2+200&&mouseY>height*3/8-25&&mouseY<height*3/8+25&&mouseIsPressed){
+    store = "Skins";
   }
 
-  //displays grid
-  rectMode(LEFT, TOP);
-  let cellSize = height/2/cols;
-  //nested for loop doubles grid size(-1) to allow for spaces between items
-  for (let y = 0; y < rows*2-1; y++) {
-    for (let x = 0; x < cols*2-1; x++) {
-      //only displays enough for the size of the grid
-      if(y%2===0&&x%2===0){
-        noStroke();
-        fill(220);
-        //if a part of the array is not filled, places a sqaure same color as background over top
-        if(store[y/2][x/2]!==undefined){
-          //circle(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.75, cellSize*1.75);
-          enterItem(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
-        }
-      }
-    }
+  if(mouseX>width/2&&mouseX<width/2+200&&mouseY>height*5/8-25&&mouseY<height*5/8+25&&mouseIsPressed){
+    store = "Hats";
+  }
+
+  strokeWeight(3);
+  fill(0,0,255);
+  if(store==="Skins"){
+    stroke(255,255,0);
+  }else{
+    stroke(0,0,255);
+  }
+  rect(width/2+100, height*3/8, 200, 50);
+  strokeWeight(1);
+  stroke(255,165,0);
+  fill(255,165,0);
+  text("Skins", width/2+100, height*3/8);
+
+  strokeWeight(3);
+  fill(0,0,255);
+  if(store==="Hats"){
+    stroke(255,255,0);
+  }else{
+    stroke(0,0,255);
+  }
+  rect(width/2+100, height*5/8, 200, 50);
+  strokeWeight(1);
+  stroke(255,165,0);
+  fill(255,165,0);
+  text("Hats", width/2+100, height*5/8);
+
+  if(store==="Skins"){
+    displaySkinStore();
+  }else{
+    displayHatStore();
   }
 
   //red back rectangle, changes the state back to menu
@@ -1485,17 +1535,117 @@ function storeMenu(){
   pointerDot();
 }
 
+function displaySkinStore(){
+  //creates creates the smallest possible rectangular grid based on the number of skins available
+  if(skins.length<3){
+    skinStore = [[]]
+  }else if(skins.length<7){
+    skinStore = [[],[]]
+  }else if(skins.length<13){
+    skinStore = [[],[],[]]
+  }else if(skins.length<21){
+    skinStore = [[],[],[],[]]
+  }else if(skins.length<31){
+    skinStore = [[],[],[],[],[]]
+  }
+  let h = 0;
+  for(var i=0; i<ceil(sqrt(skins.length)); i++){
+    for(var j=0; j<floor(sqrt(skins.length)+0.42); j++){
+      //sets number of rows and columns in grid
+      skinRows = j+1;
+      skinCols = i+1;
+
+      //pushes skins into the grid
+      if(skinStore[i]===undefined){
+        skinStore[j][i] = skins[h];
+      }else{
+        skinStore[i][j] = skins[h];
+      }
+      h++;
+    }
+  }
+
+  //displays grid
+  rectMode(LEFT, TOP);
+  let cellSize = height/2/skinCols;
+  //nested for loop doubles grid size(-1) to allow for spaces between items
+  for (let y = 0; y < skinRows*2-1; y++) {
+    for (let x = 0; x < skinCols*2-1; x++) {
+      //only displays enough for the size of the grid
+      if(y%2===0&&x%2===0){
+        noStroke();
+        fill(220);
+        //if a part of the array is not filled, places a sqaure same color as background over top
+        if(skinStore[y/2][x/2]!==undefined){
+          //circle(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.75, cellSize*1.75);
+          enterItemSkins(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
+        }
+      }
+    }
+  }
+}
+
+function displayHatStore(){
+  //creates creates the smallest possible rectangular grid based on the number of skins available
+  if(hats.length<3){
+    hatStore = [[]]
+  }else if(hats.length<7){
+    hatStore = [[],[]]
+  }else if(hats.length<13){
+    hatStore = [[],[],[]]
+  }else if(hats.length<21){
+    hatStore = [[],[],[],[]]
+  }else if(hats.length<31){
+    hatStore = [[],[],[],[],[]]
+  }
+  let h = 0;
+  for(var i=0; i<ceil(sqrt(hats.length)); i++){
+    for(var j=0; j<floor(sqrt(hats.length)+0.42); j++){
+      //sets number of rows and columns in grid
+      hatRows = j+1;
+      hatCols = i+1;
+
+      //pushes hats into the grid
+      if(hatStore[i]===undefined){
+        hatStore[j][i] = hats[h];
+      }else{
+        hatStore[i][j] = hats[h];
+      }
+      h++;
+    }
+  }
+
+  //displays grid
+  rectMode(LEFT, TOP);
+  let cellSize = height/2/hatCols;
+  //nested for loop doubles grid size(-1) to allow for spaces between items
+  for (let y = 0; y < hatRows*2-1; y++) {
+    for (let x = 0; x < hatCols*2-1; x++) {
+      //only displays enough for the size of the grid
+      if(y%2===0&&x%2===0){
+        noStroke();
+        fill(220);
+        //if a part of the array is not filled, places a sqaure same color as background over top
+        if(hatStore[y/2][x/2]!==undefined){
+          //circle(x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.75, cellSize*1.75);
+          enterItemHats(x/2, y/2, x*cellSize+cellSize, y*cellSize+cellSize, cellSize*1.5);
+        }
+      }
+    }
+  }
+}
+
 //displays a skin and its information into the store
-function enterItem(col, row, centerX, centerY, wh){
+function enterItemSkins(col, row, centerX, centerY, wh){
   textAlign(CENTER, CENTER);
   textSize(wh*1/8);
   
   //displays if the item is active, bought, or the cost of the item
   fill(255, 165, 0);
   //displays text
-  if(store[row][col]!==undefined&&store[row][col].bought==='no'){
-    text("Cost: " + store[row][col].cost, centerX, centerY+wh*4/16);
-  }else if(store[row][col]!==undefined&&store[row][col].bought==='yes'&&store[row][col].active==='no'){
+  if(skinStore[row][col]!==undefined&&skinStore[row][col].bought==='no'){
+    text("Cost: " + skinStore[row][col].cost, centerX, centerY+wh*4/16);
+  }else if(skinStore[row][col]!==undefined&&skinStore[row][col].bought==='yes'&&skinStore[row][col].active==='no'){
     text("Bought", centerX, centerY+wh*4/16);
   }else{
     text("Active", centerX, centerY+wh*4/16);
@@ -1503,50 +1653,115 @@ function enterItem(col, row, centerX, centerY, wh){
   //checks if the mouse is clicked on the button
   if(mouseX>centerX-wh/2&&mouseX<centerX+wh/2&&mouseY>centerY-wh/2&&mouseY<centerY+wh/2&&mouseIsPressed){
     //if the skin is not bought and the user has enough to buy it...
-    if(store[row][col].bought==='no'&&money>=store[row][col].cost){
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
+    if(skinStore[row][col].bought==='no'&&money>=skinStore[row][col].cost){
+      for (let y = 0; y < skinRows; y++) {
+        for (let x = 0; x < skinCols; x++) {
           //sets all other skins to not active
-          if(store[y][x]!==undefined){
-            store[y][x].active='no';
+          if(skinStore[y][x]!==undefined){
+            skinStore[y][x].active='no';
           }
         }
       }
       //subtracts money
-      money-=store[row][col].cost;
+      money-=skinStore[row][col].cost;
       //set current skin to its name
-      skin = store[row][col].name;
+      skin = skinStore[row][col].name;
       //changes skin's bought and active to 'yes'
-      store[row][col].bought='yes';
-      store[row][col].active='yes';
+      skinStore[row][col].bought='yes';
+      skinStore[row][col].active='yes';
     }else 
     //if the skin is bought...
-    if(store[row][col].bought==='yes'){
-      for (let a = 0; a < rows; a++) {
-        for (let b = 0; b < cols; b++) {
-          if(store[a][b]!==undefined){
+    if(skinStore[row][col].bought==='yes'){
+      for (let a = 0; a < skinRows; a++) {
+        for (let b = 0; b < skinCols; b++) {
+          if(skinStore[a][b]!==undefined){
             //sets all other skins to not active
-            store[a][b].active='no';
+            skinStore[a][b].active='no';
           }
         }
       }
       //set current skin to its name
-      skin = store[row][col].name;
+      skin = skinStore[row][col].name;
       //changes skin's active to 'yes'
-      store[row][col].active='yes';
+      skinStore[row][col].active='yes';
     }
   }
 
   //displays the name of the skin
   fill(255,165,0);
   stroke(255,165,0);
-  if(store[row][col]!==undefined){
-    text(store[row][col].name, centerX, centerY+wh*2/16);
+  if(skinStore[row][col]!==undefined){
+    text(skinStore[row][col].name, centerX, centerY+wh*2/16);
   }
 
   //displays picture of the skin
-  if(store[row][col]!==undefined){
-    image(store[row][col].picture, centerX-wh/4, centerY-wh*1/2,wh/2,wh/2);
+  if(skinStore[row][col]!==undefined){
+    image(skinStore[row][col].picture, centerX-wh/4, centerY-wh*1/2,wh/2,wh/2);
+  }
+}
+
+//displays a skin and its information into the store
+function enterItemHats(col, row, centerX, centerY, wh){
+  textAlign(CENTER, CENTER);
+  textSize(wh*1/8);
+  
+  //displays if the item is active, bought, or the cost of the item
+  fill(255, 165, 0);
+  //displays text
+  if(hatStore[row][col]!==undefined&&hatStore[row][col].bought==='no'){
+    text("Cost: " + hatStore[row][col].cost, centerX, centerY+wh*4/16);
+  }else if(hatStore[row][col]!==undefined&&hatStore[row][col].bought==='yes'&&hatStore[row][col].active==='no'){
+    text("Bought", centerX, centerY+wh*4/16);
+  }else{
+    text("Active", centerX, centerY+wh*4/16);
+  }
+  //checks if the mouse is clicked on the button
+  if(mouseX>centerX-wh/2&&mouseX<centerX+wh/2&&mouseY>centerY-wh/2&&mouseY<centerY+wh/2&&mouseIsPressed){
+    //if the skin is not bought and the user has enough to buy it...
+    if(hatStore[row][col].bought==='no'&&money>=hatStore[row][col].cost){
+      for (let y = 0; y < hatRows; y++) {
+        for (let x = 0; x < hatCols; x++) {
+          //sets all other skins to not active
+          if(hatStore[y][x]!==undefined){
+            hatStore[y][x].active='no';
+          }
+        }
+      }
+      //subtracts money
+      money-=hatStore[row][col].cost;
+      //set current skin to its name
+      hat = hatStore[row][col].name;
+      //changes hat's bought and active to 'yes'
+      hatStore[row][col].bought='yes';
+      hatStore[row][col].active='yes';
+    }else 
+    //if the hat is bought...
+    if(hatStore[row][col].bought==='yes'){
+      for (let a = 0; a < hatRows; a++) {
+        for (let b = 0; b < hatCols; b++) {
+          if(hatStore[a][b]!==undefined){
+            //sets all other skins to not active
+            hatStore[a][b].active='no';
+          }
+        }
+      }
+      //set current hat to its name
+      hat = hatStore[row][col].name;
+      //changes hat's active to 'yes'
+      hatStore[row][col].active='yes';
+    }
+  }
+
+  //displays the name of the hat
+  fill(255,165,0);
+  stroke(255,165,0);
+  if(hatStore[row][col]!==undefined){
+    text(hatStore[row][col].name, centerX, centerY+wh*2/16);
+  }
+
+  //displays picture of the hat
+  if(hatStore[row][col]!==undefined){
+    image(hatStore[row][col].picture, centerX-wh/4, centerY-wh*1/2,wh/2,wh/2);
   }
 }
 
@@ -1754,17 +1969,20 @@ function moveSnake(){
     playerHasDied(1);
     playerHasDied(2); 
   }
-  push();
-  translate(position[0], position[1], position[2]);
-  //head
-  placeBox(position[0],position[1],position[2],true);
-  pop();
   for(var i=bodyPosition.length-3; i>=0; i-=3){
     push();
     translate(bodyPosition[i+0], bodyPosition[i+1], bodyPosition[i+2]);
     //body
     placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
     pop();
+  }
+  push();
+  translate(position[0], position[1], position[2]);
+  //head
+  placeBox(position[0],position[1],position[2],true);  
+  pop();
+  if(gameMode!=="AI"&&axisHelp){
+    addVisibility();
   }
 }
 
@@ -1776,16 +1994,19 @@ function placeBox(x1,y1,z1,head){
   //if the position is 1 box away from the border, place a box with the color red
   if(x<=0||x>=gameSize*50||y<=0||y>=gameSize*50||z<=-gameSize*50||z>=0){
     fill(255,0,0,100);
-    applySkin(head, true, false, false);
+    applySkin(true, false, false);
+    applyHat(head);
   }else 
   //if the position is 2-3 boxs away from the border, place a box with the color blue
   if(x<=100||x>=(gameSize-2)*50||y<=100||y>=(gameSize-2)*50||z<=-(gameSize-2)*50||z>=-100){
     fill(0,0,255,100);
-    applySkin(head, false, false, true);
+    applySkin(false, false, true);
+    applyHat(head);
   }else{
     //otherwise, place a box with the color green
     fill(0,255,0,100);
-    applySkin(head, false, true, false);
+    applySkin(false, true, false);
+    applyHat(head);
   }
   //the color scheme is a warning system for the user, tells them how close they are to the border
 }
@@ -1806,23 +2027,28 @@ function moveSnakeP2(){
     playerHasDied(1);
     playerHasDied(2); 
   }
-  push();
-  translate(positionP2[0], positionP2[1], positionP2[2]);
-  placeBoxP2(positionP2[0],positionP2[1],positionP2[2],true);
-  pop();
   for(var i=bodyPositionP2.length-3; i>=0; i-=3){
     push();
     translate(bodyPositionP2[i+0], bodyPositionP2[i+1], bodyPositionP2[i+2]);
     placeBoxP2(bodyPositionP2[i+0],bodyPositionP2[i+1],bodyPositionP2[i+2]);
     pop();
   }
+  push();
+  translate(positionP2[0], positionP2[1], positionP2[2]);
+  placeBoxP2(positionP2[0],positionP2[1],positionP2[2],true);
+  pop();
+  if(gameMode!=="AI"&&axisHelp){
+    addVisibilityP2();
+  }
 }
 
 //function shows the snake on screen
-function placeBoxP2(x1,y1,z1,head){
+function placeBoxP2(x1,y1,z1){
   let x = x1;
   let y = y1;
   let z = z1;
+  stroke(0);
+  strokeWeight(3);
   //if the position is 1 box away from the border, place a box with the color red
   if(x<=0||x>=gameSize*50||y<=0||y>=gameSize*50||z<=-gameSize*50||z>=0){
     fill(255,0,0,100);
@@ -1841,7 +2067,7 @@ function placeBoxP2(x1,y1,z1,head){
 }
 
 //applys the skin with the input of which box is the head
-function applySkin(head, r, g, b){
+function applySkin(r, g, b){
   //creates line skin on box
   if(gameMode!=="Two Player"){
     if(skin==="Line"){
@@ -1866,37 +2092,72 @@ function applySkin(head, r, g, b){
     }else if(skin==="Isotope"){
       //each bady part is a sphere
       sphere(30,5,5);
-    }else if(skin==="Eyes"){
+    }else if(skin==="Scales"){
       box(50);
+        if(r){
+          applyScales(-25,-25,-25,1.58,0,redScales);
+          applyScales(-25,25,-25,1.58,0,redScales);
+          applyScales(-25,-25,-25,0,0,redScales);
+          applyScales(-25,-25,25,0,0,redScales);
+          applyScales(-25,-25,25,0,1.58,redScales);
+          applyScales(25,-25,25,0,1.58,redScales);
+        }else if(b){
+          applyScales(-25,-25,-25,1.58,0,blueScales);
+          applyScales(-25,25,-25,1.58,0,blueScales);
+          applyScales(-25,-25,-25,0,0,blueScales);
+          applyScales(-25,-25,25,0,0,blueScales);
+          applyScales(-25,-25,25,0,1.58,blueScales);
+          applyScales(25,-25,25,0,1.58,blueScales);
+        }else if(g){
+          applyScales(-25,-25,-25,1.58,0,greenScales);
+          applyScales(-25,25,-25,1.58,0,greenScales);
+          applyScales(-25,-25,-25,0,0,greenScales);
+          applyScales(-25,-25,25,0,0,greenScales);
+          applyScales(-25,-25,25,0,1.58,greenScales);
+          applyScales(25,-25,25,0,1.58,greenScales);
+        }
+    }else{
+      //no skin
+      box(50);
+    }
+  }else{
+    box(50);
+  }
+}
+
+//applys the skin with the input of which box is the head
+function applyHat(head){
+  //creates line skin on box
+  if(gameMode!=="Two Player"){
+    if(hat==="Eyes"){
       //places eyes on the head of the snake based on the direction it's going
       if(head){
         if(secondPosition[0]===position[0]-50){
-          drawEye(25,-30,10,0,90);
-          drawEye(25,-30,-10,0,90);
+          drawEye(25,-30,10,5,0,0,5,10,5);
+          drawEye(25,-30,-10,5,0,0,5,10,5);
         }
         if(secondPosition[0]===position[0]+50){
-          drawEye(-25, -30, 10, 0, 90);
-          drawEye(-25, -30, -10, 0, 90);
+          drawEye(-25,-30,10,-5,0,0,5,10,5);
+          drawEye(-25,-30,-10,-5,0,0,5,10,5);
         }
         if(secondPosition[2]===position[2]-50){
-          drawEye(10, -30, 25, 0, 0);
-          drawEye(-10, -30, 25, 0, 0);
+          drawEye(10,-30,25,0,0,5,5,10,5);
+          drawEye(-10,-30,25,0,0,5,5,10,5);
         }
         if(secondPosition[2]===position[2]+50){
-          drawEye(10, -30, -25, 0, 0);
-          drawEye(-10, -30, -25, 0, 0);
+          drawEye(10,-30,-25,0,0,-5,5,10,5);
+          drawEye(-10,-30,-25,0,0,-5,5,10,5);
         }
         if(secondPosition[1]===position[1]-50){
-          drawEye(10, 30, 25, 0, 0);
-          drawEye(-10, 30, 25, 0, 0);
+          drawEye(10,30,25,0,5,0,5,5,10);
+          drawEye(-10,30,25,0,5,0,5,5,10);
         }
         if(secondPosition[1]===position[1]+50){
-          drawEye(10, -30, 25, 0, 0);
-          drawEye(-10, -30, 25, 0, 0);
+          drawEye(10,-30,25,0,-5,0,5,5,10);
+          drawEye(-10,-30,25,0,-5,0,5,5,10);
         }
       }
-    }else if(skin==="Top Hat"){
-      box(50);
+    }else if(hat==="Top Hat"){
       if(head){
         fill(0);
         if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
@@ -1932,8 +2193,7 @@ function applySkin(head, r, g, b){
           pop();
         }
       }
-    }else if(skin==="Train"){
-      box(50);
+    }else if(hat==="Train"){
       if(head){
         if(secondPosition[0]===position[0]-50||secondPosition[0]===position[0]+50||secondPosition[2]===position[2]-50||secondPosition[2]===position[2]+50){
           push();
@@ -1968,33 +2228,6 @@ function applySkin(head, r, g, b){
           pop();
         }
       }
-    }else if(skin==="Scales"){
-      box(50);
-        if(r){
-          applyScales(-25,-25,-25,1.58,0,redScales);
-          applyScales(-25,25,-25,1.58,0,redScales);
-          applyScales(-25,-25,-25,0,0,redScales);
-          applyScales(-25,-25,25,0,0,redScales);
-          applyScales(-25,-25,25,0,1.58,redScales);
-          applyScales(25,-25,25,0,1.58,redScales);
-        }else if(b){
-          applyScales(-25,-25,-25,1.58,0,blueScales);
-          applyScales(-25,25,-25,1.58,0,blueScales);
-          applyScales(-25,-25,-25,0,0,blueScales);
-          applyScales(-25,-25,25,0,0,blueScales);
-          applyScales(-25,-25,25,0,1.58,blueScales);
-          applyScales(25,-25,25,0,1.58,blueScales);
-        }else if(g){
-          applyScales(-25,-25,-25,1.58,0,greenScales);
-          applyScales(-25,25,-25,1.58,0,greenScales);
-          applyScales(-25,-25,-25,0,0,greenScales);
-          applyScales(-25,-25,25,0,0,greenScales);
-          applyScales(-25,-25,25,0,1.58,greenScales);
-          applyScales(25,-25,25,0,1.58,greenScales);
-        }
-    }else{
-      //no skin
-      box(50);
     }
   }else{
     box(50);
@@ -2058,22 +2291,97 @@ class Smoke {
   }
 }
 
-function drawEye(x,y,z,rotX,rotY){
+function drawEye(x,y,z,aX,aY,aZ,rX,rY,rZ){
+  push();
+  
   //translates and rotates to position of eye
   translate(x,y,z);
-  rotateX(rotX);
-  rotateY(rotY);
   
   //places eyes
   fill(255);
-  ellipse(0,0,10,20);
+  stroke(255);
+  ellipsoid(rX,rY,rZ);
   fill(0);
-  ellipse(0,0,5,10);
+  stroke(0);
+  translate(aX,aY,aZ);
+  ellipsoid(rX/2,rY/2,rZ/2);
 
-  //rotates and translates back
-  rotateY(-1*rotY);
-  rotateX(-1*rotX);
-  translate(-1*x,-1*y,-1*z);
+  pop();
+}
+
+function addVisibility(){
+  //Player 1
+  strokeWeight(5);
+  //x axis
+  stroke(255,0,0);
+  if(position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
+    if(position[0]<foodPosition[0]){
+      line(-25,position[1],position[2],foodPosition[0]-25,position[1],position[2]);
+    }else{
+      line(foodPosition[0]+25,position[1],position[2],gameSize*50+25,position[1],position[2]);
+    }
+  }else{
+    line(-25,position[1],position[2],gameSize*50+25,position[1],position[2]);
+  }
+  //y axis
+  stroke(0,0,255);
+  if(position[0]===foodPosition[0]&&position[2]===foodPosition[2]){
+    if(position[1]<foodPosition[1]){
+      line(position[0],-25,position[2],position[0],foodPosition[1]-25,position[2]);
+    }else{
+      line(position[0],foodPosition[1]+25,position[2],position[0],gameSize*50+25,position[2]);
+    }
+  }else{
+    line(position[0],-25,position[2],position[0],gameSize*50+25,position[2]);
+  }
+  //z axis
+  stroke(0,255,0);
+  if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]){
+    if(position[2]<foodPosition[2]){
+      line(position[0],position[1],foodPosition[2]-25,position[0],position[1],gameSize*-50-25);
+    }else{
+      line(position[0],position[1],25,position[0],position[1],foodPosition[2]+25);
+    }
+  }else{
+    line(position[0],position[1],25,position[0],position[1],gameSize*-50-25);
+  }
+}
+
+function addVisibilityP2(){
+  //x axis
+  stroke(255,0,0);
+  if(positionP2[1]===foodPosition[1]&&positionP2[2]===foodPosition[2]){
+    if(positionP2[0]<foodPosition[0]){
+      line(-25,positionP2[1],positionP2[2],foodPosition[0]-25,positionP2[1],positionP2[2]);
+    }else{
+      line(foodPosition[0]+25,positionP2[1],positionP2[2],gameSize*50+25,positionP2[1],positionP2[2]);
+    }
+  }else{
+    line(-25,positionP2[1],positionP2[2],gameSize*50+25,positionP2[1],positionP2[2]);
+  }
+  //y axis
+  stroke(0,0,255);
+  if(positionP2[0]===foodPosition[0]&&positionP2[2]===foodPosition[2]){
+    if(positionP2[1]<foodPosition[1]){
+      line(positionP2[0],-25,positionP2[2],positionP2[0],foodPosition[1]-25,positionP2[2]);
+    }else{
+      line(positionP2[0],foodPosition[1]+25,positionP2[2],positionP2[0],gameSize*50+25,positionP2[2]);
+    }
+  }else{
+    line(positionP2[0],-25,positionP2[2],positionP2[0],gameSize*50+25,positionP2[2]);
+  }
+  //z axis
+  stroke(0,255,0);
+  if(positionP2[0]===foodPosition[0]&&positionP2[1]===foodPosition[1]){
+    if(positionP2[2]<foodPosition[2]){
+      line(positionP2[0],positionP2[1],foodPosition[2]-25,positionP2[0],positionP2[1],gameSize*-50-25);
+    }else{
+      line(positionP2[0],positionP2[1],25,positionP2[0],positionP2[1],foodPosition[2]+25);
+    }
+  }else{
+    line(positionP2[0],positionP2[1],25,positionP2[0],positionP2[1],gameSize*-50-25);
+  }
+
 }
 
 //food function places food on screen and checks if the snake has eaten it
@@ -2146,7 +2454,8 @@ function food(){
   let y = foodPosition[1];
   let z = foodPosition[2];
   fill(255,0,0);
-  noStroke();
+  stroke(0);
+  strokeWeight(3);
   //moves origin to food position
   translate(x, y, z);
   box(50);
@@ -2204,7 +2513,7 @@ function playerHasDied(p){
 }
 
 function labelPositions(){
-  if(restarted){
+  if(aiRestarted){
     currentPosition = [50,0,0];
   }else{
     currentPosition = [0,0,0];
@@ -3455,6 +3764,16 @@ function keyPressed(){
     }
     if(keyIsDown(40)&&difficulty!==1){
       difficulty--
+    }
+  }
+}
+
+function mouseReleased(){
+  if(mouseX>100-12&&mouseX<100+12&&mouseY>575-12&&mouseY<575+12&&gameMode!=="AI"&&state==="Options"){
+    if(axisHelp){
+      axisHelp = false;
+    }else{
+      axisHelp = true;
     }
   }
 }
