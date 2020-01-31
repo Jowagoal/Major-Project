@@ -2462,9 +2462,23 @@ function food(){
   //having these two scenarios will stop the snake from going straight through the food
   //when the snake has 'eaten' the food, a new piece will randomly be chosen
   if(position[0]+push0===foodPosition[0]&&position[1]+push1===foodPosition[1]&&position[2]+push2===foodPosition[2]){
-    foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+    let again = true;
+    while(again){
+      again = false;
+      foodPosition[0]=ceil(random(-0.9,gameSize))*50;
+      foodPosition[1]=ceil(random(-0.9,gameSize))*50;
+      foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+      let i=bodyPosition.length;
+      while(!again&&i>=0){
+        if(foodPosition[0]===bodyPosition[i]&&foodPosition[1]===bodyPosition[i+1]&&foodPosition[2]===bodyPosition[i+2]){
+          again = true;
+        }
+        i-=3;
+      }
+      if(foodPosition[0]===position[i]&&foodPosition[1]===position[i+1]&&foodPosition[2]===position[i+2]){
+        again = true;
+      }
+    }
 
     shadowFoodPosition[0] = foodPosition[0];
     shadowFoodPosition[1] = foodPosition[1];
@@ -2473,9 +2487,23 @@ function food(){
     points++
   }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
-    foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+    let again = true;
+    while(again){
+      again = false;
+      foodPosition[0]=ceil(random(-0.9,gameSize))*50;
+      foodPosition[1]=ceil(random(-0.9,gameSize))*50;
+      foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+      let i=bodyPosition.length;
+      while(!again&&i>=0){
+        if(foodPosition[0]===bodyPosition[i]&&foodPosition[1]===bodyPosition[i+1]&&foodPosition[2]===bodyPosition[i+2]){
+          again = true;
+        }
+        i-=3;
+      }
+      if(foodPosition[0]===position[i]&&foodPosition[1]===position[i+1]&&foodPosition[2]===position[i+2]){
+        again = true;
+      }
+    }
 
     shadowFoodPosition[0] = foodPosition[0];
     shadowFoodPosition[1] = foodPosition[1];
@@ -2485,9 +2513,23 @@ function food(){
   }
   for(var j=0; j<=bodyPosition.length-3; j+=3){
     if(foodPosition[0]===bodyPosition[j]&&foodPosition[1]===bodyPosition[j+1]&&foodPosition[2]===bodyPosition[j+2]){
-      foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-      foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-      foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+      let again = true;
+      while(again){
+        again = false;
+        foodPosition[0]=ceil(random(-0.9,gameSize))*50;
+        foodPosition[1]=ceil(random(-0.9,gameSize))*50;
+        foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+        let i=bodyPosition.length;
+        while(!again&&i>=0){
+          if(foodPosition[0]===bodyPosition[i]&&foodPosition[1]===bodyPosition[i+1]&&foodPosition[2]===bodyPosition[i+2]){
+            again = true;
+          }
+          i-=3;
+        }
+        if(foodPosition[0]===position[i]&&foodPosition[1]===position[i+1]&&foodPosition[2]===position[i+2]){
+          again = true;
+        }
+      }
 
       shadowFoodPosition[0] = foodPosition[0];
       shadowFoodPosition[1] = foodPosition[1];
