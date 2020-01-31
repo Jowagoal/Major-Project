@@ -2579,12 +2579,12 @@ function food(){
 //when a player has died, depending on the gameMode and gameType it will display death screen or reset player
 function playerHasDied(p){
   if(p===1){
-    if(gameType==="Survival"){
+    if(gameType==="Survival"&&gameMode==="Two Player"){
       state = "Game Over";
       playerDeath = 1;
       pop();
       setup();
-    }else if(gameType==="Points"){
+    }else if(gameType==="Points"&&gameMode==="Two Player"){
       position = [0,0,0];
       secondPosition = [];
       bodyPosition = [];
