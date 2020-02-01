@@ -11,7 +11,9 @@ let gameMode;
 let gameType;
 
 //these variables are the memory of the program
-let gameSize = 13;
+let gameSizeX = 6;
+let gameSizeY = 5;
+let gameSizeZ = 11;
 
 //player 1
 let position = [0,0,0];
@@ -24,7 +26,7 @@ let p1Died;
 let foodPosition = [0,0,0];
 
 //player 2
-let positionP2 = [0,gameSize*50,0];
+let positionP2 = [0,gameSizeY*50,0];
 let secondPositionP2 = [0,0,0];
 let foodPositionP2 = [0,0,0];
 let bodyPositionP2 = [];
@@ -70,6 +72,8 @@ let inconsolata;
 //sliders
 let sliderX = 225;
 let gameSliderX = 225+300;
+let gameSliderY = 225+300;
+let gameSliderZ = 225+300;
 let difficulty = 10;
 let axisHelp = false;
 //variables for changing controls
@@ -368,9 +372,9 @@ function setup() {
     camera(-300,-400,600,500,700,-500);
     
     //sets initial position of food
-    foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-    foodPosition[2]=floor(random(-1*gameSize,0.9))*50;
+    foodPosition[0]=ceil(random(-0.9,gameSizeX))*50;
+    foodPosition[1]=ceil(random(-0.9,gameSizeY))*50;
+    foodPosition[2]=floor(random(-1*gameSizeZ,0.9))*50;
     shadowFoodPosition[0] = foodPosition[0];
     shadowFoodPosition[1] = foodPosition[1];
     shadowFoodPosition[2] = foodPosition[2];
@@ -398,7 +402,7 @@ function setup() {
 
     if(gameMode!=="AI"){
       //calculates money gained for round
-      moneyGained = (snakeLength-3)*difficulty;
+      moneyGained = (snakeLength-2)*difficulty;
       //adds money gained to total money(it adds twice for some reason)
       money+=moneyGained;
     }
@@ -492,8 +496,12 @@ function mainMenu(){
   //resets difficulty for when the user switches gameModes
   difficulty = 10;
   sliderX = 225;
-  gameSize = 13;
+  gameSizeX = 6;
+  gameSizeY = 5;
+  gameSizeZ = 11;
   gameSliderX = 225 + 300;
+  gameSliderY = 225 + 300;
+  gameSliderZ = 225 + 300;
 
   //sets background
   background(0);
@@ -707,9 +715,9 @@ function resetAllValues(){
   push1 = 0;
   push2 = 0;
   push3 = 1;
-  snakeLength = 3;
+  snakeLength = 2;
   
-  positionP2 = [0,gameSize*50,0];
+  positionP2 = [0,gameSizeY*50,0];
   secondPositionP2 = [0,0,0];
   foodPositionP2 = [0,0,0];
   bodyPositionP2 = [];
@@ -825,8 +833,12 @@ function optionMenu(){
     difficultyBar();
     axisHelpButton();
   }
-  //bar to select border size
-  gameBar();
+
+  text("Area of Play", 225+350, 250);
+  //bars to select border size
+  gameBarX();
+  gameBarY();
+  gameBarZ();
   
   //red back button
   stroke(0);
@@ -852,8 +864,8 @@ function optionMenu(){
   translate(0,-25*instructionsP1.length);
 }
 
-//creates bar to set the size of the border
-function gameBar(){
+//creates bar to set the X size of the border
+function gameBarX(){
   fill(0,0,200);
   stroke(0);
   strokeWeight(3);
@@ -868,16 +880,11 @@ function gameBar(){
   strokeWeight(1);
   for(var j=0; j<11; j++){
     rect(100+25*j+300, 300, 5, 20);
+    textSize(15);
+    text(j+2, 100+25*j+300, 275);
   }
   
-  //text for size
-  textSize(25);
-  textAlign(CENTER, CENTER);
-  text("Area of Play", 225+300, 250);
-  textSize(15);
-  text("Small", 100+300, 325);
-  text("Medium", 225+300, 325);
-  text("Large", 350+300, 325);
+  text("X Axis", 350+350, 300);
   
   //the slider
   stroke(0);
@@ -893,37 +900,179 @@ function gameBar(){
   //each notch changes the size of the game
   if(gameSliderX<100+300+25/2){
     gameSliderX=100+300;
-    gameSize = 3;
+    gameSizeX = 1;
   }else if(gameSliderX>=100+300+25/2&&gameSliderX<100+300+25/2*3){
     gameSliderX=100+300+25;
-    gameSize = 5;
+    gameSizeX = 2;
   }else if(gameSliderX>=100+300+25/2*3&&gameSliderX<100+300+25/2*5){
     gameSliderX=100+300+25*2;
-    gameSize = 7;
+    gameSizeX = 3;
   }else if(gameSliderX>=100+300+25/2*5&&gameSliderX<100+300+25/2*7){
     gameSliderX=100+300+25*3;
-    gameSize = 9;
+    gameSizeX = 4;
   }else if(gameSliderX>=100+300+25/2*7&&gameSliderX<100+300+25/2*9){
     gameSliderX=100+300+25*4;
-    gameSize = 11;
+    gameSizeX = 5;
   }else if(gameSliderX>=100+300+25/2*9&&gameSliderX<100+300+25/2*11){
     gameSliderX=100+300+25*5;
-    gameSize = 13;
+    gameSizeX = 6;
   }else if(gameSliderX>=100+300+25/2*11&&gameSliderX<100+300+25/2*13){
     gameSliderX=100+300+25*6;
-    gameSize = 15;
+    gameSizeX = 7;
   }else if(gameSliderX>=100+300+25/2*13&&gameSliderX<100+300+25/2*15){
     gameSliderX=100+300+25*7;
-    gameSize = 17;
+    gameSizeX = 8;
   }else if(gameSliderX>=100+300+25/2*15&&gameSliderX<100+300+25/2*17){
     gameSliderX=100+300+25*8;
-    gameSize = 19;
+    gameSizeX = 9;
   }else if(gameSliderX>=100+300+25/2*17&&gameSliderX<100+300+25/2*19){
     gameSliderX=100+300+25*9;
-    gameSize = 21;
+    gameSizeX = 10;
   }else if(gameSliderX>=100+300+25/2*19){
     gameSliderX=100+300+25*10;
-    gameSize = 23;
+    gameSizeX = 11;
+  }
+  pop();
+}
+
+//creates bar to set the X size of the border
+function gameBarY(){
+  fill(0,0,200);
+  stroke(0);
+  strokeWeight(3);
+  push();
+  translate(50,75);
+  //game size slider bar
+  rect(225+300, 300, 250, 20);
+  
+  //notches on slider bar
+  fill(255,165,0);
+  stroke(255,165,0);
+  strokeWeight(1);
+  for(var j=0; j<11; j++){
+    rect(100+25*j+300, 300, 5, 20);
+    textSize(15);
+    text(j+1, 100+25*j+300, 275);
+  }
+  
+  text("Y Axis", 350+350, 300);
+  
+  //the slider
+  stroke(0);
+  strokeWeight(2);
+  fill(255,185,0);
+  rect(gameSliderY, 300, 9, 30);
+  
+  //if the mouse is down on any part of the bar, the slider will move to that position
+  if(mouseX>100+350&&mouseX<350+350&&mouseY>474-12+75&&mouseY<474+12+75&&mouseIsPressed){
+    gameSliderY=mouseX-50;
+  }else 
+  //when the mouse is released, the slider will snap to its nearest notch
+  //each notch changes the size of the game
+  if(gameSliderY<100+300+25/2){
+    gameSliderY=100+300;
+    gameSizeY = 0;
+  }else if(gameSliderY>=100+300+25/2&&gameSliderY<100+300+25/2*3){
+    gameSliderY=100+300+25;
+    gameSizeY = 1;
+  }else if(gameSliderY>=100+300+25/2*3&&gameSliderY<100+300+25/2*5){
+    gameSliderY=100+300+25*2;
+    gameSizeY = 2;
+  }else if(gameSliderY>=100+300+25/2*5&&gameSliderY<100+300+25/2*7){
+    gameSliderY=100+300+25*3;
+    gameSizeY = 3;
+  }else if(gameSliderY>=100+300+25/2*7&&gameSliderY<100+300+25/2*9){
+    gameSliderY=100+300+25*4;
+    gameSizeY = 4;
+  }else if(gameSliderY>=100+300+25/2*9&&gameSliderY<100+300+25/2*11){
+    gameSliderY=100+300+25*5;
+    gameSizeY = 5;
+  }else if(gameSliderY>=100+300+25/2*11&&gameSliderY<100+300+25/2*13){
+    gameSliderY=100+300+25*6;
+    gameSizeY = 6;
+  }else if(gameSliderY>=100+300+25/2*13&&gameSliderY<100+300+25/2*15){
+    gameSliderY=100+300+25*7;
+    gameSizeY = 7;
+  }else if(gameSliderY>=100+300+25/2*15&&gameSliderY<100+300+25/2*17){
+    gameSliderY=100+300+25*8;
+    gameSizeY = 8;
+  }else if(gameSliderY>=100+300+25/2*17&&gameSliderY<100+300+25/2*19){
+    gameSliderY=100+300+25*9;
+    gameSizeY = 9;
+  }else if(gameSliderY>=100+300+25/2*19){
+    gameSliderY=100+300+25*10;
+    gameSizeY = 10;
+  }
+  pop();
+}
+
+//creates bar to set the X size of the border
+function gameBarZ(){
+  fill(0,0,200);
+  stroke(0);
+  strokeWeight(3);
+  push();
+  translate(50,150);
+  //game size slider bar
+  rect(225+300, 300, 250, 20);
+  
+  //notches on slider bar
+  fill(255,165,0);
+  stroke(255,165,0);
+  strokeWeight(1);
+  for(var j=0; j<11; j++){
+    rect(100+25*j+300, 300, 5, 20);
+    textSize(15);
+    text((j+1)*2, 100+25*j+300, 275);
+  }
+  
+  text("Z Axis", 350+350, 300);
+  
+  //the slider
+  stroke(0);
+  strokeWeight(2);
+  fill(255,185,0);
+  rect(gameSliderZ, 300, 9, 30);
+  
+  //if the mouse is down on any part of the bar, the slider will move to that position
+  if(mouseX>100+350&&mouseX<350+350&&mouseY>474-12+150&&mouseY<474+12+150&&mouseIsPressed){
+    gameSliderZ=mouseX-50;
+  }else 
+  //when the mouse is released, the slider will snap to its nearest notch
+  //each notch changes the size of the game
+  if(gameSliderZ<100+300+25/2){
+    gameSliderZ=100+300;
+    gameSizeZ = 1;
+  }else if(gameSliderZ>=100+300+25/2&&gameSliderZ<100+300+25/2*3){
+    gameSliderZ=100+300+25;
+    gameSizeZ = 3;
+  }else if(gameSliderZ>=100+300+25/2*3&&gameSliderZ<100+300+25/2*5){
+    gameSliderZ=100+300+25*2;
+    gameSizeZ = 5;
+  }else if(gameSliderZ>=100+300+25/2*5&&gameSliderZ<100+300+25/2*7){
+    gameSliderZ=100+300+25*3;
+    gameSizeZ = 7;
+  }else if(gameSliderZ>=100+300+25/2*7&&gameSliderZ<100+300+25/2*9){
+    gameSliderZ=100+300+25*4;
+    gameSizeZ = 9;
+  }else if(gameSliderZ>=100+300+25/2*9&&gameSliderZ<100+300+25/2*11){
+    gameSliderZ=100+300+25*5;
+    gameSizeZ = 11;
+  }else if(gameSliderZ>=100+300+25/2*11&&gameSliderZ<100+300+25/2*13){
+    gameSliderZ=100+300+25*6;
+    gameSizeZ = 13;
+  }else if(gameSliderZ>=100+300+25/2*13&&gameSliderZ<100+300+25/2*15){
+    gameSliderZ=100+300+25*7;
+    gameSizeZ = 15;
+  }else if(gameSliderZ>=100+300+25/2*15&&gameSliderZ<100+300+25/2*17){
+    gameSliderZ=100+300+25*8;
+    gameSizeZ = 17;
+  }else if(gameSliderZ>=100+300+25/2*17&&gameSliderZ<100+300+25/2*19){
+    gameSliderZ=100+300+25*9;
+    gameSizeZ = 19;
+  }else if(gameSliderZ>=100+300+25/2*19){
+    gameSliderZ=100+300+25*10;
+    gameSizeZ = 21;
   }
   pop();
 }
@@ -1835,23 +1984,23 @@ function createBoard(){
   strokeWeight(5);
   fill(0,0,0);
   stroke(255,0,0);
-  line(-25,-25,25,gameSize*50+25,-25,25);
-  line(-25,-25,25,-25,gameSize*50+25,25);
-  line(-25,-25,25,-25,-25,gameSize*-50-25);
+  line(-25,-25,25,gameSizeX*50+25,-25,25);
+  line(-25,-25,25,-25,gameSizeY*50+25,25);
+  line(-25,-25,25,-25,-25,gameSizeZ*-50-25);
   
-  line(gameSize*50+25,gameSize*50+25,gameSize*-50-25,gameSize*50+25,gameSize*50+25,25);
-  line(gameSize*50+25,gameSize*50+25,gameSize*-50-25,gameSize*50+25,-25,gameSize*-50-25);
-  line(gameSize*50+25,gameSize*50+25,gameSize*-50-25,-25,gameSize*50+25,gameSize*-50-25);
+  line(gameSizeX*50+25,gameSizeY*50+25,gameSizeZ*-50-25,gameSizeX*50+25,gameSizeY*50+25,25);
+  line(gameSizeX*50+25,gameSizeY*50+25,gameSizeZ*-50-25,gameSizeX*50+25,-25,gameSizeZ*-50-25);
+  line(gameSizeX*50+25,gameSizeY*50+25,gameSizeZ*-50-25,-25,gameSizeY*50+25,gameSizeZ*-50-25);
   
-  line(-25,gameSize*50+25,25,gameSize*50+25,gameSize*50+25,25);
-  line(-25,gameSize*50+25,25,-25,gameSize*50+25,gameSize*-50-25);
+  line(-25,gameSizeY*50+25,25,gameSizeX*50+25,gameSizeY*50+25,25);
+  line(-25,gameSizeY*50+25,25,-25,gameSizeY*50+25,gameSizeZ*-50-25);
   
-  line(gameSize*50+25,-25,gameSize*-50-25,gameSize*50+25,-25,25);
-  line(gameSize*50+25,-25,gameSize*-50-25,-25,-25,gameSize*-50-25);
+  line(gameSizeX*50+25,-25,gameSizeZ*-50-25,gameSizeX*50+25,-25,25);
+  line(gameSizeX*50+25,-25,gameSizeZ*-50-25,-25,-25,gameSizeZ*-50-25);
   
-  line(-25,-25,gameSize*-50-25,-25,gameSize*50+25,gameSize*-50-25);
+  line(-25,-25,gameSizeZ*-50-25,-25,gameSizeY*50+25,gameSizeZ*-50-25);
   
-  line(gameSize*50+25,-25,25,gameSize*50+25,gameSize*50+25,25);
+  line(gameSizeX*50+25,-25,25,gameSizeX*50+25,gameSizeY*50+25,25);
 }
 
 //every part of the game the user plays is in this function
@@ -1885,8 +2034,6 @@ function gameStart(){
     }
   }
   
-  //food function makes the food
-  food();
   if(gameMode==="AI"){
     //memory system has been entirely restructured, 
     //the old array filled up too fast
@@ -1909,13 +2056,12 @@ function gameStart(){
       position[1]+=push1;
       position[2]+=push2;
     }
-    moveSnake();
     
     //finds neighboring positions
     let arrayOfNeighborPositions = neighboringPositions();
     //calculates the move to make
     calculateMove(arrayOfNeighborPositions);
-
+    moveSnake();
   }else{
     if(gameMode!=="Two Player"){
       //memory system has been entirely restructured, 
@@ -1988,6 +2134,8 @@ function gameStart(){
       }
     }
   }
+  //food function makes the food
+  food();
   firstIteration=false;
 }
 
@@ -2008,7 +2156,7 @@ function timer(){
 //moves snake
 function moveSnake(){
   //if the position is outside the border, state changes to game over and calls setup
-  if(position[0]<0||position[0]>gameSize*50||position[1]<0||position[1]>gameSize*50||position[2]>0||position[2]<-gameSize*50){
+  if(position[0]<0||position[0]>gameSizeX*50||position[1]<0||position[1]>gameSizeY*50||position[2]>0||position[2]<-gameSizeZ*50){
     playerHasDied(1);
   }
   //checks if the position is equal to any of the body positions
@@ -2047,13 +2195,13 @@ function placeBox(x1,y1,z1,head){
   let y = y1;
   let z = z1;
   //if the position is 1 box away from the border, place a box with the color red
-  if(x<=0||x>=gameSize*50||y<=0||y>=gameSize*50||z<=-gameSize*50||z>=0){
+  if(x<=0||x>=gameSizeX*50||y<=0||y>=gameSizeY*50||z<=-gameSizeZ*50||z>=0){
     fill(255,0,0,100);
     applySkin(true, false, false);
     applyHat(head);
   }else 
   //if the position is 2-3 boxs away from the border, place a box with the color blue
-  if(x<=100||x>=(gameSize-2)*50||y<=100||y>=(gameSize-2)*50||z<=-(gameSize-2)*50||z>=-100){
+  if(x<=100||x>=(gameSizeX-2)*50||y<=100||y>=(gameSizeY-2)*50||z<=-(gameSizeZ-2)*50||z>=-100){
     fill(0,0,255,100);
     applySkin(false, false, true);
     applyHat(head);
@@ -2068,7 +2216,7 @@ function placeBox(x1,y1,z1,head){
 
 function moveSnakeP2(){
   //if the positionP2 is outside the border, state changes to game over and calls setup
-  if(positionP2[0]<0||positionP2[0]>gameSize*50||positionP2[1]<0||positionP2[1]>gameSize*50||positionP2[2]>0||positionP2[2]<-gameSize*50){
+  if(positionP2[0]<0||positionP2[0]>gameSizeX*50||positionP2[1]<0||positionP2[1]>gameSizeY*50||positionP2[2]>0||positionP2[2]<-gameSizeZ*50){
     playerHasDied(2);
   }
   //checks if the positionP2 is equal to any of the body positions
@@ -2107,12 +2255,12 @@ function placeBoxP2(x1,y1,z1){
   stroke(0);
   strokeWeight(3);
   //if the position is 1 box away from the border, place a box with the color red
-  if(x<=0||x>=gameSize*50||y<=0||y>=gameSize*50||z<=-gameSize*50||z>=0){
+  if(x<=0||x>=gameSizeX*50||y<=0||y>=gameSizeY*50||z<=-gameSizeZ*50||z>=0){
     fill(255,0,0,100);
     box(50);
   }else 
   //if the position is 2-3 boxs away from the border, place a box with the color blue
-  if(x<=100||x>=(gameSize-2)*50||y<=100||y>=(gameSize-2)*50||z<=-(gameSize-2)*50||z>=-100){
+  if(x<=100||x>=(gameSizeX-2)*50||y<=100||y>=(gameSizeY-2)*50||z<=-(gameSizeZ-2)*50||z>=-100){
     fill(0,0,255,100);
     box(50);
   }else{
@@ -2386,10 +2534,10 @@ function addVisibility(){
     if(position[0]<foodPosition[0]){
       line(-25,position[1],position[2],foodPosition[0]-25,position[1],position[2]);
     }else{
-      line(foodPosition[0]+25,position[1],position[2],gameSize*50+25,position[1],position[2]);
+      line(foodPosition[0]+25,position[1],position[2],gameSizeX*50+25,position[1],position[2]);
     }
   }else{
-    line(-25,position[1],position[2],gameSize*50+25,position[1],position[2]);
+    line(-25,position[1],position[2],gameSizeX*50+25,position[1],position[2]);
   }
   //places y axis
   stroke(0,0,255);
@@ -2398,22 +2546,22 @@ function addVisibility(){
     if(position[1]<foodPosition[1]){
       line(position[0],-25,position[2],position[0],foodPosition[1]-25,position[2]);
     }else{
-      line(position[0],foodPosition[1]+25,position[2],position[0],gameSize*50+25,position[2]);
+      line(position[0],foodPosition[1]+25,position[2],position[0],gameSizeY*50+25,position[2]);
     }
   }else{
-    line(position[0],-25,position[2],position[0],gameSize*50+25,position[2]);
+    line(position[0],-25,position[2],position[0],gameSizeY*50+25,position[2]);
   }
   //places z axis
   stroke(0,255,0);
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]){
     //if snake is on same z axis, line stops at food
     if(position[2]<foodPosition[2]){
-      line(position[0],position[1],foodPosition[2]-25,position[0],position[1],gameSize*-50-25);
+      line(position[0],position[1],foodPosition[2]-25,position[0],position[1],gameSizeZ*-50-25);
     }else{
       line(position[0],position[1],25,position[0],position[1],foodPosition[2]+25);
     }
   }else{
-    line(position[0],position[1],25,position[0],position[1],gameSize*-50-25);
+    line(position[0],position[1],25,position[0],position[1],gameSizeZ*-50-25);
   }
 }
 
@@ -2424,10 +2572,10 @@ function addVisibilityP2(){
     if(positionP2[0]<foodPosition[0]){
       line(-25,positionP2[1],positionP2[2],foodPosition[0]-25,positionP2[1],positionP2[2]);
     }else{
-      line(foodPosition[0]+25,positionP2[1],positionP2[2],gameSize*50+25,positionP2[1],positionP2[2]);
+      line(foodPosition[0]+25,positionP2[1],positionP2[2],gameSizeX*50+25,positionP2[1],positionP2[2]);
     }
   }else{
-    line(-25,positionP2[1],positionP2[2],gameSize*50+25,positionP2[1],positionP2[2]);
+    line(-25,positionP2[1],positionP2[2],gameSizeX*50+25,positionP2[1],positionP2[2]);
   }
   //y
   stroke(0,0,255);
@@ -2435,21 +2583,21 @@ function addVisibilityP2(){
     if(positionP2[1]<foodPosition[1]){
       line(positionP2[0],-25,positionP2[2],positionP2[0],foodPosition[1]-25,positionP2[2]);
     }else{
-      line(positionP2[0],foodPosition[1]+25,positionP2[2],positionP2[0],gameSize*50+25,positionP2[2]);
+      line(positionP2[0],foodPosition[1]+25,positionP2[2],positionP2[0],gameSizeY*50+25,positionP2[2]);
     }
   }else{
-    line(positionP2[0],-25,positionP2[2],positionP2[0],gameSize*50+25,positionP2[2]);
+    line(positionP2[0],-25,positionP2[2],positionP2[0],gameSizeY*50+25,positionP2[2]);
   }
   //z
   stroke(0,255,0);
   if(positionP2[0]===foodPosition[0]&&positionP2[1]===foodPosition[1]){
     if(positionP2[2]<foodPosition[2]){
-      line(positionP2[0],positionP2[1],foodPosition[2]-25,positionP2[0],positionP2[1],gameSize*-50-25);
+      line(positionP2[0],positionP2[1],foodPosition[2]-25,positionP2[0],positionP2[1],gameSizeZ*-50-25);
     }else{
       line(positionP2[0],positionP2[1],25,positionP2[0],positionP2[1],foodPosition[2]+25);
     }
   }else{
-    line(positionP2[0],positionP2[1],25,positionP2[0],positionP2[1],gameSize*-50-25);
+    line(positionP2[0],positionP2[1],25,positionP2[0],positionP2[1],gameSizeZ*-50-25);
   }
 
 }
@@ -2461,38 +2609,13 @@ function food(){
   //the second checks on the snake head
   //having these two scenarios will stop the snake from going straight through the food
   //when the snake has 'eaten' the food, a new piece will randomly be chosen
-  if(position[0]+push0===foodPosition[0]&&position[1]+push1===foodPosition[1]&&position[2]+push2===foodPosition[2]){
-    let again = true;
-    while(again){
-      again = false;
-      foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-      foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-      foodPosition[2]=floor(random(-1* gameSize,0.9))*50
-      let i=bodyPosition.length;
-      while(!again&&i>=0){
-        if(foodPosition[0]===bodyPosition[i]&&foodPosition[1]===bodyPosition[i+1]&&foodPosition[2]===bodyPosition[i+2]){
-          again = true;
-        }
-        i-=3;
-      }
-      if(foodPosition[0]===position[i]&&foodPosition[1]===position[i+1]&&foodPosition[2]===position[i+2]){
-        again = true;
-      }
-    }
-
-    shadowFoodPosition[0] = foodPosition[0];
-    shadowFoodPosition[1] = foodPosition[1];
-    shadowFoodPosition[2] = foodPosition[2];
-    snakeLength++;
-    points++
-  }
   if(position[0]===foodPosition[0]&&position[1]===foodPosition[1]&&position[2]===foodPosition[2]){
     let again = true;
     while(again){
       again = false;
-      foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-      foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-      foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+      foodPosition[0]=ceil(random(-0.9,gameSizeX))*50;
+      foodPosition[1]=ceil(random(-0.9,gameSizeY))*50;
+      foodPosition[2]=floor(random(-1* gameSizeZ,0.9))*50
       let i=bodyPosition.length;
       while(!again&&i>=0){
         if(foodPosition[0]===bodyPosition[i]&&foodPosition[1]===bodyPosition[i+1]&&foodPosition[2]===bodyPosition[i+2]){
@@ -2500,8 +2623,17 @@ function food(){
         }
         i-=3;
       }
-      if(foodPosition[0]===position[i]&&foodPosition[1]===position[i+1]&&foodPosition[2]===position[i+2]){
+      if(foodPosition[0]===position[0]&&foodPosition[1]===position[1]&&foodPosition[2]===position[2]&&snakeLength!==orderOfPositions.length){
         again = true;
+      }
+      if(positionPlaceCounter!==orderOfPositions.length-1){
+        if(foodPosition[0]===orderOfPositions[positionPlaceCounter+1][0]&&foodPosition[1]===orderOfPositions[positionPlaceCounter+1][1]&&foodPosition[2]===orderOfPositions[positionPlaceCounter+1][2]&&snakeLength!==orderOfPositions.length-1){
+          again = true;
+        }
+      }else{
+        if(foodPosition[0]===orderOfPositions[0][0]&&foodPosition[1]===orderOfPositions[0][1]&&foodPosition[2]===orderOfPositions[0][2]&&snakeLength!==orderOfPositions.length-1){
+          again = true;
+        }
       }
     }
 
@@ -2516,9 +2648,9 @@ function food(){
       let again = true;
       while(again){
         again = false;
-        foodPosition[0]=ceil(random(-0.9,gameSize))*50;
-        foodPosition[1]=ceil(random(-0.9,gameSize))*50;
-        foodPosition[2]=floor(random(-1* gameSize,0.9))*50
+        foodPosition[0]=ceil(random(-0.9,gameSizeX))*50;
+        foodPosition[1]=ceil(random(-0.9,gameSizeY))*50;
+        foodPosition[2]=floor(random(-1* gameSizeZ,0.9))*50
         let i=bodyPosition.length;
         while(!again&&i>=0){
           if(foodPosition[0]===bodyPosition[i]&&foodPosition[1]===bodyPosition[i+1]&&foodPosition[2]===bodyPosition[i+2]){
@@ -2526,8 +2658,17 @@ function food(){
           }
           i-=3;
         }
-        if(foodPosition[0]===position[i]&&foodPosition[1]===position[i+1]&&foodPosition[2]===position[i+2]){
+        if(foodPosition[0]===position[0]&&foodPosition[1]===position[1]&&foodPosition[2]===position[2]&&snakeLength!==orderOfPositions.length){
           again = true;
+        }
+        if(positionPlaceCounter!==orderOfPositions.length-1){
+          if(foodPosition[0]===orderOfPositions[positionPlaceCounter+1][0]&&foodPosition[1]===orderOfPositions[positionPlaceCounter+1][1]&&foodPosition[2]===orderOfPositions[positionPlaceCounter+1][2]&&snakeLength!==orderOfPositions.length-1){
+            again = true;
+          }
+        }else{
+          if(foodPosition[0]===orderOfPositions[0][0]&&foodPosition[1]===orderOfPositions[0][1]&&foodPosition[2]===orderOfPositions[0][2]&&snakeLength!==orderOfPositions.length-1){
+            again = true;
+          }
         }
       }
 
@@ -2538,24 +2679,24 @@ function food(){
   }
 
   if(positionP2[0]+push0P2===foodPosition[0]&&positionP2[1]+push1P2===foodPosition[1]&&positionP2[2]+push2P2===foodPosition[2]){
-    foodPosition[0]=ceil(random(0,gameSize))*50;
-    foodPosition[1]=ceil(random(0,gameSize))*50;
-    foodPosition[2]=floor(random(-gameSize,0.9))*50;
+    foodPosition[0]=ceil(random(0,gameSizeX))*50;
+    foodPosition[1]=ceil(random(0,gameSizeY))*50;
+    foodPosition[2]=floor(random(-gameSizeZ,0.9))*50;
     snakeLengthP2++;
     pointsP2++;
   }
   if(positionP2[0]===foodPosition[0]&&positionP2[1]===foodPosition[1]&&positionP2[2]===foodPosition[2]){
-    foodPosition[0]=ceil(random(0,gameSize))*50;
-    foodPosition[1]=ceil(random(0,gameSize))*50;
-    foodPosition[2]=floor(random(-gameSize,0.9))*50;
+    foodPosition[0]=ceil(random(0,gameSizeX))*50;
+    foodPosition[1]=ceil(random(0,gameSizeY))*50;
+    foodPosition[2]=floor(random(-gameSizeZ,0.9))*50;
     snakeLengthP2++;
     pointsP2++;
   }
   for(var j=0; j<=bodyPositionP2.length-3; j+=3){
     if(foodPosition[0]===bodyPositionP2[j]&&foodPosition[1]===bodyPositionP2[j+1]&&foodPosition[2]===bodyPositionP2[j+2]){
-      foodPosition[0]=ceil(random(0,gameSize))*50;
-      foodPosition[1]=ceil(random(0,gameSize))*50;
-      foodPosition[2]=floor(random(-gameSize,0.9))*50;
+      foodPosition[0]=ceil(random(0,gameSizeX))*50;
+      foodPosition[1]=ceil(random(0,gameSizeY))*50;
+      foodPosition[2]=floor(random(-gameSizeZ,0.9))*50;
       snakeLengthP2++;
       pointsP2++;
     }
@@ -2607,7 +2748,7 @@ function playerHasDied(p){
       pop();
       setup();
     }else if(gameType==="Points"){
-      positionP2 = [0,gameSize*50,0];
+      positionP2 = [0,gameSizeY*50,0];
       secondPositionP2 = [];
       bodyPositionP2 = [];
 
@@ -2636,7 +2777,7 @@ function labelPositions(){
  let directionZ;
 
   //labels each layer 
-  for(var y=0; y<gameSize+1; y++){
+  for(var y=0; y<gameSizeY+1; y++){
     if(y%2===0){
       createLayer('forward');
     }else{
@@ -2645,15 +2786,17 @@ function labelPositions(){
     currentPosition[1]+=50;
   }
   
-  
   currentPosition = [...currentPosition];
-  currentPosition[0] = 0;
-  currentPosition[1] = gameSize*50;
-  currentPosition[2] = 0;
+  currentPosition[1] = (gameSizeY)*50;
+  currentPosition[0] -= 50;
+
+  if(gameSizeY%2===0){
+    directionZ="forward"
+  }
 
   //labels left wall to return back to starting space
-  for(var j=0; j<gameSize+1; j++){
-    for(var k=0; k<gameSize+1; k++){
+  for(var j=0; j<gameSizeY+1; j++){
+    for(var k=0; k<gameSizeZ+1; k++){
       currentPosition = [...currentPosition];
       if(k!==0){
         if(directionZ==="forward"){
@@ -2675,13 +2818,13 @@ function labelPositions(){
 
 //labels a layer
 function createLayer(direction){
-  for(var z=0; z>-(gameSize+1); z--){
+  for(var z=0; z>-(gameSizeZ+1); z--){
     if(z%2===0){
       createRow('right');
     }else{
       createRow('left');
     }
-    if(z!==-gameSize){
+    if(z!==-gameSizeX){
       if(direction==='forward'){
         currentPosition[2]-=50;
       }
@@ -2694,7 +2837,7 @@ function createLayer(direction){
 
 //labels each row
 function createRow(direction){
-  for(var x=0; x<gameSize; x++){
+  for(var x=0; x<gameSizeX; x++){
     currentPosition = [...currentPosition];
     if(!bufferX){
       if(direction==="right"){
@@ -2796,7 +2939,7 @@ function neighboringPositions(){
 //checks neighbors to see if they are open
 function right(){
   for(var i=0; i<=bodyPosition.length; i+=3){
-    if(position[0]+50===gameSize*50+50||(position[0]+50===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+    if(position[0]+50===gameSizeX*50+50||(position[0]+50===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
       return false;
     }
   }
@@ -2814,7 +2957,7 @@ function left(){
 
 function forward(){
   for(var i=0; i<=bodyPosition.length; i+=3){
-    if(position[2]-50===-gameSize*50-50||(position[0]===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]-50===bodyPosition[i+2])){
+    if(position[2]-50===-gameSizeZ*50-50||(position[0]===bodyPosition[i+0]&&position[1]===bodyPosition[i+1]&&position[2]-50===bodyPosition[i+2])){
       return false;
     }
   }
@@ -2841,7 +2984,7 @@ function up(){
 
 function down(){
   for(var i=0; i<=bodyPosition.length; i+=3){
-    if(position[1]+50===gameSize*50+50||(position[0]===bodyPosition[i+0]&&position[1]+50===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
+    if(position[1]+50===gameSizeY*50+50||(position[0]===bodyPosition[i+0]&&position[1]+50===bodyPosition[i+1]&&position[2]===bodyPosition[i+2])){
       return false;
     }
   }
@@ -2974,7 +3117,7 @@ function calculateMove(moveArr){
 }
 
 //checks if a path is open based on its neighboring positions
-function pathOpen(array, option){
+function pathOpen(array){
   let pathNotFound = true;
   let pathTest = array.length-1;
   let pathIsBad = false;
@@ -2986,7 +3129,7 @@ function pathOpen(array, option){
     if(array[pathTest]<positionPlaceCounter){
       //checks if there is a body in the positions to be skipped
       for(var i=0; i<=bodyPosition.length; i+=3){
-        for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
+        for(var j=positionPlaceCounter+1; j<orderOfPositions.length; j++){
           if(bodyPosition[i]===orderOfPositions[j][0]&&bodyPosition[i+1]===orderOfPositions[j][1]&&bodyPosition[i+2]===orderOfPositions[j][2]){
             pathIsBad = true;
           }
@@ -3005,18 +3148,10 @@ function pathOpen(array, option){
       //if path is open, checks if the food will be missed
       if(!pathIsBad){
         let missFood = willIMissFood("Double", array, pathTest);
-        if(option==="Next Best"){
-          if(!missFood&&pathTest!==array.length-1){
-            return array[pathTest];
-          }else{
-            pathTest--;
-          }
+        if(!missFood){
+          return array[pathTest];
         }else{
-          if(!missFood){
-            return array[pathTest];
-          }else{
-            pathTest--;
-          }
+          pathTest--;
         }
       }else{
         pathTest--;
@@ -3033,18 +3168,10 @@ function pathOpen(array, option){
       //if path is open, checks if the food will be missed
       if(!pathIsBad){
         let missFood = willIMissFood("Single", array, pathTest);
-        if(option==="Next Best"){
-          if(!missFood&&pathTest!==array.length-1){
-            return array[pathTest];
-          }else{
-            pathTest--;
-          }
+        if(!missFood){
+          return array[pathTest];
         }else{
-          if(!missFood){
-            return array[pathTest];
-          }else{
-            pathTest--;
-          }
+          pathTest--;
         }
       }else{
         pathTest--;
@@ -3056,7 +3183,7 @@ function pathOpen(array, option){
 //all positions to be skipped to see if the food will be missed
 function willIMissFood(x, array, pathTest){
   if(x==="Double"){
-    for(var j=positionPlaceCounter+1; j<Math.pow(gameSize+1,3); j++){
+    for(var j=positionPlaceCounter+1; j<orderOfPositions.length; j++){
       if(shadowFoodPosition[0]===orderOfPositions[j][0]&&shadowFoodPosition[1]===orderOfPositions[j][1]&&shadowFoodPosition[2]===orderOfPositions[j][2]){
         return true;
       }
@@ -3100,7 +3227,7 @@ function deathScreen(){
     if(gameMode==="Single Player"){
       text("You Died!", width/2, height/8);
     }else{
-      if(snakeLength===Math.pow(gameSize+1,3)+1){
+      if(snakeLength>=orderOfPositions.length){
         text("AI Beat the Board!", width/2, height/8);
       }else{
         text("AI Died!", width/2, height/8);
@@ -3110,7 +3237,11 @@ function deathScreen(){
     //displays the users score
     fill(220,220,0);
     textSize(25);
-    text("Score: " + snakeLength, width/2, height*5/16);
+    if(snakeLength>(gameSizeX+1)*(gameSizeY+1)*(gameSizeZ+1)){
+      text("Score: " + (gameSizeX+1)*(gameSizeY+1)*(gameSizeZ+1), width/2, height*5/16);
+    }else{
+      text("Score: " + snakeLength, width/2, height*5/16);
+    }
   }
   
   if(gameMode==="Single Player"){
@@ -3886,18 +4017,35 @@ let topViewWord = new p5(( sketch ) => {
   };
 });
 
-//each view creates a new canvas that shows the game frome a different angle
+//each view creates a new canvas that shows the game from a different angle
 let topView = new p5(( sketch ) => {
   
-  //x and y = height/4
-  let x = 150;
-  let y = 150;
+  let x;
+  let y;
+
+  if(gameSizeX<gameSizeZ){
+    x = 150*(gameSizeX/gameSizeZ);
+    y = 150;
+  }else{
+    x = 150;
+    y = 150*(gameSizeZ/gameSizeX);
+  }
   
   sketch.setup = () => {
     sketch.createCanvas(x, y);
   };
 
   sketch.draw = () => {
+    if(gameSizeX<gameSizeZ){
+      x = 150*(gameSizeX/gameSizeZ);
+      y = 150;
+    }else{
+      x = 150;
+      y = 150*(gameSizeZ/gameSizeX);
+    }
+    if(x!==gameSizeX||y!==gameSizeZ){
+      sketch.setup();
+    }
     sketch.gamePlay();
   };
 
@@ -3908,10 +4056,10 @@ let topView = new p5(( sketch ) => {
     sketch.push();
     sketch.stroke(255,0,0);
     sketch.strokeWeight(1);
-    sketch.line(0,0,150,0);
-    sketch.line(150,0,150,150);
-    sketch.line(150,150,0,150);
-    sketch.line(0,150,0,0);
+    sketch.line(0,0,x-1,0);
+    sketch.line(x-1,0,x-1,y-1);
+    sketch.line(x-1,y-1,0,y-1);
+    sketch.line(0,y-1,0,0);
     sketch.pop();
     
     sketch.food();
@@ -3929,15 +4077,15 @@ let topView = new p5(( sketch ) => {
   sketch.moveSnake = () => {    
     //since the z coordinate is negative and the side views are positive
     //this translation aligns the snake with the canvas
-    sketch.translate(0,y-y/(gameSize+1));
+    sketch.translate(0,y-y/(gameSizeZ+1));
     
     sketch.push();
-    sketch.translate(position[0]/50*x/(gameSize+1), position[2]/50*y/(gameSize+1));
+    sketch.translate(position[0]/50*x/(gameSizeX+1), position[2]/50*y/(gameSizeZ+1));
     sketch.placeBox(position[0],position[1],position[2],true);
     sketch.pop();
     for(var i=bodyPosition.length-3; i>=0; i-=3){
       sketch.push();
-      sketch.translate(bodyPosition[i+0]/50*x/(gameSize+1), bodyPosition[i+2]/50*y/(gameSize+1));
+      sketch.translate(bodyPosition[i+0]/50*x/(gameSizeX+1), bodyPosition[i+2]/50*y/(gameSizeZ+1));
       sketch.placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
       sketch.pop();
     }
@@ -3948,30 +4096,30 @@ let topView = new p5(( sketch ) => {
     let x1 = x2;
     let y1 = y2;
     let z1 = z2;
-    if(x1<=0||x1>=gameSize*50||y1<=0||y1>=gameSize*50||z1<=-gameSize*50||z1>=0){
+    if(x1<=0||x1>=gameSizeX*50||y1<=0||y1>=gameSizeY*50||z1<=-gameSizeZ*50||z1>=0){
       sketch.fill(255,0,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
-    }else if(x1<=100||x1>=(gameSize-2)*50||y1<=100||y1>=(gameSize-2)*50||z1<=-(gameSize-2)*50||z1>=-100){
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeZ+1));
+    }else if(x1<=100||x1>=(gameSizeX-2)*50||y1<=100||y1>=(gameSizeY-2)*50||z1<=-(gameSizeZ-2)*50||z1>=-100){
       sketch.fill(0,0,255,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeZ+1));
     }else{
       sketch.fill(0,255,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeZ+1));
     }
   };
 
   sketch.moveSnakeP2 = () => {
     //since the z coordinate is negative and the side views are positive
     //this translation aligns the snake with the canvas
-    sketch.translate(0,y-y/(gameSize+1));
+    sketch.translate(0,y-y/(gameSizeZ+1));
     
     sketch.push();
-    sketch.translate(positionP2[0]/50*x/(gameSize+1), positionP2[2]/50*y/(gameSize+1));
+    sketch.translate(positionP2[0]/50*x/(gameSizeX+1), positionP2[2]/50*y/(gameSizeZ+1));
     sketch.placeBoxP2(positionP2[0],positionP2[1],positionP2[2],true);
     sketch.pop();
     for(var i=bodyPositionP2.length-3; i>=0; i-=3){
       sketch.push();
-      sketch.translate(bodyPositionP2[i+0]/50*x/(gameSize+1), bodyPositionP2[i+2]/50*y/(gameSize+1));
+      sketch.translate(bodyPositionP2[i+0]/50*x/(gameSizeX+1), bodyPositionP2[i+2]/50*y/(gameSizeZ+1));
       sketch.placeBoxP2(bodyPositionP2[i+0],bodyPositionP2[i+1],bodyPositionP2[i+2]);
       sketch.pop();
     }
@@ -3982,22 +4130,22 @@ let topView = new p5(( sketch ) => {
     let x1 = x2;
     let y1 = y2;
     let z1 = z2;
-    if(x1<=0||x1>=gameSize*50||y1<=0||y1>=gameSize*50||z1<=-gameSize*50||z1>=0){
+    if(x1<=0||x1>=gameSizeX*50||y1<=0||y1>=gameSizeY*50||z1<=-gameSizeZ*50||z1>=0){
       sketch.fill(255,0,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
-    }else if(x1<=100||x1>=(gameSize-2)*50||y1<=100||y1>=(gameSize-2)*50||z1<=-(gameSize-2)*50||z1>=-100){
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeZ+1));
+    }else if(x1<=100||x1>=(gameSizeX-2)*50||y1<=100||y1>=(gameSizeY-2)*50||z1<=-(gameSizeZ-2)*50||z1>=-100){
       sketch.fill(0,0,255,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeZ+1));
     }else{
       sketch.fill(0,255,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeZ+1));
     }
   };
 
   //places the food at its correct position
   sketch.food = () => {
     sketch.fill(255,0,0);
-    sketch.rect(foodPosition[0]/50*x/(gameSize+1),(foodPosition[2]/50+gameSize)*y/(gameSize+1),x/(gameSize+1),y/(gameSize+1));
+    sketch.rect(foodPosition[0]/50*x/(gameSizeX+1),(foodPosition[2]/50+gameSizeZ)*y/(gameSizeZ+1),x/(gameSizeX+1),y/(gameSizeZ+1));
   };
 });
 
@@ -4026,14 +4174,32 @@ let sideViewWord = new p5(( sketch ) => {
 //side view is mainly the same as top view
 let sideView = new p5(( sketch ) => {
 
-  let x = 150;
-  let y = 150;
+  let x;
+  let y;
+
+  if(gameSizeZ<gameSizeY){
+    x = 150*(gameSizeZ/gameSizeY);
+    y = 150;
+  }else{
+    x = 150;
+    y = 150*(gameSizeY/gameSizeZ);
+  }
 
   sketch.setup = () => {
     sketch.createCanvas(x, y);
   };
   
   sketch.draw = () => {
+    if(gameSizeZ<gameSizeY){
+      x = 150*(gameSizeZ/gameSizeY);
+      y = 150;
+    }else{
+      x = 150;
+      y = 150*(gameSizeY/gameSizeZ);
+    }
+    if(x!==gameSizeZ||y!==gameSizeY){
+      sketch.setup();
+    }
     sketch.gamePlay();
   };
 
@@ -4043,10 +4209,10 @@ let sideView = new p5(( sketch ) => {
     sketch.push();
     sketch.stroke(255,0,0);
     sketch.strokeWeight(1);
-    sketch.line(0,0,150,0);
-    sketch.line(150,0,150,150);
-    sketch.line(150,150,0,150);
-    sketch.line(0,150,0,0);
+    sketch.line(0,0,x-1,0);
+    sketch.line(x-1,0,x-1,y-1);
+    sketch.line(x-1,y-1,0,y-1);
+    sketch.line(0,y-1,0,0);
     sketch.pop();
     
     sketch.food();
@@ -4063,15 +4229,15 @@ let sideView = new p5(( sketch ) => {
   
   sketch.moveSnake = () => {
     //in side view, x is 3d z and y is the same as 3d y
-    sketch.translate(y-y/(gameSize+1),0);
+    sketch.translate(x-x/(gameSizeZ+1),0);
     
     sketch.push();
-    sketch.translate(position[2]/50*x/(gameSize+1), position[1]/50*y/(gameSize+1));
+    sketch.translate(position[2]/50*x/(gameSizeZ+1), position[1]/50*y/(gameSizeY+1));
     sketch.placeBox(position[0],position[1],position[2],true);
     sketch.pop();
     for(var i=bodyPosition.length-3; i>=0; i-=3){
       sketch.push();
-      sketch.translate(bodyPosition[i+2]/50*x/(gameSize+1), bodyPosition[i+1]/50*y/(gameSize+1));
+      sketch.translate(bodyPosition[i+2]/50*x/(gameSizeZ+1), bodyPosition[i+1]/50*y/(gameSizeY+1));
       sketch.placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
       sketch.pop();
     }
@@ -4081,29 +4247,29 @@ let sideView = new p5(( sketch ) => {
     let x1 = x2;
     let y1 = y2;
     let z1 = z2;
-    if(x1<=0||x1>=gameSize*50||y1<=0||y1>=gameSize*50||z1<=-gameSize*50||z1>=0){
+    if(x1<=0||x1>=gameSizeX*50||y1<=0||y1>=gameSizeY*50||z1<=-gameSizeZ*50||z1>=0){
       sketch.fill(255,0,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
-    }else if(x1<=100||x1>=(gameSize-2)*50||y1<=100||y1>=(gameSize-2)*50||z1<=-(gameSize-2)*50||z1>=-100){
+      sketch.rect(0,0,x/(gameSizeZ+1),y/(gameSizeY+1));
+    }else if(x1<=100||x1>=(gameSizeX-2)*50||y1<=100||y1>=(gameSizeY-2)*50||z1<=-(gameSizeZ-2)*50||z1>=-100){
       sketch.fill(0,0,255,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeZ+1),y/(gameSizeY+1));
     }else{
       sketch.fill(0,255,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeZ+1),y/(gameSizeY+1));
     }
   };
 
   sketch.moveSnakeP2 = () => {
     //in side view, x is 3d z and y is the same as 3d y
-    sketch.translate(y-y/(gameSize+1),0);
+    sketch.translate(y-y/(gameSizeY+1),0);
     
     sketch.push();
-    sketch.translate(positionP2[2]/50*x/(gameSize+1), positionP2[1]/50*y/(gameSize+1));
+    sketch.translate(positionP2[2]/50*x/(gameSizeZ+1), positionP2[1]/50*y/(gameSizeY+1));
     sketch.placeBoxP2(positionP2[0],positionP2[1],positionP2[2],true);
     sketch.pop();
     for(var i=bodyPositionP2.length-3; i>=0; i-=3){
       sketch.push();
-      sketch.translate(bodyPositionP2[i+2]/50*x/(gameSize+1), bodyPositionP2[i+1]/50*y/(gameSize+1));
+      sketch.translate(bodyPositionP2[i+2]/50*x/(gameSizeZ+1), bodyPositionP2[i+1]/50*y/(gameSizeY+1));
       sketch.placeBoxP2(bodyPositionP2[i+0],bodyPositionP2[i+1],bodyPositionP2[i+2]);
       sketch.pop();
     }
@@ -4113,21 +4279,21 @@ let sideView = new p5(( sketch ) => {
     let x1 = x2;
     let y1 = y2;
     let z1 = z2;
-    if(x1<=0||x1>=gameSize*50||y1<=0||y1>=gameSize*50||z1<=-gameSize*50||z1>=0){
+    if(x1<=0||x1>=gameSizeX*50||y1<=0||y1>=gameSizeY*50||z1<=-gameSizeZ*50||z1>=0){
       sketch.fill(255,0,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
-    }else if(x1<=100||x1>=(gameSize-2)*50||y1<=100||y1>=(gameSize-2)*50||z1<=-(gameSize-2)*50||z1>=-100){
+      sketch.rect(0,0,x/(gameSizeZ+1),y/(gameSizeY+1));
+    }else if(x1<=100||x1>=(gameSizeX-2)*50||y1<=100||y1>=(gameSizeY-2)*50||z1<=-(gameSizeZ-2)*50||z1>=-100){
       sketch.fill(0,0,255,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeZ+1),y/(gameSizeY+1));
     }else{
       sketch.fill(0,255,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeZ+1),y/(gameSizeY+1));
     }
   };
 
   sketch.food = () => {
     sketch.fill(255,0,0);
-    sketch.rect((foodPosition[2]/50+gameSize)*x/(gameSize+1),foodPosition[1]/50*y/(gameSize+1),x/(gameSize+1),y/(gameSize+1));
+    sketch.rect((foodPosition[2]/50+gameSizeZ)*x/(gameSizeZ+1),foodPosition[1]/50*y/(gameSizeY+1),x/(gameSizeZ+1),y/(gameSizeY+1));
   };
 });
   
@@ -4155,14 +4321,32 @@ let frontViewWord = new p5(( sketch ) => {
 
 let frontView = new p5(( sketch ) => {
   
-  let x = 150;
-  let y = 150;
+  let x;
+  let y;
+
+  if(gameSizeX<gameSizeY){
+    x = 150*(gameSizeX/gameSizeY);
+    y = 150;
+  }else{
+    x = 150;
+    y = 150*(gameSizeY/gameSizeX);
+  }
 
   sketch.setup = () => {
     sketch.createCanvas(x, y);
   };
   
   sketch.draw = () => {
+    if(gameSizeX<gameSizeY){
+      x = 150*(gameSizeX/gameSizeY);
+      y = 150;
+    }else{
+      x = 150;
+      y = 150*(gameSizeY/gameSizeX);
+    }
+    if(x!==gameSizeX||y!==gameSizeY){
+      sketch.setup();
+    }
     sketch.gamePlay();
   };
   
@@ -4172,10 +4356,10 @@ let frontView = new p5(( sketch ) => {
     sketch.push();
     sketch.stroke(255,0,0);
     sketch.strokeWeight(1);
-    sketch.line(0,0,150,0);
-    sketch.line(150,0,150,150);
-    sketch.line(150,150,0,150);
-    sketch.line(0,150,0,0);
+    sketch.line(0,0,x-1,0);
+    sketch.line(x-1,0,x-1,y-1);
+    sketch.line(x-1,y-1,0,y-1);
+    sketch.line(0,y-1,0,0);
     sketch.pop();
     
     sketch.food();
@@ -4193,12 +4377,12 @@ let frontView = new p5(( sketch ) => {
   sketch.moveSnake = () => {
     //in front view, x and y are the same as 3d x and y
     sketch.push();
-    sketch.translate(position[0]/50*x/(gameSize+1), position[1]/50*y/(gameSize+1));
+    sketch.translate(position[0]/50*x/(gameSizeX+1), position[1]/50*y/(gameSizeY+1));
     sketch.placeBox(position[0],position[1],position[2],true);
     sketch.pop();
     for(var i=bodyPosition.length-3; i>=0; i-=3){
       sketch.push();
-      sketch.translate(bodyPosition[i+0]/50*x/(gameSize+1), bodyPosition[i+1]/50*y/(gameSize+1));
+      sketch.translate(bodyPosition[i+0]/50*x/(gameSizeX+1), bodyPosition[i+1]/50*y/(gameSizeY+1));
       sketch.placeBox(bodyPosition[i+0],bodyPosition[i+1],bodyPosition[i+2]);
       sketch.pop();
     }
@@ -4208,27 +4392,27 @@ let frontView = new p5(( sketch ) => {
     let x1 = x2;
     let y1 = y2;
     let z1 = z2;
-    if(x1<=0||x1>=gameSize*50||y1<=0||y1>=gameSize*50||z1<=-gameSize*50||z1>=0){
+    if(x1<=0||x1>=gameSizeX*50||y1<=0||y1>=gameSizeY*50||z1<=-gameSizeZ*50||z1>=0){
       sketch.fill(255,0,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
-    }else if(x1<=100||x1>=(gameSize-2)*50||y1<=100||y1>=(gameSize-2)*50||z1<=-(gameSize-2)*50||z1>=-100){
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeY+1));
+    }else if(x1<=100||x1>=(gameSizeX-2)*50||y1<=100||y1>=(gameSizeY-2)*50||z1<=-(gameSizeZ-2)*50||z1>=-100){
       sketch.fill(0,0,255,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeY+1));
     }else{
       sketch.fill(0,255,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeY+1));
     }
   };
 
   sketch.moveSnakeP2 = () => {
     //in front view, x and y are the same as 3d x and y
     sketch.push();
-    sketch.translate(positionP2[0]/50*x/(gameSize+1), positionP2[1]/50*y/(gameSize+1));
+    sketch.translate(positionP2[0]/50*x/(gameSizeX+1), positionP2[1]/50*y/(gameSizeY+1));
     sketch.placeBoxP2(positionP2[0],positionP2[1],positionP2[2],true);
     sketch.pop();
     for(var i=bodyPositionP2.length-3; i>=0; i-=3){
       sketch.push();
-      sketch.translate(bodyPositionP2[i+0]/50*x/(gameSize+1), bodyPositionP2[i+1]/50*y/(gameSize+1));
+      sketch.translate(bodyPositionP2[i+0]/50*x/(gameSizeX+1), bodyPositionP2[i+1]/50*y/(gameSizeY+1));
       sketch.placeBoxP2(bodyPositionP2[i+0],bodyPositionP2[i+1],bodyPositionP2[i+2]);
       sketch.pop();
     }
@@ -4238,28 +4422,28 @@ let frontView = new p5(( sketch ) => {
     let x1 = x2;
     let y1 = y2;
     let z1 = z2;
-    if(x1<=0||x1>=gameSize*50||y1<=0||y1>=gameSize*50||z1<=-gameSize*50||z1>=0){
+    if(x1<=0||x1>=gameSizeX*50||y1<=0||y1>=gameSizeY*50||z1<=-gameSizeZ*50||z1>=0){
       sketch.fill(255,0,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
-    }else if(x1<=100||x1>=(gameSize-2)*50||y1<=100||y1>=(gameSize-2)*50||z1<=-(gameSize-2)*50||z1>=-100){
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeY+1));
+    }else if(x1<=100||x1>=(gameSizeX-2)*50||y1<=100||y1>=(gameSizeY-2)*50||z1<=-(gameSizeZ-2)*50||z1>=-100){
       sketch.fill(0,0,255,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeY+1));
     }else{
       sketch.fill(0,255,0,150);
-      sketch.rect(0,0,x/(gameSize+1),y/(gameSize+1));
+      sketch.rect(0,0,x/(gameSizeX+1),y/(gameSizeY+1));
     }
   };
 
   sketch.food = () => {
     sketch.fill(255,0,0);
-    sketch.rect(foodPosition[0]/50*x/(gameSize+1),foodPosition[1]/50*y/(gameSize+1),x/(gameSize+1),y/(gameSize+1));
+    sketch.rect(foodPosition[0]/50*x/(gameSizeX+1),foodPosition[1]/50*y/(gameSizeY+1),x/(gameSizeX+1),y/(gameSizeY+1));
   };
 });
 
 //display has different uses based on the game mode
 let display = new p5(( sketch ) => {
 
-  let x = 250;
+  let x = 300;
   let y = 150;
 
   //creates canvas
